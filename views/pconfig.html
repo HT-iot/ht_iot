@@ -1,0 +1,114 @@
+{{template "header"}}
+
+  <title>HT-IOT - 信息录入</title>
+  <style type="text/css">
+     body {
+       padding: 50px 0;
+       vertical-align:middle
+     }
+     fieldset{
+         color: #333;
+         border: #06c, dashed 1px
+     }
+     legend{
+         vertical-align: middle
+     }
+
+
+</style>
+
+</head>
+
+{{template "navbar"}}
+
+<body> 
+
+    <form method="GET" action ="/pconfig" role = "form" class="form-horizontal"> 
+        <fieldset>
+            <legend>患者信息录入</legend>
+        <div class = "form-group"> 
+            <label class="col-sm-1 control-label" for = "name">医院名称</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "请医院名称" name = "hospital_name"></input> 
+            </div> 
+        
+            <label class="col-sm-1 control-label" for = "name">病 区 号</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "area" placeholder = "请输入病区号" name = "hospital_zone"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">病 床 号</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "bed" placeholder = "请输入病床号" name = "hospital_bed"></input> 
+            </div>
+           
+        </div> 
+        
+        
+        <div class = "form-group"> 
+            <label class="col-sm-1 control-label" for = "name">患者姓名</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "请输入患者姓名" name = "p_name"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "profession">性    别</label> 
+            <div class="col-sm-2" >
+             <select id = "profession" class = "form-control" name = "p_sex">
+              <option>男</option> 
+              <option>女</option> 
+             </select> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">终 端 号</label> 
+            <div class="col-sm-2"> 
+                <input type = "number" class = "form-control" id = "bed" placeholder = "请输入终端号" name = "p_device"></input> 
+            </div> 
+
+            <div class="col-sm-1 col-sm-offset-1"> 
+                <button type = "submit" class="btn-info btn-sm">提   交</button> 
+            </div>    
+            <input type="hidden" name="op" value="add">
+              
+        </div> 
+
+    </fieldset>
+    </form> 
+    
+   
+    <table class="table table-striped", border="1">
+      
+        <thread>
+            <tr>
+                <th>紧急呼叫</th>
+                <th>医院名称</th>   
+                <th>病区号</th> 
+                <th>病床号</th>   
+                <th>姓名</th> 
+                <th>性别</th>   
+                <th>终端号</th>
+                <th>操作</th>
+            </tr>    
+        </thread>
+              
+        <tbody>
+        
+             {{range $index, $v := .Hospitalsilce}}
+             <tr>
+                <td>{{$index}}</td> 
+                <td>{{.Hospital_id}} </td> 
+                <td>{{.Hospital_zone}}</td>   
+                <td>{{.Hospital_bed}}</td> 
+                <td>{{.Patient_name}}</td>   
+                <td>{{.Patient_sex}}</td>     
+                <td>{{.Device_hospital_id}}</td>   
+                <td>{{.Device_hospital_id}}</td>   
+                <td>
+                    <a href="/pconfig?op=del&id = {{$index}}">取消</a>
+                </td>
+        </tr>
+            {{end}}
+         
+        </tbody>
+    </table>
+</body>
+</html>

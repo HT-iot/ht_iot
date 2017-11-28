@@ -1,0 +1,23 @@
+{{define "navbar"}}
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#"> 体征监控系统 </a>
+          <ul class="nav navbar-nav navbar-left">
+              <li {{if .IsStatus}} class ="active" {{end}} ><a href="#"> 状态监测 </a></li>
+              <li {{if .IsPconfig}} class ="active" {{end}}><a href="/pconfig"> 入院信息录入 </a></li>
+             <li {{if .IsOconfig}} class ="active" {{end}}><a href="#"> 出院信息录入 </a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            {{if .IsLogin}}
+                <li><a href="/login?exit=true">退出</a></li>  
+            {{else}}
+                <li><a href="/login"> 管理员登录 </a></li>
+            {{end}}
+            <li {{if .IsHelp}} class ="active" {{end}}><a href="#"> 帮助 </a></li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+{{end}}

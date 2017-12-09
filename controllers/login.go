@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"fmt"
+	"ht_iot/models"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 )
@@ -9,33 +12,49 @@ type LoginController struct {
 	beego.Controller
 }
 
-func (this *LoginController) Get() {
-	this.TplName = "login.html"
-	isExit := this.Input().Get("exit") == "true"
-	if isExit {
-		this.Ctx.SetCookie("uname", "", -1, "/")
-		this.Ctx.SetCookie("pwd", "", -1, "/")
-		this.Redirect("/", 301)
+func (c *LoginController) Get() {
+	c.TplName = "login.html"
+	isExit := c.Input().Get("exit")
+	if isExit == "true" {
+		c.Ctx.SetCookie("uname", "", -1, "/")
+		c.Ctx.SetCookie("pwd", "", -1, "/")
+		c.Redirect("/", 301)
 		return
 	}
 }
 
-func (this *LoginController) Post() {
-	uname := this.Input().Get("uname")
-	pwd := this.Input().Get("pwd")
-	autoLogin := this.Input().Get("autoLogin") == "on"
+func (c *LoginController) Post() {
+	c.TplName = "login.html"
+	uname := c.Input().Get("uname")
+	pwd := c.Input().Get("pwd")
+
+	autoLogin := c.Input().Get("autoLogin") == "on"
 
 	//	this.Ctx.WriteString(fmt.Sprint(this.Input()))
-	if beego.AppConfig.String("uname") == uname && beego.AppConfig.String("pwd") == pwd {
+
+	p := models.User{Email: uname, Password: pwd}
+	q, err := models.GetAllUers(p)
+
+	fmt.Println("q, err =", q, err)
+
+	if len(q) > 0 {
+		fmt.Println("register pwd")
 		maxAge := 0
 		if autoLogin {
 			maxAge = 1<<31 - 1
-
 		}
-		this.Ctx.SetCookie("uname", uname, maxAge, "/")
-		this.Ctx.SetCookie("pwd", pwd, maxAge, "/")
+		c.Ctx.SetCookie("uname", uname, maxAge, "/")
+		c.Ctx.SetCookie("pwd", pwd, maxAge, "/")
+
+		c.Data["IsLogin"] = true
+		IsLogin = true
+		//, IsStatus, IsPconfig, IsOconfig
+		c.TplName = "home.html"
+	} else {
+		c.Data["IsLogin"] = false
+		IsLogin = false
+		c.Redirect("/login", 301)
 	}
-	this.Redirect("/", 301)
 	return
 }
 
@@ -51,5 +70,18 @@ func checkAccount(ctx *context.Context) bool {
 		return false
 	}
 	pwd := ck.Value
-	return beego.AppConfig.String("uname") == uname && beego.AppConfig.String("pwd") == pwd
+
+	p := models.User{Email: uname, Password: pwd}
+	q, err := models.GetAllUers(p)
+
+	fmt.Println("q, err =", q, err)
+
+	if len(q) > 0 {
+		IsLogin = true
+		return true
+	} else {
+		IsLogin = false
+		return false
+
+	}
 }

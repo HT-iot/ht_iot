@@ -2,27 +2,25 @@
 
   <title>HT-IOT - 登录</title>
   <style type="text/css">
-    
-    body {
+     body {
        padding: 200px 0;
        vertical-align:middle
      }
-     
-   </style>
-
+    </style>
 </head>
 
+{{template "navbar" .}}
 
 <body>
   <div class = "container" style="width: 500px">
       <form method="POST" action ="/login">
           <div class="form-group" >
-            <label for="exampleInputEmail1">用户名</label>
-            <input id = "uname" type="email" class="form-control"  placeholder="请输入用户名" name="uname">
+            <label for="uname">用户名</label>
+            <input id = "uname" type="email" class="form-control"  placeholder="请输入用户名/Email" name="uname">
           </div>
           <div class="form-group">
-            <label for="exampleInputPassword1">密码</label>
-            <input id = "pwd" type="password" class="form-control"  placeholder="Password" name="pwd">
+            <label for="pwd">密码</label>
+            <input id = "pwd" type="password" class="form-control"  placeholder="输入密码/Password" name="pwd">
           </div>
           
           <div class="checkbox">
@@ -30,8 +28,8 @@
               <input type="checkbox" name="autoLogin"> 自动登录
             </label>
           </div>
-          <button type="submit" class="btn btn-default" onclick="return checkInput();">登录</button>
-          <button class="btn btn-default" onclick="return backToHome; ">退出</button>
+          <button type="submit" class="btn btn-primary" onClick="checkInput()">登录</button>
+          <button class="btn btn-default" onClick="return backToHome()">退出</button>
         </form>
 
     
@@ -39,23 +37,24 @@
           function checkInput(){
             var uname = document.getElementById("uname");
             if (uname.value.length == 0){
-              alter ("请输入帐号");
+              alert ("请输入帐号");
               return false;
             }
             var pwd = document.getElementById("pwd");
             if (pwd.value.length == 0){
-              alter ("请输入密码");
+              alert ("请输入密码");
               return false;
             }
             return true;
           }
 
-          function backToHome(){
-            window.location.href = "/";
+          function backToHome(){ 
+              window.location.href = "/";
             return false;
           }
 
         </script>
   </div>
+
 </body>
 </html>

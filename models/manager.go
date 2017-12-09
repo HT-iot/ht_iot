@@ -5,55 +5,54 @@ import (
 
 	"github.com/astaxie/beego/logs"
 	"github.com/gocql/gocql"
-
 	"github.com/scylladb/gocqlx"
 	"github.com/scylladb/gocqlx/qb"
 )
 
 var tables = []string{
-	`CREATE TABLE IF NOT EXISTS hospital_patient_info (
-		hospital_name text,
-		hospital_id text,
-		hospital_zone text,  
-		hopsital_bed int,
-		patient_name text,
-		patient_sex text,
-		patient_id text,
-		patient_entr_time timeuuid,
-		patient_exit_time timeuuid,
-		patient_in_hospital boolean,
-		device_id text,
-		device_hospital_id int,
-		channel_id text,
-		meta map<text,text>,
-		PRIMARY KEY (hospital_name,hospital_zone,patient_name,device_hospital_id,patient_in_hospital)
+	`CREATE TABLE IF NOT EXISTS manager.hospital_by_patient (
+		hospitalname text,
+		hospitalzone text,
+		patientname text,
+		hospitaldeviceid int,
+		inhospital boolean,
+		channelid text,
+		deviceid text,
+		hospitalbed int,
+		hospitalid text,
+		patiententrtime timeuuid,
+		patientexittime timeuuid,
+		patientid text,
+		patientsex text,
+		meta map<text, text>,
+		PRIMARY KEY (hospitalname, hospitalzone, patientname, hospitaldeviceid, inhospital)
 		)`,
 
-	`CREATE TABLE IF NOT EXISTS device_info (
-		manufacturer text,
-		model_number text,
-		device_id text,
-		firmware_version text,
+	`CREATE TABLE IF NOT EXISTS manager.device_info (
+		Manufacturer  text,
+		Modelnumber text,
+		Deviceid text,
+		FirmwareVersion text,
 		reboot boolean,
-		factory_reset boolean,
-		available_power_source int,
-		power_source_voltage int,
-		power_source_current int,
-		battery_level int,
-		memory_free int,
-		error_code int,
-		reset_error_code text,
-		current_time timeuuid,
-		utc_offset text,
-		timezone text,
-		supported_binding_modes text,
-		device_type text,
-		hardware_version text,
-		software_version text,
-		hospital_name text,
-		device_hospital_id int,
-		channel_id text,
-		PRIMARY KEY (device_id,channel_id,hospital_name,device_hospital_id)
+		factoryreset boolean,
+		Availablepowersource int,
+		Powersourcevoltage int,
+		Powersourcesurrent int,
+		Batterylevel int,
+		Memoryfree int,
+		Errorcode int,
+		Reseterrorcode text,
+		Currenttime timeuuid,
+		Utcoffset text,
+		Timezone text,
+		Supportedbindingmodes text,
+		Devicetype text,
+		Hardwareversion text,
+		Softwareversion text,
+		Hospitalname text,
+		Hospitaldeviceid int,
+		Channelid text,
+		PRIMARY KEY (Deviceid,Channelid,Hospitalname,Hospitaldeviceid)
 		)`,
 
 	/* These Table will be created by manager application
@@ -112,50 +111,50 @@ type ChannelsByUser struct {
 
 /*HospitalPatientInfo : The Hospital/Patient information */
 type HospitalPatientInfo struct {
-	HospitalName     string
-	HospitalID       string
-	HospitalZone     string
-	HopsitalBed      int
-	PatientName      string
-	PatientSex       string
-	PatientID        string
-	AdmissionTime    gocql.UUID
-	DischargeTime    gocql.UUID
-	InHospital       bool
-	DeviceID         string
-	HospitalDeviceID int
-	ChannelID        string
+	Hospitalname     string
+	Hospitalid       string
+	Hospitalzone     string
+	Hospitalbed      int
+	Patientname      string
+	Patientsex       string
+	Patientid        string
+	Patiententrtime  string
+	Patientexittime  string
+	Inhospital       bool
+	Deviceid         string
+	Hospitaldeviceid int
+	Channelid        string
 	Meta             map[string]string
 }
 
 /*DeviceInfo : The Device information */
 type DeviceInfo struct {
 	Manufacturer          string
-	ModelNumber           string
-	DeviceID              string
-	FirmwareVersion       string
+	Modelnumber           string
+	Deviceid              string
+	Firmwareversion       string
 	Reboot                bool
-	FactoryReset          bool
-	AvailablePowerSource  int
-	PowerSourceVoltage    int
-	PowerSourceCurrent    int
-	BatteryLevel          int
-	MemoryFree            int
-	ErrorCode             int
-	ResetErrorCode        string
-	CurrentTime           gocql.UUID
+	Factoryreset          bool
+	Availablepowersource  int
+	Powersourcevoltage    int
+	Powersourcesurrent    int
+	Batterylevel          int
+	Memoryfree            int
+	Errorcode             int
+	ReseterrorCode        string
+	Currenttime           gocql.UUID
 	UtcOffset             string
 	Timezone              string
-	SupportedBindingModes string
-	DeviceType            string
-	HardwareVersion       string
-	SoftwareVersion       string
-	HospitalName          string
-	HospitalDeviceID      int
-	ChannelID             string
+	Supportedbindingmodes string
+	Devicetype            string
+	Hardwareversion       string
+	Softwareversion       string
+	Hospitalname          string
+	Hospitaldeviceid      int
+	Channelid             string
 }
 
-/*GetUers  get data... */
+/*GetUsers  get data... */
 func GetUers() (User, error) {
 	log := logs.GetBeeLogger()
 
@@ -171,6 +170,47 @@ func GetUers() (User, error) {
 	}
 
 	return user, err
+}
+
+/*GetUsers  get all data...*/
+func GetAllUers(p User) ([]User, error) {
+
+	sel := qb.Select("users").Where(qb.Eq("email")).Limit(100).AllowFiltering()
+
+	if p.Password != "" {
+		sel.Where(qb.Eq("password"))
+	}
+	stmt, names := sel.ToCql()
+
+	fmt.Println("stmt =", stmt)
+	fmt.Println("names =", names)
+
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&p)
+	fmt.Println("q.Query=  ", q.Query)
+	defer q.Release()
+
+	var people []User
+	var err error
+	if err = gocqlx.Select(&people, q.Query); err != nil {
+		fmt.Println("select Err:", err)
+	}
+	return people, err
+}
+
+func SaveUers(u *User) error {
+	log := logs.GetBeeLogger()
+	log.Info("start SaveUser")
+
+	log.Info("start Insert admin information")
+	stmt, names := qb.Insert("users").Columns("email", "password").ToCql()
+
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(u)
+
+	if err := q.ExecRelease(); err != nil {
+		log.Critical("select:" + err.Error())
+		return err
+	}
+	return nil
 }
 
 /*GetClientByUser  get data... */
@@ -193,71 +233,88 @@ func GetClientByUser() ([]ClientsByUser, error) {
 	return clients, err
 }
 
-/*GetUers  get data... */
-/*
-func GetUers() (User, error) {
+/*InsertPatient Insert Patient to Cassandra
+func GetPatient(h HospitalPatientInfo) (*[]HospitalPatientInfo, error) {
+	// Insert with query parameters bound from struct.
+
 	log := logs.GetBeeLogger()
+	log.Info("Get Patient information")
 
-	cql := `SELECT email, password FROM users LIMIT 1`
+	sel := qb.Select("hospital_by_patient").Where(qb.Eq("hospitalname")).AllowFiltering()
 
-	u := User{}
-	var err error
-	//var email string
-	//var password string
+		if len(h.Hospitalzone) > 0 {
+			sel.Where(qb.Eq("hospitalzone"))
+		}
 
-	if SessionMgr == nil || SessionMgr.Closed() {
-		log.Critical("SessionMgr is nil")
-		//return , nil
-	}
+		if len(h.Patientname) > 0 {
+			sel.Where(qb.Eq("patientname"))
+		}
 
-	if err := SessionMgr.Query(cql).
-		Scan(&u.Email, &u.Password); err != nil {
+	stmt, names := sel.ToCql()
 
-		log.Error("Manager DB query failure")
-		//return nil
-	}
-	log.Info("user talbe, email is " + u.Email + " password is " + u.Password)
-	//	return u, err
+	fmt.Println("stmt =", stmt)
+	fmt.Println("names =", names)
 
-	/////
-
-	cql = `SELECT channel,id FROM messages_by_channel LIMIT 1`
-	//u := User{}
-	//var err error
-	var channel, id string
-	//var password string
-	if SessionMsg == nil || SessionMsg.Closed() {
-		log.Critical("SessionMgr is nil")
-		//return , nil
-	}
-	if err := SessionMsg.Query(cql).
-		Scan(&channel, &id); err != nil {
-
-		log.Error("Manager DB query failure", err.Error())
-		//return nil
-	}
-	log.Info("Message channel, id is " + channel + " password is " + id)
-	return u, err
-
-}
-*/
-/*
-func get_clients_by_uer{
-	session := createSession(t)
-	defer session.Close()
-
-	stmt, names := qb.Select("manager.clients_by_user").ToCql()
-
-	q := gocqlx.Query(session.Query(stmt), names).BindMap(qb.M{
-		"first_name": []string{"Patricia", "Igy", "Ian"},
-	})
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
+	fmt.Println("q.Query=  ", q.Query)
 	defer q.Release()
 
-	var people []Person
-	if err := gocqlx.Select(&people, q.Query); err != nil {
-		t.Fatal("select:", err)
+	var Patient []HospitalPatientInfo
+	if err := gocqlx.Select(Patient, q.Query); err != nil {
+		fmt.Println("select Err:", err)
 	}
-
-	t.Log(people)
+	return &Patient, nil
 }
 */
+/*InsertPatient Insert Patient to Cassandra */
+func InsertPatient(h HospitalPatientInfo) error {
+	// Insert with query parameters bound from struct.
+	log := logs.GetBeeLogger()
+	log.Info("Insert Patient information")
+
+	stmt, names := qb.Insert("hospital_by_patient").Columns("hospitalname", "hospitalzone",
+		"patientname", "hospitaldeviceid", "inhospital", "channelid",
+		"deviceid", "hospitalbed", "hospitalid", "patiententrtime",
+		"patientid", "patientsex", "meta").
+		ToCql()
+
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
+
+	if err := q.ExecRelease(); err != nil {
+		log.Critical("select:" + err.Error())
+		return err
+	}
+	return nil
+}
+
+func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
+	// Insert with query parameters bound from struct.
+
+	log := logs.GetBeeLogger()
+	log.Info("Get Patient information")
+
+	sel := qb.Select("hospital_by_patient").Where(qb.Eq("hospitalname")).Limit(100).AllowFiltering()
+	/*
+		if len(h.Hospitalzone) != 0 {
+			sel.Where(qb.Eq("hospitalzone"))
+		}
+	*/
+	if len(h.Patientname) != 0 {
+		sel.Where(qb.Eq("patientname"))
+	}
+
+	stmt, names := sel.ToCql()
+
+	fmt.Println("stmt =", stmt)
+	fmt.Println("h =", h)
+
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
+	fmt.Println("q.Query=  ", q.Query)
+	defer q.Release()
+
+	var patient []HospitalPatientInfo
+	if err := gocqlx.Select(&patient, q.Query); err != nil {
+		fmt.Println("select Err:", err)
+	}
+	return patient, nil
+}

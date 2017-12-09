@@ -1,6 +1,6 @@
 {{template "header"}}
 
-  <title>HT-IOT - 信息录入</title>
+  <title>HT-IOT - 出院信息录入</title>
   <style type="text/css">
      body {
        padding: 50px 0;
@@ -13,17 +13,20 @@
      legend{
          vertical-align: middle
      }
-    
-    </style>
+
+
+</style>
 
 </head>
 
-{{template "navbar" .}}
+{{template "navbar"}}
 
 <body> 
-
-    <form method="GET" action ="/pconfig" role = "form" class="form-horizontal"> 
-        <h1>患者信息录入</H1>
+ 
+    <form method="GET" action ="/outhospital" role = "form" class="form-horizontal"> 
+        <fieldset>
+            <legend>患者信息查询</legend>
+            <h1>JC{{.ISLogin}}</h1>
         <div class = "form-group"> 
             <label class="col-sm-1 control-label" for = "name">医院名称</label> 
             <div class="col-sm-2"> 
@@ -37,9 +40,10 @@
 
             <label class="col-sm-1 control-label" for = "name">病 床 号</label> 
             <div class="col-sm-2"> 
-                <input type = "number" class = "form-control" id = "bed" placeholder = "请输入病床号" name = "hospital_bed"></input> 
+                <input type = "text" class = "form-control" id = "bed" placeholder = "请输入病床号" name = "hospital_bed"></input> 
             </div>
-     </div> 
+           
+        </div> 
         
         
         <div class = "form-group"> 
@@ -48,35 +52,30 @@
                 <input type = "text" class = "form-control" id = "name" placeholder = "请输入患者姓名" name = "p_name"></input> 
             </div> 
 
-            <label class="col-sm-1 control-label" for = "profession">性    别</label> 
-            <div class="col-sm-2" >
-             <select id = "profession" class = "form-control" name = "p_sex">
-              <option>男</option> 
-              <option>女</option> 
-             </select> 
-            </div> 
+            
 
             <label class="col-sm-1 control-label" for = "name">终 端 号</label> 
             <div class="col-sm-2"> 
-                <input type = "number" class = "form-control" id = "p_device" placeholder = "请输入终端号" name = "p_device"></input> 
+                <input type = "number" class = "form-control" id = "bed" placeholder = "请输入终端号" name = "p_device"></input> 
             </div> 
 
             <div class="col-sm-1 col-sm-offset-1"> 
-                <button type = "submit" class="btn-info btn-sm">添    加</button> 
+                <button type = "submit" class="btn-info btn-sm">查   询</button> 
             </div>    
-            <input type="hidden" name="op" value="add">
+            <input type="hidden" name="op" value="check">
               
         </div> 
 
+    </fieldset>
     </form> 
     
-
-    <table class="table table-striped", border=2>
+   
+    <table class="table table-striped", border="2">
       
         <thread>
             <tr>
-                <th >紧急呼叫</th>
-                <th >医院名称</th>   
+                <th>紧急呼叫</th>
+                <th>医院名称</th>   
                 <th>病区号</th> 
                 <th>病床号</th>   
                 <th>姓名</th> 
@@ -89,7 +88,7 @@
               
         <tbody>
         
-                {{range $index, $v := .Hospitalsilce}}
+             {{range $index, $v := .Hospitalsilce}}
              <tr>
                 <td>{{$index}}</td> 
                 <td>{{.Hospitalname}} </td> 
@@ -100,14 +99,12 @@
                 <td>{{.Hospitaldeviceid}}</td>   
                 <td>{{.Patiententrtime}}</td>   
                 <td>
-                    <a href="/pconfig?op=wrte&id = {{$index}}">写入</a>
-                    <a href="/pconfig?op=del&id = {{$index}}">取消</a>
+                    <a href="/outhospital?op=del&id = {{$index}}">出院</a>
                 </td>
-            </tr>
+        </tr>
             {{end}}
-        
+         
         </tbody>
     </table>
-
 </body>
 </html>

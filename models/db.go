@@ -38,7 +38,7 @@ func InitDB() error {
 	for _, table := range tables {
 		if err := Session.Query(table).Exec(); err != nil {
 			log.Info("create table in cassandra failure ")
-			return err
+			//		return err
 		}
 	}
 

@@ -182,11 +182,11 @@ func GetAllUers(p User) ([]User, error) {
 	}
 	stmt, names := sel.ToCql()
 
-	fmt.Println("stmt =", stmt)
-	fmt.Println("names =", names)
+	//	fmt.Println("stmt =", stmt)
+	//	fmt.Println("names =", names)
 
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&p)
-	fmt.Println("q.Query=  ", q.Query)
+	//	fmt.Println("q.Query=  ", q.Query)
 	defer q.Release()
 
 	var people []User

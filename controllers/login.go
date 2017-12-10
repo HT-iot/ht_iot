@@ -14,7 +14,8 @@ type LoginController struct {
 
 func (c *LoginController) Get() {
 	c.TplName = "login.html"
-	isExit := c.Input().Get("exit")
+	isExit := c.GetString("exit")
+	fmt.Println("Login isExit =", isExit)
 	if isExit == "true" {
 		c.Ctx.SetCookie("uname", "", -1, "/")
 		c.Ctx.SetCookie("pwd", "", -1, "/")
@@ -30,8 +31,6 @@ func (c *LoginController) Post() {
 
 	autoLogin := c.Input().Get("autoLogin") == "on"
 
-	//	this.Ctx.WriteString(fmt.Sprint(this.Input()))
-
 	p := models.User{Email: uname, Password: pwd}
 	q, err := models.GetAllUers(p)
 
@@ -45,14 +44,15 @@ func (c *LoginController) Post() {
 		}
 		c.Ctx.SetCookie("uname", uname, maxAge, "/")
 		c.Ctx.SetCookie("pwd", pwd, maxAge, "/")
-
-		c.Data["IsLogin"] = true
 		IsLogin = true
+		c.Data["ISLogin"] = IsLogin
+		fmt.Println("IsLogin =", IsLogin)
+
 		//, IsStatus, IsPconfig, IsOconfig
 		c.TplName = "home.html"
 	} else {
-		c.Data["IsLogin"] = false
 		IsLogin = false
+		c.Data["ISLogin"] = IsLogin
 		c.Redirect("/login", 301)
 	}
 	return
@@ -74,7 +74,7 @@ func checkAccount(ctx *context.Context) bool {
 	p := models.User{Email: uname, Password: pwd}
 	q, err := models.GetAllUers(p)
 
-	fmt.Println("q, err =", q, err)
+	//	fmt.Println("q, err =", q, err)
 
 	if len(q) > 0 {
 		IsLogin = true

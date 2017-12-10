@@ -17,16 +17,16 @@
               <ul class="nav navbar-nav navbar-left">
                   <li {{if .IsStatus}} class ="active" {{end}} ><a href="#"> 状态监测 </a></li>
                   <li {{if .IsPconfig}} class ="active" {{end}}><a href="/pconfig"> 入院信息录入 </a></li>
-                 <li {{if .IsOconfig}} class ="active" {{end}}><a href="/outhospital"> 出院信息录入 </a></li>
+                  <li {{if .IsOconfig}} class ="active" {{end}}><a href="/outhospital"> 出院信息录入 </a></li>
               </ul>
          
               <ul class="nav navbar-nav navbar-right">
                 {{if .ISLogin}}
-                    <li><a href="/login?exit=true">退出</a></li>  
+                    <li><a href="/?exit=true">退出</a></li>  
                 {{else}}
                     <li><a href="/login"> 管理员登录 </a></li>
                 {{end}}
-                <li {{if .IsHelp}} class ="active" {{end}}><a href="#"> 帮助 </a></li>
+                    <li {{if .IsHelp}} class ="active" {{end}}><a href="#"> 帮助 </a></li>
               </ul>
        
       </div><!--/.navbar-collapse -->

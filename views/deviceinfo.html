@@ -1,0 +1,160 @@
+{{template "header"}}
+
+  <title>HT-IOT - 器件信息录入</title>
+  <style type="text/css">
+     body {
+       padding: 50px 0;
+       vertical-align:middle
+     }
+     fieldset{
+         color: #333;
+         border: #06c, dashed 1px
+     }
+     legend{
+         vertical-align: middle
+     }
+
+
+</style>
+
+</head>
+
+{{template "navbar" .}}
+
+<body> 
+    <span class="glyphicon glyphicon-search"></span>
+    <form method="GET" action ="/deviceinfo" role = "form" class="form-horizontal"> 
+        <fieldset>
+            <legend>器件信息查询</legend>
+         <div class = "form-group"> 
+            <label class="col-sm-1 control-label" for = "name">医院名称</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "请医院名称" name = "hospital_name"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">医院器件编号</label> 
+            <div class="col-sm-1"> 
+                <input type = "text" class = "form-control" id = "area" placeholder = "请输入医院器件编号" name = "Hospitaldeviceid"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">器件编号</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "请输入器件编号" name = "device_id"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">信道编号</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "请输入信道编号" name = "channel_id"></input> 
+            </div>
+
+            <div class="col-sm-1 "> 
+                <button type = "submit" class="btn-info btn-sm">查   询</button> 
+                <input type="hidden" name="op" value="check">
+            </div>
+         
+        </div> 
+
+        <div class = "form-group"> 
+            <label class="col-sm-1 control-label" for = "name">manufacturer</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "manufacturer" name = "manufacturer"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">modelnumber </label> 
+            <div class="col-sm-1"> 
+                <input type = "text" class = "form-control" id = "area" placeholder = "modelnumber" name = "modelnumber"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">firmwareVersion</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "firmwareVersion" name = "firmwareVersion"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">DeviceType</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "DeviceType" name = "DeviceType"></input> 
+            </div> 
+         
+        </div> 
+        <div class = "form-group"> 
+            <label class="col-sm-1 control-label" for = "name">availablepowersource</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "availablepowersource" name = "availablepowersource"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">powersourcevoltage</label> 
+            <div class="col-sm-1"> 
+                <input type = "text" class = "form-control" id = "area" placeholder = "powersourcevoltage" name = "powersourcevoltage"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">powersourcesurrent </label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "powersourcesurrent" name = "powersourcesurrent"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">batterylevel</label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "batterylevel" name = "batterylevel"></input> 
+            </div> 
+         
+        </div> 
+	    <div class = "form-group"> 
+            <label class="col-sm-1 control-label" for = "name">supportedbindingmodes </label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "supportedbindingmodes" name = "supportedbindingmodes"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">hardwareversion</label> 
+            <div class="col-sm-1"> 
+                <input type = "text" class = "form-control" id = "area" placeholder = "hardwareversion" name = "hardwareversion"></input> 
+            </div> 
+
+            <label class="col-sm-1 control-label" for = "name">softwareversion </label> 
+            <div class="col-sm-2"> 
+                <input type = "text" class = "form-control" id = "name" placeholder = "softwareversion" name = "softwareversion"></input> 
+            </div> 
+
+            <div class="col-sm-1 col-sm-offset-1"> 
+                <button type = "submit" class="btn-info btn-sm">编辑保存</button> 
+                <input type="hidden" name="op" value="add">
+            </div>    
+
+           
+         
+        </div> 
+	 
+       </fieldset>
+    </form> 
+    
+   
+    <table class="table table-striped", border="2">
+      
+        <thread>
+            <tr>
+                <th>医院名称</th>
+                <th>医院器件编号</th>   
+                <th>器件编号</th> 
+                <th>信道编号</th>   
+                <th>manufacturer</th> 
+                <th>modelnumber</th>   
+                <th>firmwareVersion</th>
+                <th>DeviceType</th>
+                <th>availablepowersource</th>
+                <th>powersourcevoltage</th> 
+                <th>powersourcesurrent</th>   
+                <th>batterylevel</th>
+                <th>supportedbindingmodes</th>
+                <th>hardwareversion</th>
+                <th>softwareversion</th>
+           
+            </tr>    
+        </thread>
+              
+        <tbody>
+        
+
+         
+        </tbody>
+    </table>
+</body>
+</html>

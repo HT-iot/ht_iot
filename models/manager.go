@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/astaxie/beego/logs"
 	"github.com/gocql/gocql"
@@ -12,6 +13,7 @@ import (
 var tables = []string{
 	`CREATE TABLE IF NOT EXISTS manager.hospital_by_patient (
 		hospitalname text,
+		id timeuuid,
 		hospitalzone text,
 		patientname text,
 		hospitaldeviceid int,
@@ -20,39 +22,40 @@ var tables = []string{
 		deviceid text,
 		hospitalbed int,
 		hospitalid text,
-		patiententrtime timeuuid,
-		patientexittime timeuuid,
+		patiententrtime timestamp,
+		patientexittime timestamp,
 		patientid text,
 		patientsex text,
 		meta map<text, text>,
-		PRIMARY KEY (hospitalname, hospitalzone, patientname, hospitaldeviceid, inhospital)
+		PRIMARY KEY (hospitalname,id, hospitalzone, patientname, hospitaldeviceid)
 		)`,
 
 	`CREATE TABLE IF NOT EXISTS manager.device_info (
-		Manufacturer  text,
-		Modelnumber text,
+		hospitalname text,
+		id timeuuid,
+		manufacturer  text,
+		modelnumber text,
 		Deviceid text,
-		FirmwareVersion text,
+		firmwareVersion text,
 		reboot boolean,
 		factoryreset boolean,
-		Availablepowersource int,
-		Powersourcevoltage int,
-		Powersourcesurrent int,
-		Batterylevel int,
-		Memoryfree int,
-		Errorcode int,
-		Reseterrorcode text,
-		Currenttime timeuuid,
-		Utcoffset text,
-		Timezone text,
-		Supportedbindingmodes text,
-		Devicetype text,
-		Hardwareversion text,
-		Softwareversion text,
-		Hospitalname text,
-		Hospitaldeviceid int,
-		Channelid text,
-		PRIMARY KEY (Deviceid,Channelid,Hospitalname,Hospitaldeviceid)
+		availablepowersource int,
+		powersourcevoltage int,
+		powersourcesurrent int,
+		batterylevel int,
+		memoryfree int,
+		errorcode int,
+		reseterrorcode text,
+		currenttime timestamp,
+		utcoffset text,
+		timezone text,
+		supportedbindingmodes text,
+		devicetype text,
+		hardwareversion text,
+		softwareversion text,
+		hospitaldeviceid int,
+		channelid text,
+		PRIMARY KEY (hospitalname,hospitaldeviceid,deviceid,channelid)
 		)`,
 
 	/* These Table will be created by manager application
@@ -111,24 +114,27 @@ type ChannelsByUser struct {
 
 /*HospitalPatientInfo : The Hospital/Patient information */
 type HospitalPatientInfo struct {
+	Id               gocql.UUID
 	Hospitalname     string
-	Hospitalid       string
 	Hospitalzone     string
-	Hospitalbed      int
 	Patientname      string
-	Patientsex       string
-	Patientid        string
-	Patiententrtime  string
-	Patientexittime  string
-	Inhospital       bool
-	Deviceid         string
 	Hospitaldeviceid int
+	Inhospital       bool
 	Channelid        string
+	Deviceid         string
+	Hospitalbed      int
+	Hospitalid       string
+	Patiententrtime  time.Time
+	Patientexittime  time.Time
+	Patientid        string
+	Patientsex       string
 	Meta             map[string]string
 }
 
 /*DeviceInfo : The Device information */
 type DeviceInfo struct {
+	Hospitalname          string
+	Id                    gocql.UUID
 	Manufacturer          string
 	Modelnumber           string
 	Deviceid              string
@@ -141,15 +147,14 @@ type DeviceInfo struct {
 	Batterylevel          int
 	Memoryfree            int
 	Errorcode             int
-	ReseterrorCode        string
-	Currenttime           gocql.UUID
-	UtcOffset             string
+	Reseterrorcode        string
+	Currenttime           time.Time
+	Utcoffset             string
 	Timezone              string
 	Supportedbindingmodes string
 	Devicetype            string
 	Hardwareversion       string
 	Softwareversion       string
-	Hospitalname          string
 	Hospitaldeviceid      int
 	Channelid             string
 }
@@ -272,13 +277,16 @@ func InsertPatient(h HospitalPatientInfo) error {
 	log := logs.GetBeeLogger()
 	log.Info("Insert Patient information")
 
-	stmt, names := qb.Insert("hospital_by_patient").Columns("hospitalname", "hospitalzone",
+	stmt, names := qb.Insert("hospital_by_patient").Columns("id", "hospitalname", "hospitalzone",
 		"patientname", "hospitaldeviceid", "inhospital", "channelid",
 		"deviceid", "hospitalbed", "hospitalid", "patiententrtime",
 		"patientid", "patientsex", "meta").
 		ToCql()
 
+	fmt.Println("stmt =", stmt)
+	fmt.Println("h =", h)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
+	fmt.Println("q =", q)
 
 	if err := q.ExecRelease(); err != nil {
 		log.Critical("select:" + err.Error())
@@ -305,11 +313,7 @@ func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
 
 	stmt, names := sel.ToCql()
 
-	fmt.Println("stmt =", stmt)
-	fmt.Println("h =", h)
-
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
-	fmt.Println("q.Query=  ", q.Query)
 	defer q.Release()
 
 	var patient []HospitalPatientInfo
@@ -317,4 +321,41 @@ func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
 		fmt.Println("select Err:", err)
 	}
 	return patient, nil
+}
+
+func GetDeviceInfo(d DeviceInfo) ([]DeviceInfo, error) {
+	// Insert with query parameters bound from struct.
+
+	log := logs.GetBeeLogger()
+	log.Info("Get Device information")
+	fmt.Println("d =", d)
+
+	sel := qb.Select("device_info").Limit(100).AllowFiltering()
+	if len(d.Hospitalname) != 0 {
+		sel = qb.Select("device_info").Where(qb.Eq("hospitalname")).Limit(100).AllowFiltering()
+		if d.Hospitaldeviceid != 0 {
+			sel.Where(qb.Eq("Hospitaldeviceid"))
+		}
+		if len(d.Channelid) != 0 {
+			sel.Where(qb.Eq("Channelid"))
+		}
+		if len(d.Deviceid) != 0 {
+			sel.Where(qb.Eq("Deviceid"))
+		}
+	}
+
+	stmt, names := sel.ToCql()
+
+	fmt.Println("stmt =", stmt)
+	fmt.Println("names =", names)
+
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
+	fmt.Println("q.Query=  ", q.Query)
+	defer q.Release()
+
+	var deviceinfo []DeviceInfo
+	if err := gocqlx.Select(&deviceinfo, q.Query); err != nil {
+		fmt.Println("select Err:", err)
+	}
+	return deviceinfo, nil
 }

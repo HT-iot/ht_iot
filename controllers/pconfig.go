@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"ht_iot/models"
+	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/gocql/gocql"
@@ -40,8 +41,9 @@ func (this *PconfigController) Get() {
 			h.Patientsex = this.GetString("p_sex")
 			h.Hospitaldeviceid, _ = this.GetInt("p_device")
 			h.Inhospital = true
-			h.Patiententrtime = gocql.TimeUUID().String()
+			h.Patiententrtime = time.Now().Local()
 			Hospitalslice = append(Hospitalslice, h)
+
 			break
 		}
 	case "del":
@@ -51,6 +53,7 @@ func (this *PconfigController) Get() {
 		}
 	case "wrte":
 		{
+			Hospitalslice[id].Id = gocql.TimeUUID()
 			h = Hospitalslice[id]
 			_ = models.InsertPatient(h)
 			Hospitalslice = append(Hospitalslice[:id], Hospitalslice[id+1:]...)

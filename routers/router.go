@@ -16,6 +16,7 @@ func init() {
 	beego.Router("/clients", &controllers.MgrController{}, "get:GetClients")
 	beego.Router("/msg", &controllers.MsgController{}, "get:GetMsg")
 	beego.Router("/login", &controllers.LoginController{})
+	beego.Router("/status", &controllers.PatientController{})
 	beego.Router("/pconfig", &controllers.PconfigController{})
 	beego.Router("/outhospital", &controllers.OuthospitalController{})
 	beego.Router("/deviceinfo", &controllers.DeviceinfoController{})

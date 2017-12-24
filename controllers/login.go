@@ -22,7 +22,7 @@ func (c *LoginController) Get() {
 	isExit := c.GetString("exit")
 	fmt.Println("Login isExit =", isExit)
 	if isExit == "true" {
-		c.Ctx.SetCookie("uname", "", -1, "/")
+		c.Ctx.SetCookie("name", "", -1, "/")
 		c.Ctx.SetCookie("pwd", "", -1, "/")
 		c.Redirect("/", 301)
 		return
@@ -46,7 +46,7 @@ func (c *LoginController) Post() {
 		if autoLogin {
 			maxAge = 1<<31 - 1
 		}
-		c.Ctx.SetCookie("uname", uname, maxAge, "/")
+		c.Ctx.SetCookie("name", uname, maxAge, "/")
 		h := sha1.New()
 		io.WriteString(h, uname+pwd)
 		pwd = base64.StdEncoding.EncodeToString(h.Sum(nil))
@@ -67,7 +67,7 @@ func (c *LoginController) Post() {
 }
 
 func checkAccount(ctx *context.Context) bool {
-	ck, err := ctx.Request.Cookie("uname")
+	ck, err := ctx.Request.Cookie("name")
 	if err != nil {
 		return false
 	}

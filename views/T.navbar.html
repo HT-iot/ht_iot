@@ -15,7 +15,7 @@
       <div id="navbar" class="navbar-collapse collapse">
       
               <ul class="nav navbar-nav navbar-left">
-                  <li {{if .IsStatus}} class ="active" {{end}} ><a href="#"> 状态监测 </a></li>
+                  <li {{if .IsSconfig}} class ="active" {{end}} ><a href="/status"> 状态监测 </a></li>
                   <li {{if .IsPconfig}} class ="active" {{end}}><a href="/pconfig"> 入院信息录入 </a></li>
                   <li {{if .IsOconfig}} class ="active" {{end}}><a href="/outhospital"> 出院信息录入 </a></li>
                   <li {{if .IsDconfig}} class ="active" {{end}}><a href="/deviceinfo"> 终端信息维护 </a></li>

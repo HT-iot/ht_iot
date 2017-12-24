@@ -289,36 +289,59 @@ func InsertPatient(h HospitalPatientInfo) error {
 	fmt.Println("q =", q)
 
 	if err := q.ExecRelease(); err != nil {
-		log.Critical("select:" + err.Error())
+		log.Critical("InsertPatient: select:" + err.Error())
 		return err
 	}
 	return nil
+}
+
+func GetAllPatient() ([]HospitalPatientInfo, error) {
+	log := logs.GetBeeLogger()
+	log.Debug("Get ALL Patient")
+
+	sel := qb.Select("hospital_by_patient").Limit(MaxNum).AllowFiltering()
+	stmt, names := sel.ToCql()
+
+	q := gocqlx.Query(SessionMgr.Query(stmt), names)
+	defer q.Release()
+
+	var patient []HospitalPatientInfo
+	if err := gocqlx.Select(&patient, q.Query); err != nil {
+		log.Error("GetAllPatient: select Err:" + err.Error())
+	}
+	return patient, nil
 }
 
 func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
 	// Insert with query parameters bound from struct.
 
 	log := logs.GetBeeLogger()
-	log.Info("Get Patient information")
+	log.Debug("Get Patient information")
 
-	sel := qb.Select("hospital_by_patient").Where(qb.Eq("hospitalname")).Limit(100).AllowFiltering()
-	/*
-		if len(h.Hospitalzone) != 0 {
-			sel.Where(qb.Eq("hospitalzone"))
-		}
-	*/
+	sel := qb.Select("hospital_by_patient").Limit(MaxNum).AllowFiltering()
+	//sel := qb.Select("hospital_by_patient").Where(qb.Eq("hospitalname")).Limit(MaxNum).AllowFiltering()
+
+	if len(h.Hospitalname) != 0 {
+		sel.Where(qb.Eq("hospitalname"))
+	}
+	if len(h.Hospitalzone) != 0 {
+		sel.Where(qb.Eq("hospitalzone"))
+	}
+	if h.Hospitalbed != 0 {
+		sel.Where(qb.Eq("hospitalbed"))
+	}
 	if len(h.Patientname) != 0 {
 		sel.Where(qb.Eq("patientname"))
 	}
 
 	stmt, names := sel.ToCql()
-
+	logs.Debug(stmt, names)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
 	defer q.Release()
 
 	var patient []HospitalPatientInfo
 	if err := gocqlx.Select(&patient, q.Query); err != nil {
-		fmt.Println("select Err:", err)
+		log.Debug("select Err:", err.Error())
 	}
 	return patient, nil
 }

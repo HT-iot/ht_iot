@@ -12,12 +12,17 @@ func init() {
 	l.Info("init router ...")
 
 	beego.Router("/", &controllers.MainController{})
+	beego.Router("/login", &controllers.LoginController{})
+
 	beego.Router("/users", &controllers.MgrController{}, "get:GetUsers")
 	beego.Router("/clients", &controllers.MgrController{}, "get:GetClients")
-	beego.Router("/msg", &controllers.MsgController{}, "get:GetMsg")
-	beego.Router("/login", &controllers.LoginController{})
-	beego.Router("/status", &controllers.PatientController{})
+
+	beego.Router("/status", &controllers.StatusController{})
+	beego.Router("/api/status", &controllers.StatusController{}, "get:GetStatus;post:PostStatus")
+
 	beego.Router("/pconfig", &controllers.PconfigController{})
+
 	beego.Router("/outhospital", &controllers.OuthospitalController{})
 	beego.Router("/deviceinfo", &controllers.DeviceinfoController{})
+
 }

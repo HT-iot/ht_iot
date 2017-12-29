@@ -58,10 +58,10 @@ func (this *OuthospitalController) Get() {
 		{
 			h.Hospitalname = this.GetString("hospital_name")
 			h.Hospitalzone = this.GetString("hospital_zone")
-			h.Hospitalbed, _ = this.GetInt("hospital_bed")
+			h.Hospitalbed = this.GetString("hospital_bed")
 			h.Patientname = this.GetString("p_name")
 			h.Patientsex = this.GetString("p_sex")
-			h.Hospitaldeviceid, _ = this.GetInt("p_device")
+			h.Hospitaldeviceid = this.GetString("p_device")
 			/*			p := models.User{Email: "yong@test.com"}
 						q, _ := models.GetAllUers(p)
 						fmt.Println(q)

@@ -59,19 +59,52 @@ type Message struct {
 	L         string
 }
 
-type PatientInfo struct {
-	Hospitalname     string
-	Hospitalzone     string
-	Hospitalbed      int
-	Patientname      string
-	Hospitaldeviceid int
-	Channelid        string
-	Deviceid         string
+/*
+{
+    "data": [{
+        "hospitalname": "ADBD",
+        "hospitalzone": "ADBD",
+        "hospitalbed": "ADBD",
+        "patientname": "ADBD",
+        "hospitaldeviceid": "ADBD",
+        "channelid": "ADBD",
+        "deviceid": "ADBD",
+        "puls": 1.0,
+        "pressure": 2.0,
+        "oxgen": 3.0,
+        "position": "ADBD"
+    },{
+        "hospitalname": "CDE",
+        "hospitalzone": "CDE",
+        "hospitalbed": "CDE",
+        "patientname": "CDE",
+        "hospitaldeviceid": "ADBD",
+        "channelid": "ADBD",
+        "deviceid": "ADBD",
+        "puls": 1.0,
+        "pressure": 2.0,
+        "oxgen": 3.0,
+        "position": "ADBD"
+    }]
+}
+*/
 
-	Puls     float64
-	Pressure float64
-	Oxgen    float64
-	Position float64
+type DataTable struct {
+	Data []PatientInfo `json:"data"`
+}
+
+type PatientInfo struct {
+	Hospitalname     string  `json:"hospitalname"`
+	Hospitalzone     string  `json:"hospitalzone"`
+	Hospitalbed      string  `json:"hospitalbed"`
+	Patientname      string  `json:"patientname"`
+	Hospitaldeviceid string  `json:"hospitaldeviceid"`
+	Channelid        string  `json:"channelid"`
+	Deviceid         string  `json:"deviceid"`
+	Puls             float64 `json:"puls"`
+	Pressure         float64 `json:"pressure"`
+	Oxgen            float64 `json:"oxgen"`
+	Position         string  `json:"position"`
 }
 
 const (

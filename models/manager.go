@@ -16,11 +16,11 @@ var tables = []string{
 		id timeuuid,
 		hospitalzone text,
 		patientname text,
-		hospitaldeviceid int,
+		hospitaldeviceid text,
 		inhospital boolean,
 		channelid text,
 		deviceid text,
-		hospitalbed int,
+		hospitalbed text,
 		hospitalid text,
 		patiententrtime timestamp,
 		patientexittime timestamp,
@@ -118,11 +118,11 @@ type HospitalPatientInfo struct {
 	Hospitalname     string
 	Hospitalzone     string
 	Patientname      string
-	Hospitaldeviceid int
+	Hospitaldeviceid string
 	Inhospital       bool
 	Channelid        string
 	Deviceid         string
-	Hospitalbed      int
+	Hospitalbed      string
 	Hospitalid       string
 	Patiententrtime  time.Time
 	Patientexittime  time.Time
@@ -327,7 +327,7 @@ func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
 	if len(h.Hospitalzone) != 0 {
 		sel.Where(qb.Eq("hospitalzone"))
 	}
-	if h.Hospitalbed != 0 {
+	if len(h.Hospitalbed) != 0 {
 		sel.Where(qb.Eq("hospitalbed"))
 	}
 	if len(h.Patientname) != 0 {

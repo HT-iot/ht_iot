@@ -3,31 +3,36 @@ package controllers
 import (
 	"ht_iot/models"
 
-	"github.com/astaxie/beego/logs"
-
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 )
 
-type PatientController struct {
+type StatusController struct {
 	beego.Controller
 }
 
-func (this *PatientController) Get() {
-	this.TplName = "patient_status.html"
-	this.Data["IsSconfig"] = true
+/*Get reponse the status query */
+func (s *StatusController) Get() {
+	s.Data["IsSconfig"] = true
 
-	flag := checkAccount(this.Ctx)
-	this.Data["ISLogin"] = flag
+	flag := checkAccount(s.Ctx)
+	s.Data["ISLogin"] = flag
 	if !flag {
-		this.Redirect("/login", 302)
+		s.Redirect("/login", 302)
 		return
 	}
 
+	s.TplName = "patient_status.html"
+}
+
+/*GetStatus reponse the API query */
+func (s *StatusController) GetStatus() {
+	logs.Debug("GetStatus")
 	var hPatients []models.HospitalPatientInfo
 
-	name := this.GetString("hospital_name")
-	zone := this.GetString("hospital_zone")
-	pName := this.GetString("p_name")
+	name := s.GetString("hospital_name")
+	zone := s.GetString("hospital_zone")
+	pName := s.GetString("p_name")
 
 	if name != "" || zone != "" || pName != "" {
 		hp := models.HospitalPatientInfo{
@@ -60,12 +65,16 @@ func (this *PatientController) Get() {
 		logs.Debug(Patients[i])
 	}
 
-	this.Data["Patients"] = &Patients
+	logs.Debug(Patients)
 
-	this.TplName = "patient_status.html"
+	var data models.DataTable
+	data.Data = Patients
 
+	s.Data["json"] = &data
+	s.ServeJSON()
 }
 
-func (this *PatientController) Post() {
-	this.TplName = "patient_status.html"
+/*PostStatus reponse the API query */
+func (s *StatusController) PostStatus() {
+
 }

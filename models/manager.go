@@ -350,7 +350,6 @@ func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
 
 func GetPaientIDs(name string, hid int) (ch, de string, hv bool) {
 
-
 	log := logs.GetBeeLogger()
 	log.Info("Patient to Device mapping")
 
@@ -381,6 +380,8 @@ func GetPaientIDs(name string, hid int) (ch, de string, hv bool) {
 	}
 	return "", "", false
 }
+
+/*
 func GetDeviceInfo(d DeviceInfo) ([]DeviceInfo, error) {
 	// Insert with query parameters bound from struct.
 
@@ -417,3 +418,4 @@ func GetDeviceInfo(d DeviceInfo) ([]DeviceInfo, error) {
 	}
 	return deviceinfo, nil
 }
+*/

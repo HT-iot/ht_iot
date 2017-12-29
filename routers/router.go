@@ -21,8 +21,7 @@ func init() {
 	beego.Router("/api/status", &controllers.StatusController{}, "get:GetStatus;post:PostStatus")
 
 	beego.Router("/pconfig", &controllers.PconfigController{})
-
+	beego.Router("/api/pconfig", &controllers.PconfigController{}, "get:GetPat;post:PostPat")
 	beego.Router("/outhospital", &controllers.OuthospitalController{})
 	beego.Router("/deviceinfo", &controllers.DeviceinfoController{})
-
 }

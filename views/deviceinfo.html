@@ -23,104 +23,111 @@
 
 <body> 
     <span class="glyphicon glyphicon-search"></span>
-    <form method="GET" action ="/deviceinfo" role = "form" class="form-horizontal"> 
+    <form method="Get" action ="/deviceinfo" role = "form" class="form-horizontal"> 
         <fieldset>
             <legend>器件信息查询</legend>
          <div class = "form-group"> 
-            <label class="col-sm-1 control-label" for = "name">医院名称</label> 
+           <label class="col-sm-1 control-label" for = "name1">医院名称</label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "请医院名称" name = "hospital_name"></input> 
-            </div> 
+  <!--              <input type = "text" class = "form-control"  value = {{.hospital_name_v}} name ="hospital_name"></input> -->
+              <input type = "text" id ="name1" value = "{{.hospital_name_v}}"  name ="hospital_name"></input>       
+</div> 
 
-            <label class="col-sm-1 control-label" for = "name">医院器件编号</label> 
+            <label class="col-sm-1 control-label" for = "name2">医院器件编号</label> 
             <div class="col-sm-1"> 
-                <input type = "text" class = "form-control" id = "area" placeholder = "请输入医院器件编号" name = "Hospitaldeviceid"></input> 
+                <input type = "number" class = "form-control" id = "name2"  value = "{{.hospitaldeviceid_v}}" name = "hospitaldeviceid"></input> 
             </div> 
 
-            <label class="col-sm-1 control-label" for = "name">器件编号</label> 
+            <label class="col-sm-1 control-label" for = "name3">器件编号</label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "请输入器件编号" name = "device_id"></input> 
+                <input type = "text" class = "form-control" id = "name3"  value = "{{.device_id_v}}" name = "device_id"></input> 
             </div> 
 
-            <label class="col-sm-1 control-label" for = "name">信道编号</label> 
+            <label class="col-sm-1 control-label" for = "name4">信道编号</label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "请输入信道编号" name = "channel_id"></input> 
+                <input type = "text" class = "form-control" id = "name4"  value = "{{.channel_id_v}}" name = "channel_id"></input> 
             </div>
 
             <div class="col-sm-1 "> 
-                <button type = "submit" class="btn-info btn-sm">查   询</button> 
-                <input type="hidden" name="op" value="check">
+             
+             <!--   <button type = "submit" class="btn-info btn-sm">查   询</button> 
+                <input type="hidden" name="op" value="Check">  -->
+                <input type="submit" name="op" value="Check">   
+                
             </div>
-         
         </div> 
 
         <div class = "form-group"> 
-            <label class="col-sm-1 control-label" for = "name">manufacturer</label> 
+            <label class="col-sm-1 control-label">manufacturer</label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "manufacturer" name = "manufacturer"></input> 
+                <input type = "text" class = "form-control" id = "manufacturer" value = "{{.manufacturer_v}}" name = "manufacturer"></input> 
             </div> 
 
-            <label class="col-sm-1 control-label" for = "name">modelnumber </label> 
+            <label class="col-sm-1 control-label">modelnumber </label> 
             <div class="col-sm-1"> 
-                <input type = "text" class = "form-control" id = "area" placeholder = "modelnumber" name = "modelnumber"></input> 
+                <input type = "text" class = "form-control" id = "modelnumber" value = "{{.modelnumber_v}}" name = "modelnumber"></input> 
             </div> 
 
             <label class="col-sm-1 control-label" for = "name">firmwareVersion</label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "firmwareVersion" name = "firmwareVersion"></input> 
+                <input type = "text" class = "form-control" id = "firmwareversion" value = "{{.firmwareversion_v}}" name = "firmwareversion"></input> 
             </div> 
 
-            <label class="col-sm-1 control-label" for = "name">DeviceType</label> 
+            <label class="col-sm-1 control-label" for = "name">Devicetype</label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "DeviceType" name = "DeviceType"></input> 
+                <input type = "text" class = "form-control" id = "devicetype" value = "{{.devicetype_v}}" name = "devicetype"></input> 
             </div> 
-         
-        </div> 
+        </div>
+<
         <div class = "form-group"> 
             <label class="col-sm-1 control-label" for = "name">availablepowersource</label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "availablepowersource" name = "availablepowersource"></input> 
+                <input type = "text" class = "form-control" id = "availablepowersource" value = "{{.availablepowersource_v}}" name = "availablepowersource"></input> 
             </div> 
 
             <label class="col-sm-1 control-label" for = "name">powersourcevoltage</label> 
             <div class="col-sm-1"> 
-                <input type = "text" class = "form-control" id = "area" placeholder = "powersourcevoltage" name = "powersourcevoltage"></input> 
+                <input type = "text" class = "form-control" id = "powersourcevoltage" value = "{{.powersourcevoltage_v}}" name = "powersourcevoltage"></input> 
             </div> 
 
             <label class="col-sm-1 control-label" for = "name">powersourcesurrent </label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "powersourcesurrent" name = "powersourcesurrent"></input> 
+                <input type = "text" class = "form-control" id = "powersourcesurrent" value = "{{.powersourcesurrent_v}}" name = "powersourcesurrent"></input> 
             </div> 
 
             <label class="col-sm-1 control-label" for = "name">batterylevel</label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "batterylevel" name = "batterylevel"></input> 
+                <input type = "text" class = "form-control" id = "batterylevel" value = "{{.batterylevel_v}}" name = "batterylevel"></input> 
             </div> 
          
         </div> 
 	    <div class = "form-group"> 
             <label class="col-sm-1 control-label" for = "name">supportedbindingmodes </label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "supportedbindingmodes" name = "supportedbindingmodes"></input> 
+                <input type = "text" class = "form-control" id = "supportedbindingmodes" value = "{{.supportedbindingmodes_v}}" name = "supportedbindingmodes"></input> 
             </div> 
 
             <label class="col-sm-1 control-label" for = "name">hardwareversion</label> 
             <div class="col-sm-1"> 
-                <input type = "text" class = "form-control" id = "area" placeholder = "hardwareversion" name = "hardwareversion"></input> 
+                <input type = "text" class = "form-control" id = "hardwareversion" value = "{{.hardwareversion_v}}" name = "hardwareversion"></input> 
             </div> 
 
             <label class="col-sm-1 control-label" for = "name">softwareversion </label> 
             <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name" placeholder = "softwareversion" name = "softwareversion"></input> 
+                <input type = "text" class = "form-control" id = "softwareversion" value = "{{.softwareversion_v}}" name = "softwareversion"></input> 
             </div> 
-
+    
             <div class="col-sm-1 col-sm-offset-1"> 
-                <button type = "submit" class="btn-info btn-sm">编辑保存</button> 
-                <input type="hidden" name="op" value="add">
+                <input type="submit" name="op" value="Update">
+                
             </div>    
-
+        
+            <div class="col-sm-1 col-sm-offset-1"> 
+                <input type="submit" name="op" value="Merge"> 
+                        
+            </div>   
            
-         
+
         </div> 
 	 
        </fieldset>
@@ -137,24 +144,34 @@
                 <th>信道编号</th>   
                 <th>manufacturer</th> 
                 <th>modelnumber</th>   
-                <th>firmwareVersion</th>
                 <th>DeviceType</th>
-                <th>availablepowersource</th>
-                <th>powersourcevoltage</th> 
-                <th>powersourcesurrent</th>   
-                <th>batterylevel</th>
-                <th>supportedbindingmodes</th>
+                <th>firmwareVersion</th>
                 <th>hardwareversion</th>
                 <th>softwareversion</th>
-           
+                <th>操作</th>
             </tr>    
         </thread>
               
         <tbody>
-        
-
-         
-        </tbody>
+                {{range $index, $v := .Deviceinfo}}
+                 <tr>
+                    <td>{{.Hospitalname}} </td> 
+                    <td>{{.Hospitaldeviceid}}</td>   
+                    <td>{{.Deviceid}}</td> 
+                    <td>{{.Channelid}}</td>   
+                    <td>{{.Manufacturer}}</td>     
+                    <td>{{.Modelnumber}}</td>   
+                    <td>{{.Devicetype}}</td>             
+                    <td>{{.Firmwareversion}}</td>   
+                    <td>{{.Hardwareversion}}</td>     
+                    <td>{{.Softwareversion}}</td>   
+                    <td>
+                        <a href="/deviceinfo?op=Edit&id={{$index}}">编辑</a>
+                    </td>
+            </tr>
+                {{end}}
+             
+            </tbody>
     </table>
 </body>
 </html>

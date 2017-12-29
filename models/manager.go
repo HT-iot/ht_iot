@@ -55,7 +55,8 @@ var tables = []string{
 		softwareversion text,
 		hospitaldeviceid int,
 		channelid text,
-		PRIMARY KEY (hospitalname,hospitaldeviceid,deviceid,channelid)
+		used boolean,
+		PRIMARY KEY (hospitalname,id,hospitaldeviceid,deviceid,channelid)
 		)`,
 
 	/* These Table will be created by manager application
@@ -157,6 +158,7 @@ type DeviceInfo struct {
 	Softwareversion       string
 	Hospitaldeviceid      int
 	Channelid             string
+	Used                  bool
 }
 
 /*GetUsers  get data... */
@@ -346,6 +348,39 @@ func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
 	return patient, nil
 }
 
+func GetPaientIDs(name string, hid int) (ch, de string, hv bool) {
+
+
+	log := logs.GetBeeLogger()
+	log.Info("Patient to Device mapping")
+
+	d := DeviceInfo{Hospitalname: name, Hospitaldeviceid: hid}
+	sel := qb.Select("device_info").Where(qb.Eq("hospitalname")).AllowFiltering()
+	fmt.Println("d:", d)
+
+	if hid >= 0 {
+		sel.Where(qb.Eq("hospitaldeviceid"))
+	}
+
+	stmt, names := sel.ToCql()
+	fmt.Println("stmt,names:", stmt, names)
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
+	defer q.Release()
+
+	var device []DeviceInfo
+	if err := gocqlx.Select(&device, q.Query); err != nil {
+		fmt.Println("select Err:", err)
+		return "", "", false
+	}
+	if len(device) > 0 && (!device[0].Used) {
+		ch = device[0].Channelid
+		de = device[0].Deviceid
+		device[0].Used = true
+		UpdateDeviceItem(device[0])
+		return ch, de, true
+	}
+	return "", "", false
+}
 func GetDeviceInfo(d DeviceInfo) ([]DeviceInfo, error) {
 	// Insert with query parameters bound from struct.
 

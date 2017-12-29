@@ -54,22 +54,40 @@ func (this *PconfigController) Get() {
 		this.Redirect("/login", 302)
 		return
 	}
+	var Mystruct Jsonout
+	if len(Hospitalslice) > 0 {
+		Mystruct.Draw = len(Hospitalslice)
+		Mystruct.Recordstotal = len(Hospitalslice)
+		Mystruct.Recordsfiltered = -1
+		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
+	}
+}
+
+func (this *PconfigController) GetPat() {
+	type In struct {
+		Succ string `json:"Succ"`
+	}
 	var h Out
 	{
-		h.Hospitalname = this.GetString("hospital_name")
-		h.Hospitalzone = this.GetString("hospital_zone")
-		h.Hospitalbed = this.GetString("hospital_bed")
-		h.Patientname = this.GetString("p_name")
+		h.Hospitalname = this.GetString("hospitalname")
+		h.Hospitalzone = this.GetString("hospitalzone")
+		h.Hospitalbed = this.GetString("hospitalbed")
+		h.Patientname = this.GetString("patientname")
 		//		h.Patientsex = this.GetString("p_sex")
-		h.Hospitaldeviceid = this.GetString("p_device")
+		h.Hospitaldeviceid = this.GetString("hospitaldeviceid")
+		fmt.Println("h=", h)
 	}
 	Hospitalslice = append(Hospitalslice, h)
 
-	//	this.Data["Hospitalsilce"] = &Hospitalslice
+	Getstruct := In{Succ: "add"}
+
+	this.Data["json"] = &Getstruct
+
+	this.ServeJSON()
 
 }
 
-func (this *PconfigController) Post() {
+func (this *PconfigController) PostPat() {
 
 	fmt.Println("Post")
 

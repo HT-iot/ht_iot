@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 )
 
 type DeviceinfoController struct {
@@ -17,7 +18,8 @@ var d models.DeviceInfo
 var Deviceinfo []models.DeviceInfo
 var err error
 
-func (this *DeviceinfoController) Prepare() {
+func (this *DeviceinfoController) Get() {
+	this.TplName = "deviceinfo.html"
 	this.Data["IsDconfig"] = true
 
 	flag := checkAccount(this.Ctx)
@@ -26,19 +28,9 @@ func (this *DeviceinfoController) Prepare() {
 		this.Redirect("/login", 302)
 		return
 	}
-	//	p := models.DeviceInfo{Hospitalname: "", Hospitaldeviceid: 0, Channelid: "", Deviceid: ""}
-	p := models.DeviceInfo{}
-	Deviceinfo, err = models.GetDeviceInfo(p)
-
-	if len(Deviceinfo) <= 0 {
-		id = -1
-		fmt.Println("err", err)
-	}
-
 }
 
-func (this *DeviceinfoController) Get() {
-
+/*
 	op := this.Input().Get("op")
 
 	fmt.Println("op", op)
@@ -51,7 +43,7 @@ func (this *DeviceinfoController) Get() {
 
 			fmt.Println("Hospitalname", d.Hospitalname)
 			this.Data["Hospitalname"] = d.Hospitalname
-			d.Hospitaldeviceid, err = this.GetInt("hospitaldeviceid")
+			d.Hospitaldeviceid = this.GetString("hospitaldeviceid")
 			d.Channelid = this.GetString("channel_id")
 			d.Deviceid = this.GetString("device_id")
 			p := models.DeviceInfo{Hospitalname: d.Hospitalname, Hospitaldeviceid: d.Hospitaldeviceid,
@@ -134,43 +126,93 @@ func (this *DeviceinfoController) Get() {
 	//		fmt.Println("IsLogin1:  ", IsLogin)
 	this.Data["Deviceinfo"] = &Deviceinfo
 	this.TplName = "deviceinfo.html"
+
 }
+*/
 
 func (this *DeviceinfoController) Post() {
 	this.TplName = "deviceinfo.html"
+	logs.Debug("Device information to Device table")
+	var Mystruct models.DeviceTable
+	p := models.DeviceInfo{}
+	Deviceinfo, err = models.GetDeviceInfo(p)
+	if len(Deviceinfo) > 0 {
+		Mystruct.Data = append(Mystruct.Data, Deviceinfo...)
+	} else {
+		Mystruct.Data = nil
+	}
+	this.Data["json"] = &Mystruct
+	this.ServeJSON()
 }
 
-func (this *DeviceinfoController) writetohtml(id int) {
-	d.Hospitalname = this.GetString("hospital_name")
-	d.Hospitaldeviceid, _ = this.GetInt("hospitaldeviceid")
-	fmt.Println(Deviceinfo[id])
+func (this *DeviceinfoController) GetModal() {
 
-	this.Data["hospital_name_v"] = Deviceinfo[id].Hospitalname
-	this.Data["hospitaldeviceid_v"] = Deviceinfo[id].Hospitaldeviceid
-	this.Data["device_id_v"] = Deviceinfo[id].Deviceid
-	this.Data["channel_id_v"] = Deviceinfo[id].Channelid
+	logs.Debug("Device information to Device Modal")
+	deviceid := this.GetString("deviceid")
+	var Mystruct models.DeviceTable
+	var devicemodal []models.DeviceInfo
+	p := models.DeviceInfo{Deviceid: deviceid}
 
-	this.Data["manufacturer_v"] = Deviceinfo[id].Manufacturer
-	this.Data["modelnumber_v"] = Deviceinfo[id].Modelnumber
-	this.Data["firmwareversion_v"] = Deviceinfo[id].Firmwareversion
-	this.Data["devicetype_v"] = Deviceinfo[id].Devicetype
+	devicemodal, err = models.GetDeviceInfo(p)
+	fmt.Println(devicemodal)
+	if len(devicemodal) == 1 {
+		Mystruct.Data = append(Mystruct.Data, devicemodal...)
+	} else {
+		Mystruct.Data = nil
+	}
+	this.Data["json"] = &devicemodal
+	this.ServeJSON()
+}
 
-	this.Data["availablepowersource_v"] = Deviceinfo[id].Availablepowersource
-	this.Data["powersourcevoltage_v"] = Deviceinfo[id].Powersourcevoltage
-	this.Data["powersourcesurrent_v"] = Deviceinfo[id].Powersourcesurrent
-	this.Data["batterylevel_v"] = Deviceinfo[id].Batterylevel
+func (this *DeviceinfoController) PostModal() {
+	logs.Debug("Get Device information from Device Modal")
+	//	deviceid := this.GetString("deviceid")
+	var Getstruct In
+	d = this.getfromhtml()
+	//	hd := this.GetString("deviceid")
+	//	d.Id = uuid.FromString(d.Deviceid)
+	fmt.Println("PostModal d=", d)
+	err := models.UpdateDeviceItem(d)
 
-	this.Data["supportedbindingmodes_v"] = Deviceinfo[id].Supportedbindingmodes
-	this.Data["hardwareversion_v"] = Deviceinfo[id].Hardwareversion
-	this.Data["softwareversion_v"] = Deviceinfo[id].Softwareversion
+	if err == nil {
+		Getstruct.Info = "更新成功"
+		Getstruct.Succ = "Succ"
+	} else {
+		Getstruct.Info = "更新失败"
+		Getstruct.Succ = "Fail"
+	}
+	this.Data["json"] = &Getstruct
+	this.ServeJSON()
+}
+
+func (this *DeviceinfoController) PostMerge() {
+	logs.Debug("Device information to Device table")
+	str0 := this.GetString("hospitalname")
+
+	var Getstruct In
+	//	fmt.Println("str", str0, str1, str2)
+	_ = models.InputDevices(str0)
+	p := models.DeviceInfo{Hospitalname: d.Hospitalname}
+	Deviceinfo, _ = models.GetDeviceInfo(p)
+	fmt.Println("Deviceinfo", Deviceinfo)
+	if len(Deviceinfo) > 0 {
+		//				d = Deviceinfo[id]
+		Getstruct.Info = "合并终端成功"
+		Getstruct.Succ = "Succ"
+	} else {
+		Getstruct.Info = "无终端可添加"
+		Getstruct.Succ = "Fail"
+	}
+	this.Data["json"] = &Getstruct
+	this.ServeJSON()
 }
 
 func (this *DeviceinfoController) getfromhtml() models.DeviceInfo {
 	var h models.DeviceInfo
-	h.Hospitalname = this.GetString("hospital_name")
-	h.Hospitaldeviceid, _ = this.GetInt("hospitaldeviceid")
-	h.Deviceid = this.GetString("device_id")
-	h.Channelid = this.GetString("channel_id")
+	h.Hospitalname = this.GetString("hospitalname")
+	h.Hospitaldeviceid = this.GetString("hospitaldeviceid")
+	h.Deviceid = this.GetString("deviceid")
+	h.Channelid = this.GetString("channelid")
 
 	h.Manufacturer = this.GetString("manufacturer")
 	h.Modelnumber = this.GetString("modelnumber")

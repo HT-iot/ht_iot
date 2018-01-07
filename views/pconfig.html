@@ -3,87 +3,145 @@
   <title>HT-IOT - 信息录入</title>
   <style type="text/css">
      body {
-       padding: 50px 0;
+       padding: 80px 0;
        vertical-align:middle
-     }
-   
-     fieldset{
-         color: #333;
-         border: #06c, dashed 1px
-     }
-     legend{
-         vertical-align: middle
-     }
-    
+     }   
     </style>
-
 </head>
-
-
 
 <body> 
     {{template "navbar" .}}
 
-    <frameset rows="50%,50%" frameborder="1 ">
-            <form method="Get" action ="/pconfig" role = "form" class="form-horizontal"> 
-                <h1>患者信息录入</H1>
-                <div class = "form-group"> 
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">  
+        <div class="modal-dialog  modal-md" role="document">  
+            <div class="modal-content">  
+                <div class="modal-header">  
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span  
+                        aria-hidden="true">×</span></button>  
+                    <h4 class="modal-title" id="exampleModalLabel">患者信息添加</h4>  
+                </div>  
+                <div class="modal-body">  
+                    <form>  
+                        <hr><br>
+                               <label class="col-sm-4 control-label" for = "name">医院名称</label> 
+                               <div class="col-sm-8">
+                                   <input type = "text" placeholder = "请医院名称" id="col1_filter"></input> 
+                              </div>
+                               
+                               <label class="col-sm-4 control-label" for = "name">病 区 号</label> 
+                               <div class="col-sm-8">
+                                   <input type = "text"  id="col2_filter" placeholder = "请输入病区号" ></input> 
+                               </div>
+                       
+                               <label class="col-sm-4 control-label" for = "name">病 床 号</label> 
+                               <div class="col-sm-8">
+                                   <input type = "text"  id="col3_filter" placeholder = "请输入病床号"></input> 
+                               </div>
+                               <hr><br><br>
+
+                               <label class="col-sm-4 control-label" for = "name">患者姓名</label> 
+                               <div class="col-sm-8"> 
+                                   <input type = "text"  id="col4_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                               </div> 
+                               <label class="col-sm-4 control-label" for = "name">患者性别</label> 
+                               <div class="col-sm-8"> 
+                                   <input type = "text"   id="col5_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                               </div> 
+                               <label class="col-sm-4 control-label" for = "name">患者身份证</label> 
+                               <div class="col-sm-8"> 
+                                   <input type = "text"  id="col6_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                               </div> 
+                               <hr><br><br>
+                               <label class="col-sm-4 control-label" for = "name">终 端 号</label> 
+                               <div class="col-sm-8"> 
+                                   <input type = "text"   id="col7_filter" placeholder = "请输入终端号" name = "p_device"></input> 
+                               </div> 
+                             </form> 
+                            <hr><br><br> <br>
              
-                    <label class="col-sm-1 control-label" for = "name">医院名称</label> 
-                    <div class="col-sm-1">
-                        <input type = "text"class="form-controlSearch" placeholder = "请医院名称" data-column="1" id="col1_filter" name = "hospital_name"></input> 
-                   </div>
-                    
-                    <label class="col-sm-1 control-label" for = "name">病 区 号</label> 
-                    <div class="col-sm-1">
-                        <input type = "text" class = "form-controlSearch" data-column="2" id="col2_filter" placeholder = "请输入病区号" name = "hospital_zone"></input> 
-                    </div>
-            
-                    <label class="col-sm-1 control-label" for = "name">病 床 号</label> 
-                    <div class="col-sm-1">
-                        <input type = "text" class = "form-controlSearch" data-column="3" id="col3_filter" placeholder = "请输入病床号" name = "hospital_bed"></input> 
-                    </div>
-                    <label class="col-sm-1 control-label" for = "name">患者姓名</label> 
-                    <div class="col-sm-1"> 
-                        <input type = "text" class = "form-controlSearch" data-column="4" id="col4_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
-                    </div> 
-                    <label class="col-sm-1 control-label" for = "name">终 端 号</label> 
-                    <div class="col-sm-1"> 
-                        <input type = "text" class = "form-controlSearch" data-column="5" id="col5_filter" placeholder = "请输入终端号" name = "p_device"></input> 
-                    </div> 
-                    <div class="col-sm-1 col-sm-offset-1"> 
-                   <!--     <button type = "button" class="btn-info btn-sm">添    加1</button> 
-                        <input type="hidden" id="submit_data_in" onclick="data_in()"/>  -->
-                        <input type="button" name="submit_data_in" id="submit_data_in" value="添    加" onclick="data_in()"/>
-                    </div>    
-                  </form> 
+                </div>  
+                <div class="modal-footer">  
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
+                    <button type="button" class="btn btn-primary" onclick="update()">保存</button>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
 
+    <div class="modal fade" id="patientModal" tabindex="-1" role="dialog" aria-labelledby="patientModalLabel">  
+        <div class="modal-dialog  modal-md" role="document">  
+            <div class="modal-content">  
+                <div class="modal-header">  
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span  
+                        aria-hidden="true">×</span></button>  
+                    <h4 class="modal-title2" id="patientModalLabel">患者信息更改</h4>  
+                </div>  
+                <div class="modal-body">  
+                    <form>  
+                        <hr><br>
+                               <label class="col-sm-4 control-label" for = "name">医院名称</label> 
+                               <div class="col-sm-8">
+                                   <input type = "text" placeholder = "请医院名称" id="col1_filter"></input> 
+                              </div>
+                               
+                               <label class="col-sm-4 control-label" for = "name">病 区 号</label> 
+                               <div class="col-sm-8">
+                                   <input type = "text"  id="col2_filter" placeholder = "请输入病区号" ></input> 
+                               </div>
+                       
+                               <label class="col-sm-4 control-label" for = "name">病 床 号</label> 
+                               <div class="col-sm-8">
+                                   <input type = "text"  id="col3_filter" placeholder = "请输入病床号"></input> 
+                               </div>
+                               <hr><br><br>
 
-                <h5 class="page-header" width = "5px"  color="#000000"></h5>
+                               <label class="col-sm-4 control-label" for = "name">患者姓名</label> 
+                               <div class="col-sm-8"> 
+                                   <input type = "text" data-column="4" id="col4_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                               </div> 
+                               <label class="col-sm-4 control-label" for = "name">患者性别</label> 
+                               <div class="col-sm-8"> 
+                                   <input type = "text"  data-column="4" id="col5_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                               </div> 
+                               <label class="col-sm-4 control-label" for = "name">患者身份证</label> 
+                               <div class="col-sm-8"> 
+                                   <input type = "text" data-column="4" id="col6_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                               </div> 
+                               <hr><br><br>
+                               <label class="col-sm-4 control-label" for = "name">终 端 号</label> 
+                               <div class="col-sm-8"> 
+                                   <input type = "text"  data-column="5" id="col7_filter" placeholder = "请输入终端号" name = "p_device"></input> 
+                               </div> 
+                             </form> 
+                            <hr><br><br> <br>
+             
+                </div>  
+                <div class="modal-footer">  
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
+                    <button type="button" class="btn btn-primary" onclick="update2()">保存</button>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
 
      <div class="container-fluid">
-    
-        
         <table id="example" class="display">
             <thead>
             <tr>
- <!--               <th><input type="checkbox" id="employeeCheckAll"></th>
-                <th >紧急呼叫</th>  -->
                 <th >医院名称</th>   
                 <th>病区号</th> 
                 <th>病床号</th>   
                 <th>姓名</th> 
-<!--                <th>性别</th>  --> 
+                <th>性别</th>  
                <th>终端号</th>
- <!--               <th>使用时间</th>   -->
+               <th>使用时间</th>  
                <th style="background-color: white;">操作</th> 
             </tr>
             </thead>
         </table>
     </div>
 
-</frame>
-</frameset>
+
 
    <script type="text/javascript">
 
@@ -119,9 +177,9 @@
            lengthChange: true,
            paging: true,
            scrollCollapse: true,
-           serverSide: true,
+           serverSide: false,
            search: true,
-           processing: true,
+           processing: false,
            scrollY: 400,
            scrollX: "100%",
            scrollXInner: "100%",
@@ -131,65 +189,39 @@
            autoSearch: false
        };
    
-       //路径配置
-   
-       employee.url = "/static/";
-       employee.requestUrl = {
-           queryList: employee.url + "objects.txt"
-       };
-   
-       employee.search = {
-           uuid: ""
-       };
-   
+
        employee.status = [
-           {"searchable": false, "orderable": false, "targets": 0},//第一行不进行排序和搜索
+/*           {"searchable": false, "orderable": false, "targets": 0},//第一行不进行排序和搜索
               {defaultContent: '', targets: ['_all']} //所有列设置默认值为空字符串
-          ];
+    */          ];
    
+
+
        employee.filed = [
-     //      {"data": "extn"},
-           {"data": "hospitalname"},
-           {"data": "hospitalzone"},
-           {"data": "hospitalbed"},
-           {"data": "patientname"},
-           {"data": "hospitaldeviceid"},
+           {"data": "Hospitalname"},
+           {"data": "Hospitalzone"},
+           {"data": "Hospitalbed"},
+           {"data": "Patientname"},
+           {"data": "Patientsex"},
+           {"data": "Hospitaldeviceid"},
+           {"data": "Patiententrtime"},
            {
-               "data": "extn",
+ /*             "data": "Deviceid",
               "createdCell": function (nTd, sData, oData, iRow, iCol) {
-                    $(nTd).html("<button class=‘btn btn-default btn-xs’ type=‘button’ name='buttonitem1' onclick='button1(iRow, iCol)'><span class='glyphicon glyphicon-ok'></span></button> <button class=‘btn btn-default btn-xs’ type=‘button’ name='buttonitem2'><span class='glyphicon glyphicon-remove'></span></button> ")
-                    
-     //                $(nTd).html("<input type='button' name='buttonitem1' class='btn btn-default btn-xs'> <span class='glyphicon glyphicon-ok'></span></button>")          
-              }
+                    $(nTd).html("<button type='button' data-toggle='modal' data-target='#patientModal' data-whatever=" + sData + ">修改</button> <button class=‘btn btn-default btn-xs’ type=‘button’ name='buttonitem2' onclick='button2(" + iRow + "," + iCol + ")'>出院</button> ")
+//                    $(nTd).html("<input type='button' class ='btn btn-success btn-sm' value='修改' onclick='button1(" + iRow + ")'>  <input type='button' class ='btn btn-warning btn-sm' value='出院' onclick='button2(" + iRow + ")'>")
+*/
+                "data": "Deviceid",
+               "createdCell": function (nTd, sData, oData, iRow, iCol) {
+                    $(nTd).html("<button type='button' data-toggle='modal' data-target='#patientModal' data-whatever="+ sData +">编辑 </button>")
+
+                }
            },
-           
           ];
-   /*
-   employee.filed = [
-            {
-               "data": "extn",
-              "createdCell": function (nTd, sData, oData, iRow, iCol) {
-                   $(nTd).html("<input type='checkbox' name='checkList' value='" + sData + "'>");
-              }
-           },
-           {"data": "name"},
-           {"data": "position"},
-           {"data": "salary"},
-           {"data": "start_date"},
-           {"data": "salary2"},
-           {"data": "start_date2"},
-           {"data": "start_date3"},
-           {"data": "office"},
-        ];
-   */   
-       employee.buttons =
-               '<button class="btn btn-default"  type="button" id="reload" data-toggle="modal" data-target="#employeeModal">刷新表格</button>' +
-               '<button class="btn btn-primary" type="button" id="batchIds" style="margin-left:20px;" data-toggle="modal" >多选</button>' +
-               '<button class="btn btn-primary" type="button" id="selection" style="margin-left:20px;" data-toggle="modal" >单选</button>' +
-               '<button class="btn btn-default" type="button" id="search" style="margin-left:20px;" data-toggle="modal" >查询</button>' +
-               '<button class="btn btn-danger" type="button" id="clearSearch" style="margin-left:20px;" data-toggle="modal" >重置</button>';
-   
-   
+
+          employee.buttons =
+            '<button class="btn btn-primary" type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>'
+      
        var eloancn = {};
    
        eloancn.table = {
@@ -202,44 +234,29 @@
        function dataTablesInit(elo) {
    
            eloancn.table.grid = $('#' + elo.property.tableId).DataTable({
-                    "processing": true,
-                    "serverSide": true,
-                    "ajax": {
-                        "url": "/api/pconfig",
-                        "type": "POST",
-                        "dataType":"json",
-                      },
-                   
-
-               "searching": elo.gridInit.searching,//搜索框，默认是开启
-   
+ //               "processing": true,
+                "serverSide": false,
+                "ajax": {
+                    "url": "/api/pconfig",
+                    "type": "POST",
+                    "dataType":"json",
+                },     
+                "columnDefs": elo.status,//列表状态
+                "columns": elo.filed,//字段
                "lengthChange": elo.gridInit.lengthChange,//是否允许用户改变表格每页显示的记录数，默认是开启
-   
                "paging": elo.gridInit.paging,//是否开启本地分页，默认是开启
-   
                "processing": elo.gridInit.processing,//是否显示中文提示
-   
                "scrollCollapse": elo.gridInit.scrollCollapse,  //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
-   
                "serverSide": elo.gridInit.serverSide, //开启服务器模式，默认是关闭
-   
                "scrollY": elo.gridInit.scrollY,//设置高
-   
                "scrollX": elo.gridInit.scrollX,//设置宽度
-   
                "scrollXInner": elo.gridInit.scrollXInner,//设置内宽度
-   
                "scrollCollapse": elo.gridInit.scrollCollapse,//设置折叠
-   
                "jQueryUI": elo.gridInit.jQueryUI,//jquery 风格
-   
                "autoWidth": elo.gridInit.autoWidth, //是否自适应宽度
-   
-               "columnDefs": elo.status,//列表状态
-               "columns": elo.filed,//字段
-           
-  
-               "language": {
+//               "bSort": false,
+                "buttons":"导出csv",
+                "language": {
                    "sProcessing": "处理中...",
                    "sLengthMenu": "显示 _MENU_ 项结果",
                    "sZeroRecords": "没有匹配结果",
@@ -258,15 +275,13 @@
                        "sNext": "下页",
                        "sLast": "末页"
                    },
-                   "oAria": {
+                     "oAria": {
                        "sSortAscending": ": 以升序排列此列",
                        "sSortDescending": ": 以降序排列此列"
                    }
                },
                "dom": "<'row'<'col-sm-2'l><'#" + elo.property.buttonId + ".col-sm-10'><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
-
-                "initComplete": function (settings, json) {
-                    console.log("Init !!!!");
+               "initComplete": function () {
                    $("#" + elo.property.buttonId).append(elo.buttons);
                    if (elo.gridInit.search) {
                        $search = $("input[type='search']");
@@ -275,8 +290,10 @@
                        $search.parent().hide();
                    }
                    //加载完成之后 初始化checkbox
+   
                    checkbox(elo.property.tableId);
-      
+   
+   
                    $("#reload").click(function () {
                        reload();
                    });
@@ -307,20 +324,8 @@
                            $("tr").removeClass('selected');
                        }
                    });
-//Jason:
-
-            
-
-                   $("button[name='buttonitem1']") = function(iRow, iCol){
-                                    alert(iRow, iCol);
-                    };   
-
-                    $("button[name='buttonitem2']").each(function(){
-                            var currentEle = $(this);
-                            currentEle.click(function(){
-                                    alert("22222")
-                      });
-                    });   
+   
+   
                } 
            });
    
@@ -358,123 +363,175 @@
            eloancn.table.grid.on('mouseleave', function () {
                $(eloancn.table.grid.cells().nodes()).removeClass('highlight');
            });
-   
-   
            //自动搜索方法
-   
-           $('.form-controlSearch').on('keyup change', function () {
-               elo.gridInit.autoSearch = $("#autoSearch").prop("checked");
-               if (elo.gridInit.autoSearch) {
-                   filterColumn($(this).attr('data-column'));
-               }
-           });
-           
-       }
 
-   
-       //选中一行 checkbox选中
-   
-       function checkbox(tableId) {
-           //每次加载时都先清理
-   
-           $('#' + tableId + ' tbody').off("click", "tr");
-           $('#' + tableId + ' tbody').on("click", "tr", function () {
-               $(this).toggleClass('selected');
-               if ($(this).hasClass("selected")) {
-                   $(this).find("input").prop("checked", true);
-               } else {
-                   $(this).find("input").prop("checked", false);
-               }
-           });
-       }
-   
-       //按钮搜索方法
-   
-       function search() {
-   
-           var oSettings = "";
-           $("[data-]").each(function () {
-               var filedValue = $(this).attr('data-column');
-               if (filedValue != "") {
-                   console.log($('#col' + filedValue + '_filter').val());
-                   oSettings = eloancn.table.grid.column(filedValue).search(
-                           $('#col' + filedValue + '_filter').val()
-                   );
-               }
-           });
-           //搜索的数据一次条件，节省资源
-   
-           eloancn.table.grid.draw(oSettings);
-       }
-   
-       //搜索
-   
-       function filterColumn(i) {
-   
-           eloancn.table.grid.column(i).search(
-                   $('#col' + i + '_filter').val()
-           ).draw();
-       }
-   
-       //清理搜索数据
-   
-       function clearSearch(id) {
-   
-           $("." + id).each(function () {
-               $(this).val("");
-           });
-           //清空查询条件重新读取数据
-   
-           eloancn.table.grid.columns().search("").draw();
-       }
-   
-       //获取所有选中行的UUID
-   
-       function batchIds() {
-   
-           var uuid = '';
-           var uuids = eloancn.table.grid.rows(".selected").data();
-           if (uuids.length == 0) {
-               alert(eloancn.table.statusTitle);
-           } else {
-               for (var i = 0; i < uuids.length; i++) {
-                   uuid = uuid + uuids[i].extn + ",";
-               }
-               alert(uuid);
-           }
-       }
-   
-       //单选
-   
-       function selection() {
-   
-           if (eloancn.table.grid.rows(".selected").data().length == 1) {
-               var uuid = eloancn.table.grid.row(".selected").data().extn;
-   
-               if (uuid == "") {
-                   alert(eloancn.table.statusTitle);
-               } else {
-                   alert(uuid);
-               }
-   
-           } else {
-               alert(eloancn.table.statusTitle);
-           }
-       }
-   
-       //刷新页面
-   
+        $('.form-controlSearch').on('keyup change', function () {
+            elo.gridInit.autoSearch = $("#autoSearch").prop("checked");
+            if (elo.gridInit.autoSearch) {
+                filterColumn($(this).attr('data-column'));
+            }
+        });
+
+         }
+
+//////////////////////
+//选中一行 checkbox选中
+
+function checkbox(tableId) {
+        //每次加载时都先清理
+
+        $('#' + tableId + ' tbody').off("click", "tr");
+        $('#' + tableId + ' tbody').on("click", "tr", function () {
+            $(this).toggleClass('selected');
+            if ($(this).hasClass("selected")) {
+                $(this).find("input").prop("checked", true);
+            } else {
+                $(this).find("input").prop("checked", false);
+            }
+        });
+
+
+    }
+
+    //按钮搜索方法
+
+    function search() {
+
+        var oSettings = "";
+        $("[data-column]").each(function () {
+            var filedValue = $(this).attr('data-column');
+            if (filedValue != "") {
+                console.log($('#col' + filedValue + '_filter').val());
+                oSettings = eloancn.table.grid.column(filedValue).search(
+                        $('#col' + filedValue + '_filter').val()
+                );
+            }
+        });
+        //搜索的数据一次条件，节省资源
+
+        eloancn.table.grid.draw(oSettings);
+    }
+
+    //搜索
+
+    function filterColumn(i) {
+
+        eloancn.table.grid.column(i).search(
+                $('#col' + i + '_filter').val()
+        ).draw();
+    }
+
+    //清理搜索数据
+
+    function clearSearch(id) {
+
+        $("." + id).each(function () {
+            $(this).val("");
+        });
+        //清空查询条件重新读取数据
+
+        eloancn.table.grid.columns().search("").draw();
+    }
+
+    //获取所有选中行的UUID
+
+    function batchIds() {
+
+        var uuid = '';
+        var uuids = eloancn.table.grid.rows(".selected").data();
+        if (uuids.length == 0) {
+            alert(eloancn.table.statusTitle);
+        } else {
+            for (var i = 0; i < uuids.length; i++) {
+                uuid = uuid + uuids[i].extn + ",";
+            }
+            alert(uuid);
+        }
+    }
+
+    //单选
+
+    function selection() {
+
+        if (eloancn.table.grid.rows(".selected").data().length == 1) {
+            var uuid = eloancn.table.grid.row(".selected").data().extn;
+
+            if (uuid == "") {
+                alert(eloancn.table.statusTitle);
+            } else {
+                alert(uuid);
+            }
+
+        } else {
+            alert(eloancn.table.statusTitle);
+        }
+    }
+
+
+//////////////////////////
+    
+    function button1(iRow){
+
+
+
+        $.ajax({ 
+            type: "post", 
+            url: "/line/pconfig", 
+            dataType:"json" ,
+            data: {
+                action:"Add",
+                id:iRow
+             }, 
+             complete: function(msg){ 
+                var jsonData = eval("("+msg.responseText+")");
+                alert(jsonData.info);
+                if (jsonData.succ  == "nil"){
+                    eloancn.table.grid.clear().draw();
+                }  else {
+                    if (jsonData.succ  == "add"){
+                        reload();
+                        }
+                }
+             
+            }
+        });
+    };
+
+      function button2(iRow){
+        $.ajax({ 
+            type: "post", 
+            url: "/line/pconfig", 
+            dataType:"json" ,
+            data: {
+                action:"Del",
+                id:iRow
+             }, 
+             complete: function(msg){ 
+                var jsonData = eval("("+msg.responseText+")");
+                if (jsonData.succ  == "nil"){
+                    eloancn.table.grid.clear().draw();
+                }  else {
+                    if (jsonData.succ  == "del"){
+                        reload();
+                    }
+                }
+                alert(jsonData.info);
+            }
+        });
+    };
+      
+     
        //重新加载数据
    
        function reload() {
            eloancn.table.grid.ajax.reload();
        }
-   
        //销毁table
    
        function destroyDataTable(tableId) {
    
            var dttable = $('#' + tableId).DataTable();
+           alert (dettable);
            dttable.destroy();
        }
        
@@ -485,34 +542,36 @@
 
         $("#submit_data_in").click(function(){
                var col1 =  $("#col1_filter").val();
+            
                if (col1.length == 0) 
                {
                     alert ("请输入医院名");  
-                    return;
+                    return false;
                }
                var col2 =  $("#col2_filter").val();
-               if (col1.length == 0) 
+    
+               if (col2.length ==0) 
                {
                     alert ("请输入病区号");  
-                    return;
+                    return false;
                }
                var col3 =  $("#col3_filter").val();
-               if (col1.length == 0) 
+               if (col3.length == 0) 
                {
                     alert ("请输入病床号");  
-                    return;
+                    return false;;
                }
                var col4 =  $("#col4_filter").val();
-               if (col1.length == 0) 
+               if (col4.length == 0) 
                {
                     alert ("请输入姓名");  
-                    return;
+                    return false;;
                }
                var col5 =  $("#col5_filter").val();
-               if (col1.length == 0) 
+               if (col5.length == 0) 
                {
                     alert ("请输入终端号");  
-                    return;
+                    return false;;
                }
             $.ajax({ 
             type: "get", 
@@ -534,6 +593,132 @@
             });
         });   
 
+        
+        $('#exampleModal').on('show.bs.modal', function (event) {  
+           var button = $(event.relatedTarget); // 触发事件的按钮  
+            var recipient = button.data('whatever'); // 解析出data-whatever内容  
+            var modal = $(this);  
+ /*           $.ajax({ 
+                type: "get", 
+                url: "/api/pconfig", 
+                dataType:"json",
+                data: {
+                    deviceid:recipient,
+                }, 
+                complete: function(msg){ 
+                        var jsonData = eval("("+msg.responseText+")");
+                        console.log(jsonData[0].Hospitalname);
+                        modal.find('.modal-body #name1').val(jsonData[0].Hospitalname);
+                        modal.find('.modal-body #name2').val(jsonData[0].Hospitaldeviceid); 
+                        modal.find('.modal-body #name3').val(jsonData[0].Deviceid);      
+                        modal.find('.modal-body #name4').val(jsonData[0].Channelid);   
+
+                        modal.find('.modal-body #manufacturer').val(jsonData[0].Manufacturer);      
+                        modal.find('.modal-body #modelnumber').val(jsonData[0].Modelnumber);   
+                        modal.find('.modal-body #firmwareversion').val(jsonData[0].Firmwareversion);      
+                        modal.find('.modal-body #devicetype').val(jsonData[0].Devicetype);   
+
+                        modal.find('.modal-body #availablepowersource').val(jsonData[0].Availablepowersource);      
+                        modal.find('.modal-body #powersourcevoltage').val(jsonData[0].Powersourcevoltage);                   
+                        modal.find('.modal-body #powersourcesurrent').val(jsonData[0].Powersourcesurrent);      
+                        modal.find('.modal-body #batterylevel').val(jsonData[0].Batterylevel);                   
+
+                        modal.find('.modal-body #supportedbindingmodes').val(jsonData[0].Supportedbindingmodes);                   
+                        modal.find('.modal-body #hardwareversion').val(jsonData[0].Hardwareversion);      
+                        modal.find('.modal-body #softwareversion').val(jsonData[0].Softwareversion);  
+                },
+            });
+ */
+           modal.find('.modal-title').text('添加新患者信息：')  
+//            modal.find('.modal-body #name3').val(recipient)  
+//            modal.find('.modal-body input').val(recipient)  
+        });
+
+
+        //提交更改  
+    function update() {  
+        $.ajax({  
+            type: "get",  
+            url: "/api/pconfig", 
+            dataType:"json",
+            data: {
+                hospitalname:$('#col1_filter').val(),
+                hospitalzone :$('#col2_filter').val(),
+                hospitalbed:$('#col3_filter').val(),
+                patientname:$('#col4_filter').val(),
+                patientsex:$('#col5_filter').val(),
+                patientid:$('#col6_filter').val(),
+                hospitaldeviceid:$('#col7_filter').val()    
+            }, 
+            complete: function(msg){ 
+                var jsonData = eval("("+msg.responseText+")");
+                console.log(jsonData.succ);    
+                alert(jsonData.info);
+                reload();
+            }  
+        }); 
+        $('#exampleModal').modal('hide');
+    };
+
+  
+
+        $('#patientModal').on('show.bs.modal', function (event) {  
+          var button = $(event.relatedTarget); // 触发事件的按钮  
+            var recipient = button.data('whatever'); // 解析出data-whatever内容  
+            var modal = $(this);  
+            modal.find('.modal-title2').text('患者信息更改：' + recipient);
+            console.log(recipient);
+            $.ajax({ 
+                type: "post", 
+                url: "/line/pconfig", 
+                dataType:"json",
+                data: {
+                    deviceid:recipient,
+                },
+                complete: function(msg){ 
+                        var jsonData = eval("("+msg.responseText+")");
+                        console.log(jsonData);
+                        modal.find('.modal-body #col1_filter').val(jsonData[0].Hospitalname);
+                        modal.find('.modal-body #col2_filter').val(jsonData[0].Hospitalzone); 
+                        modal.find('.modal-body #col3_filter').val(jsonData[0].Hospitalbed);      
+                        modal.find('.modal-body #col4_filter').val(jsonData[0].Patientname);   
+
+                        modal.find('.modal-body #col5_filter').val(jsonData[0].Patientsex);      
+                        modal.find('.modal-body #col6_filter').val(jsonData[0].Patientid);   
+                        modal.find('.modal-body #col7_filter').val(jsonData[0].Hospitaldeviceid);      
+                       
+                },
+            });
+ 
+//            modal.find('.modal-body #name3').val(recipient)  
+//            modal.find('.modal-body input').val(recipient)  
+       });
+
+function update2() {  
+    $.ajax({  
+        type: "get",  
+        url: "/line/pconfig", 
+        dataType:"json",
+        data: {
+                    hospitalname:$('#col1_filter').val(),
+                    hospitalzone :$('#col2_filter').val(),
+                    hospitalbed:$('#col3_filter').val(),
+                    patientname:$('#col4_filter').val(),
+                    patientsex:$('#col5_filter').val(),
+                    patientid:$('#col6_filter').val(),
+                    hospitaldeviceid:$('#col7_filter').val()
+        }, 
+        complete: function(msg){ 
+            var jsonData = eval("("+msg.responseText+")");
+            console.log(jsonData.succ);    
+            alert(jsonData.info);
+            reload();
+        }  
+    });  
+    $('#patientModal').modal('hide');
+};
+
+  
 </script> 
 </body>
 </html>

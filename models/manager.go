@@ -27,12 +27,11 @@ var tables = []string{
 		patientid text,
 		patientsex text,
 		meta map<text, text>,
-		PRIMARY KEY (hospitalname,id, hospitalzone, patientname, hospitaldeviceid)
+		PRIMARY KEY ((hospitalname),id, hospitalzone, patientname, hospitaldeviceid)
 		)`,
 
 	`CREATE TABLE IF NOT EXISTS manager.device_info (
 		hospitalname text,
-		id timeuuid,
 		manufacturer  text,
 		modelnumber text,
 		Deviceid text,
@@ -53,10 +52,10 @@ var tables = []string{
 		devicetype text,
 		hardwareversion text,
 		softwareversion text,
-		hospitaldeviceid int,
+		hospitaldeviceid text,
 		channelid text,
 		used boolean,
-		PRIMARY KEY (hospitalname,id,hospitaldeviceid,deviceid,channelid)
+		PRIMARY KEY ((hospitalname),deviceid,channelid)
 		)`,
 
 	/* These Table will be created by manager application
@@ -113,6 +112,10 @@ type ChannelsByUser struct {
 	Connected []string
 }
 
+type HospitalTable struct {
+	Data []HospitalPatientInfo `json:"data"`
+}
+
 /*HospitalPatientInfo : The Hospital/Patient information */
 type HospitalPatientInfo struct {
 	Id               gocql.UUID
@@ -133,9 +136,12 @@ type HospitalPatientInfo struct {
 }
 
 /*DeviceInfo : The Device information */
+type DeviceTable struct {
+	Data []DeviceInfo `json:"data"`
+}
+
 type DeviceInfo struct {
 	Hospitalname          string
-	Id                    gocql.UUID
 	Manufacturer          string
 	Modelnumber           string
 	Deviceid              string
@@ -156,7 +162,7 @@ type DeviceInfo struct {
 	Devicetype            string
 	Hardwareversion       string
 	Softwareversion       string
-	Hospitaldeviceid      int
+	Hospitaldeviceid      string
 	Channelid             string
 	Used                  bool
 }
@@ -228,7 +234,7 @@ func GetClientByUser() ([]ClientsByUser, error) {
 	stmt, names := qb.Select("clients_by_user").Limit(200).ToCql()
 
 	log.Info("stmt is " + stmt)
-	fmt.Println(names)
+	//	fmt.Println(names)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names)
 	defer q.Release()
 	var clients []ClientsByUser
@@ -285,10 +291,10 @@ func InsertPatient(h HospitalPatientInfo) error {
 		"patientid", "patientsex", "meta").
 		ToCql()
 
-	fmt.Println("stmt =", stmt)
-	fmt.Println("h =", h)
+		//	fmt.Println("stmt =", stmt)
+		//	fmt.Println("h =", h)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
-	fmt.Println("q =", q)
+	//	fmt.Println("q =", q)
 
 	if err := q.ExecRelease(); err != nil {
 		log.Critical("InsertPatient: select:" + err.Error())
@@ -336,6 +342,10 @@ func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
 		sel.Where(qb.Eq("patientname"))
 	}
 
+	if len(h.Deviceid) != 0 {
+		sel.Where(qb.Eq("deviceid"))
+	}
+
 	stmt, names := sel.ToCql()
 	logs.Debug(stmt, names)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
@@ -348,21 +358,21 @@ func GetPatient(h HospitalPatientInfo) ([]HospitalPatientInfo, error) {
 	return patient, nil
 }
 
-func GetPaientIDs(name string, hid int) (ch, de string, hv bool) {
+func GetPaientIDs(name, hid string) (ch, de string, hv bool) {
 
 	log := logs.GetBeeLogger()
 	log.Info("Patient to Device mapping")
 
 	d := DeviceInfo{Hospitalname: name, Hospitaldeviceid: hid}
 	sel := qb.Select("device_info").Where(qb.Eq("hospitalname")).AllowFiltering()
-	fmt.Println("d:", d)
+	//	fmt.Println("d:", d)
 
-	if hid >= 0 {
+	if len(hid) != 0 {
 		sel.Where(qb.Eq("hospitaldeviceid"))
 	}
 
 	stmt, names := sel.ToCql()
-	fmt.Println("stmt,names:", stmt, names)
+	//	fmt.Println("stmt,names:", stmt, names)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
 	defer q.Release()
 

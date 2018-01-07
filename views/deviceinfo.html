@@ -3,175 +3,437 @@
   <title>HT-IOT - 器件信息录入</title>
   <style type="text/css">
      body {
-       padding: 50px 0;
+       padding: 80px 0;
        vertical-align:middle
      }
-     fieldset{
-         color: #333;
-         border: #06c, dashed 1px
-     }
-     legend{
-         vertical-align: middle
-     }
-
-
-</style>
+ </style>
 
 </head>
 
 {{template "navbar" .}}
-
 <body> 
-    <span class="glyphicon glyphicon-search"></span>
-    <form method="Get" action ="/deviceinfo" role = "form" class="form-horizontal"> 
-        <fieldset>
-            <legend>器件信息查询</legend>
-         <div class = "form-group"> 
-           <label class="col-sm-1 control-label" for = "name1">医院名称</label> 
-            <div class="col-sm-2"> 
-  <!--              <input type = "text" class = "form-control"  value = {{.hospital_name_v}} name ="hospital_name"></input> -->
-              <input type = "text" id ="name1" value = "{{.hospital_name_v}}"  name ="hospital_name"></input>       
-</div> 
-
-            <label class="col-sm-1 control-label" for = "name2">医院器件编号</label> 
-            <div class="col-sm-1"> 
-                <input type = "number" class = "form-control" id = "name2"  value = "{{.hospitaldeviceid_v}}" name = "hospitaldeviceid"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name3">器件编号</label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name3"  value = "{{.device_id_v}}" name = "device_id"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name4">信道编号</label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "name4"  value = "{{.channel_id_v}}" name = "channel_id"></input> 
-            </div>
-
-            <div class="col-sm-1 "> 
-             
-             <!--   <button type = "submit" class="btn-info btn-sm">查   询</button> 
-                <input type="hidden" name="op" value="Check">  -->
-                <input type="submit" name="op" value="Check">   
-                
-            </div>
-        </div> 
-
-        <div class = "form-group"> 
-            <label class="col-sm-1 control-label">manufacturer</label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "manufacturer" value = "{{.manufacturer_v}}" name = "manufacturer"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label">modelnumber </label> 
-            <div class="col-sm-1"> 
-                <input type = "text" class = "form-control" id = "modelnumber" value = "{{.modelnumber_v}}" name = "modelnumber"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name">firmwareVersion</label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "firmwareversion" value = "{{.firmwareversion_v}}" name = "firmwareversion"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name">Devicetype</label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "devicetype" value = "{{.devicetype_v}}" name = "devicetype"></input> 
-            </div> 
-        </div>
-<
-        <div class = "form-group"> 
-            <label class="col-sm-1 control-label" for = "name">availablepowersource</label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "availablepowersource" value = "{{.availablepowersource_v}}" name = "availablepowersource"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name">powersourcevoltage</label> 
-            <div class="col-sm-1"> 
-                <input type = "text" class = "form-control" id = "powersourcevoltage" value = "{{.powersourcevoltage_v}}" name = "powersourcevoltage"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name">powersourcesurrent </label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "powersourcesurrent" value = "{{.powersourcesurrent_v}}" name = "powersourcesurrent"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name">batterylevel</label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "batterylevel" value = "{{.batterylevel_v}}" name = "batterylevel"></input> 
-            </div> 
-         
-        </div> 
-	    <div class = "form-group"> 
-            <label class="col-sm-1 control-label" for = "name">supportedbindingmodes </label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "supportedbindingmodes" value = "{{.supportedbindingmodes_v}}" name = "supportedbindingmodes"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name">hardwareversion</label> 
-            <div class="col-sm-1"> 
-                <input type = "text" class = "form-control" id = "hardwareversion" value = "{{.hardwareversion_v}}" name = "hardwareversion"></input> 
-            </div> 
-
-            <label class="col-sm-1 control-label" for = "name">softwareversion </label> 
-            <div class="col-sm-2"> 
-                <input type = "text" class = "form-control" id = "softwareversion" value = "{{.softwareversion_v}}" name = "softwareversion"></input> 
-            </div> 
-    
-            <div class="col-sm-1 col-sm-offset-1"> 
-                <input type="submit" name="op" value="Update">
-                
-            </div>    
-        
-            <div class="col-sm-1 col-sm-offset-1"> 
-                <input type="submit" name="op" value="Merge"> 
+    <div class="modal fade bs-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">  
+        <div class="modal-dialog  modal-lg" role="document">  
+            <div class="modal-content">  
+                <div class="modal-header">  
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span  
+                        aria-hidden="true">×</span></button>  
+                    <h4 class="modal-title" id="exampleModalLabel">器件信息编辑</h4>  
+                </div>  
+                <div class="modal-body">  
+                    <form>  
+                        <br>
+                        <div class = "form-group"> 
+                            <label class="col-sm-2 control-label" for = "name1">医院名称</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id ="name1" disabled="disabled" ></input>       
+                            </div> 
+                                    
+                            <label class="col-sm-2 control-label" for = "name2">医院器件编号</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "name2"  ></input> 
+                            </div> 
+                        </div> 
+                        <hr><br>
+                        <div class = "form-group"> 
+                            <label class="col-sm-2 control-label" for = "name3">器件编号</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "name3" disabled="disabled"></input> 
+                            </div> 
+            
+                            <label class="col-sm-2 control-label" for = "name4">信道编号</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "name4" disabled="disabled"></input> 
+                            </div>                       
+                        </div>   
+                        <hr><br>                 
+                        <div class = "form-group"> 
+                            <label class="col-sm-2 control-label">Manufacturer:</label> 
+                            <div class="col-sm-4"> 
+                                 <input type = "text" class = "form-control" id = "manufacturer"></input> 
+                            </div>                                                 
+                            <label class="col-sm-2 control-label">Modelnumber: </label> 
+                            <div class="col-sm-4">   
+                                <input type = "text" class = "form-control" id = "modelnumber"></input> 
+                            </div>
+                        </div>
+                        <hr><br>
+                        <div class = "form-group"> 
+                            <label class="col-sm-2 control-label" for = "name">FirmwareVersion</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "firmwareversion"></input> 
+                            </div>
+                            <label class="col-sm-2 control-label" for = "name">Devicetype</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "devicetype"></input> 
+                            </div>  
                         
-            </div>   
-           
+                        </div> 
+                        <hr><br>
 
-        </div> 
-	 
-       </fieldset>
-    </form> 
-    
-   
-    <table class="table table-striped", border="2">
-      
-        <thread>
-            <tr>
-                <th>医院名称</th>
-                <th>医院器件编号</th>   
-                <th>器件编号</th> 
-                <th>信道编号</th>   
-                <th>manufacturer</th> 
-                <th>modelnumber</th>   
-                <th>DeviceType</th>
-                <th>firmwareVersion</th>
-                <th>hardwareversion</th>
-                <th>softwareversion</th>
-                <th>操作</th>
-            </tr>    
-        </thread>
-              
-        <tbody>
-                {{range $index, $v := .Deviceinfo}}
-                 <tr>
-                    <td>{{.Hospitalname}} </td> 
-                    <td>{{.Hospitaldeviceid}}</td>   
-                    <td>{{.Deviceid}}</td> 
-                    <td>{{.Channelid}}</td>   
-                    <td>{{.Manufacturer}}</td>     
-                    <td>{{.Modelnumber}}</td>   
-                    <td>{{.Devicetype}}</td>             
-                    <td>{{.Firmwareversion}}</td>   
-                    <td>{{.Hardwareversion}}</td>     
-                    <td>{{.Softwareversion}}</td>   
-                    <td>
-                        <a href="/deviceinfo?op=Edit&id={{$index}}">编辑</a>
-                    </td>
-            </tr>
-                {{end}}
-             
-            </tbody>
-    </table>
-</body>
+                        <div class = "form-group"> 
+                            <label class="col-sm-2 control-label" for = "name">Availablepowersource</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "availablepowersource"></input> 
+                            </div>
+                            <label class="col-sm-2 control-label" for = "name">Powersourcevoltage</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "powersourcevoltage" value = "{{.powersourcevoltage_v}}" name = "powersourcevoltage"></input> 
+                            </div> 
+                        
+                        </div>
+                        <hr><br>
+
+                        <div class = "form-group"> 
+                            <label class="col-sm-2 control-label" for = "name">Powersourcesurrent </label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "powersourcesurrent" value = "{{.powersourcesurrent_v}}" name = "powersourcesurrent"></input> 
+                            </div>
+                            <label class="col-sm-2 control-label" for = "name">Batterylevel</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "batterylevel" value = "{{.batterylevel_v}}" name = "batterylevel"></input> 
+                            </div> 
+                          
+                        </div> 
+                        <hr><br>
+
+                         <div class = "form-group"> 
+                            <label class="col-sm-2 control-label" for = "name">Supportedbindingmodes </label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "supportedbindingmodes" value = "{{.supportedbindingmodes_v}}" name = "supportedbindingmodes"></input> 
+                            </div>
+                            <label class="col-sm-2 control-label" for = "name">Hardwareversion</label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "hardwareversion" value = "{{.hardwareversion_v}}" name = "hardwareversion"></input> 
+                            </div> 
+                        </div>
+                         <hr><br>
+
+                         <div class = "form-group"> 
+                            <label class="col-sm-2 control-label" for = "name">Softwareversion </label> 
+                            <div class="col-sm-4"> 
+                                <input type = "text" class = "form-control" id = "softwareversion" value = "{{.softwareversion_v}}" name = "softwareversion"></input> 
+                            </div> 
+                        </div> 
+                        <hr><br><br> <br>   
+                    </form>  
+                </div>  
+                <div class="modal-footer">  
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
+                    <button type="button" class="btn btn-primary" onclick="update()">保存</button>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+    <div>
+        <div class="col-md-4 col-md-offset-4"></div>        
+        <label class="col-sm-1 control-label" for = "name">终端导入       医院名称：</label> 
+            <input type = "text" placeholder = "医院名称"  id="hospital_filter"></input> 
+            <button type="button" class="btn btn-primary" id="hospital_merge">合并数据</button> 
+        <hr>
+
+        <table id="example" class="display">
+            <thead>
+                <tr>
+                    <th>医院名称</th>
+                    <th>医院器件编号</th>   
+                    <th>器件编号</th> 
+                    <th>信道编号</th>   
+                    <th>manufacturer</th> 
+                    <th>modelnumber</th>   
+                    <th>DeviceType</th>
+                    <th>firmwareVersion</th>
+                    <th>hardwareversion</th>
+                    <th>softwareversion</th>
+                    <th style="background-color: white;">操作</th> 
+                </tr>
+            </thead>
+        </table>
+    </div>
+        
+                
+    <script type="text/javascript">
+        var employee = {};
+        employee.property = {
+               version: "v1.0",
+               name: "employee",
+               tableId: "example",
+               checkAllId: "employeeCheckAll",
+               buttonId: "employeeButtonId",
+               formId: "employeeForm",
+               corporateFormId: "employeeForm",
+               returnStatus: "SUCCESS",
+               returnTitle: "操作成功",
+               statusTitle: "请选择一条数据！",
+               idFailure: "获取id失败",
+               prompt: "提示",
+               pleaseConfirm: "请确认！",
+               wantToDelete: "您确定要删除吗?",
+               sexMan: "男",
+               sexWoman: "女",
+               isTest: "是",
+               noTest: "否",
+               banned: "禁用",
+               enable: "启用"
+           };
+        
+           //初始化配置
+        
+           employee.gridInit = {
+               searching: false,
+               lengthChange: true,
+               paging: true,
+               scrollCollapse: true,
+               serverSide: false,
+               search: false,
+               processing: false,
+               scrollY: 700,
+               scrollX: "100%",
+               scrollXInner: "100%",
+               scrollCollapse: false,
+               jQueryUI: true,
+               autoWidth: true,
+               autoSearch: false
+           };
+                     
+        employee.filed = [
+            {"data": "Hospitalname"},
+            {"data": "Hospitaldeviceid"},
+            {"data": "Deviceid"},
+            {"data": "Channelid"},
+            {"data": "Manufacturer"},
+            {"data": "Modelnumber"},
+            {"data": "Devicetype"},
+            {"data": "Firmwareversion"},
+            {"data": "Hardwareversion"},
+            {"data": "Softwareversion"},
+            {
+               "data": "Deviceid",
+               "createdCell": function (nTd, sData, oData, iRow, iCol) {
+                    $(nTd).html("<button type='button' data-toggle='modal' data-target='#exampleModal' data-whatever="+ sData +">编辑 </button>")
+               }
+            },
+        ];
+        
+       
+
+           var eloancn = {};
+        
+           eloancn.table = {
+               grid: "",
+               statusTitle: "请选择一条数据！"
+           };
+        
+           //dataTables方法封装
+        
+           function dataTablesInit(elo) {
+       
+               eloancn.table.grid = $('#' + elo.property.tableId).DataTable({
+        //               "processing": true,
+                    "serverSide": false,
+                    "ajax": {
+                        "url": "/deviceinfo",
+                        "type": "POST",
+                        "dataType":"json",
+                        },
+                          
+                    "columnDefs": elo.status,//列表状态
+                    "columns": elo.filed,//字段
+        
+                   "lengthChange": elo.gridInit.lengthChange,//是否允许用户改变表格每页显示的记录数，默认是开启
+                   "paging": elo.gridInit.paging,//是否开启本地分页，默认是开启
+        //               "processing": elo.gridInit.processing,//是否显示中文提示
+                   "scrollCollapse": elo.gridInit.scrollCollapse,  //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+                   "serverSide": elo.gridInit.serverSide, //开启服务器模式，默认是关闭
+                   "scrollY": elo.gridInit.scrollY,//设置高
+                   "scrollX": elo.gridInit.scrollX,//设置宽度
+                   "scrollXInner": elo.gridInit.scrollXInner,//设置内宽度
+                   "scrollCollapse": elo.gridInit.scrollCollapse,//设置折叠
+                       "jQueryUI": elo.gridInit.jQueryUI,//jquery 风格
+                   "autoWidth": elo.gridInit.autoWidth, //是否自适应宽度
+        //               "bSort": false,
+        
+                   "language": {
+                       "sProcessing": "处理中...",
+                       "sLengthMenu": "显示 _MENU_ 项结果",
+                       "sZeroRecords": "没有匹配结果",
+                       "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                       "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                       "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                       "sInfoPostFix": "",
+                       "sSearch": "搜索:",
+                       "sUrl": "",
+                       "sEmptyTable": "未搜索到数据",
+                       "sLoadingRecords": "载入中...",
+                       "sInfoThousands": ",",
+                       "oPaginate": {
+                           "sFirst": "首页",
+                           "sPrevious": "上页",
+                           "sNext": "下页",
+                           "sLast": "末页"
+                       },
+                         "oAria": {
+                           "sSortAscending": ": 以升序排列此列",
+                           "sSortDescending": ": 以降序排列此列"
+                       }
+                   },
+             });
+        
+               //错误信息提示
+        
+               $.fn.dataTable.ext.errMode = function (s, h, m) {
+                   if (h == 1) {
+                       alert("连接服务器失败！");
+                   } else if (h == 7) {
+                       alert("返回数据错误！");
+                   }
+               };
+        
+               //回调，如果返回的时候有问题提示信息
+        
+               eloancn.table.grid.on('xhr.dt', function (e, settings, json, xhr) {
+                   console.log("重新加载了数据");
+                   console.log(json);
+               });
+        
+               //鼠标经过高亮
+        
+               var lastIdx = null;
+               eloancn.table.grid.on('mouseover', 'td', function () {
+        
+                   if (typeof(eloancn.table.grid.cell(this).index()) != "undefined") {
+                       var colIdx = eloancn.table.grid.cell(this).index().column;
+                       if (colIdx !== lastIdx) {
+                           $(eloancn.table.grid.cells().nodes()).removeClass('highlight');
+                           $(eloancn.table.grid.column(colIdx).nodes()).addClass('highlight');
+                       }
+                   }
+               });
+        
+               eloancn.table.grid.on('mouseleave', function () {
+                   $(eloancn.table.grid.cells().nodes()).removeClass('highlight');
+               });
+             }
+        
+         
+           //重新加载数据
+          function reload() {
+               eloancn.table.grid.ajax.reload();
+           }
+           //销毁table
+        
+           function destroyDataTable(tableId) {
+               var dttable = $('#' + tableId).DataTable();
+               alert (dettable);
+               dttable.destroy();
+           }
+           
+         
+            $(document).ready(function(){
+                  dataTablesInit(employee);
+            });
+        
+            $("#hospital_merge").click(function(){
+                console.log("xxxx");
+                var hospitalname0 =  $('#hospital_filter').val();
+                console.log(hospitalname0);
+                $.ajax({ 
+                    type: "post", 
+                    url: "/merge/deviceinfo", 
+                    dataType:"json",
+                    data: {
+                        hospitalname:hospitalname0,
+                    }, 
+                    complete: function(msg){ 
+                            var jsonData = eval("("+msg.responseText+")");
+                            if (jsonData.succ  == "Succ"){
+                                reload();
+                        }
+                    }
+                });
+            });
+
+  
+        $('#exampleModal').on('show.bs.modal', function (event) {  
+            var button = $(event.relatedTarget); // 触发事件的按钮  
+            var recipient = button.data('whatever'); // 解析出data-whatever内容  
+            var modal = $(this);  
+            $.ajax({ 
+                type: "get", 
+                url: "/api/deviceinfo", 
+                dataType:"json",
+                data: {
+                    deviceid:recipient,
+                }, 
+                complete: function(msg){ 
+                        var jsonData = eval("("+msg.responseText+")");
+                        console.log(jsonData[0].Hospitalname);
+                        modal.find('.modal-body #name1').val(jsonData[0].Hospitalname);
+                        modal.find('.modal-body #name2').val(jsonData[0].Hospitaldeviceid); 
+                        modal.find('.modal-body #name3').val(jsonData[0].Deviceid);      
+                        modal.find('.modal-body #name4').val(jsonData[0].Channelid);   
+
+                        modal.find('.modal-body #manufacturer').val(jsonData[0].Manufacturer);      
+                        modal.find('.modal-body #modelnumber').val(jsonData[0].Modelnumber);   
+                        modal.find('.modal-body #firmwareversion').val(jsonData[0].Firmwareversion);      
+                        modal.find('.modal-body #devicetype').val(jsonData[0].Devicetype);   
+
+                        modal.find('.modal-body #availablepowersource').val(jsonData[0].Availablepowersource);      
+                        modal.find('.modal-body #powersourcevoltage').val(jsonData[0].Powersourcevoltage);                   
+                        modal.find('.modal-body #powersourcesurrent').val(jsonData[0].Powersourcesurrent);      
+                        modal.find('.modal-body #batterylevel').val(jsonData[0].Batterylevel);                   
+
+                        modal.find('.modal-body #supportedbindingmodes').val(jsonData[0].Supportedbindingmodes);                   
+                        modal.find('.modal-body #hardwareversion').val(jsonData[0].Hardwareversion);      
+                        modal.find('.modal-body #softwareversion').val(jsonData[0].Softwareversion);  
+                },
+            });
+ 
+           modal.find('.modal-title').text('编辑器件信息：' + recipient)  
+//            modal.find('.modal-body #name3').val(recipient)  
+//            modal.find('.modal-body input').val(recipient)  
+        })  
+
+
+//提交更改  
+function update() {  
+    $.ajax({  
+        type: "post",  
+        url: "/api/deviceinfo", 
+        dataType:"json",
+        data: {
+                    hospitalname:$('#name1').val(),
+                    hospitaldeviceid:$('#name2').val(),
+                    deviceid:$('#name3').val(),
+                    channelid:$('#name4').val(),
+                    manufacturer:$('#manufacturer').val(),
+                    modelnumber:$('#modelnumber').val(),
+
+                    firmwareversion:$('#firmwareversion').val(),
+                    devicetype:$('#devicetype').val(),
+                    availablepowersource:$('#availablepowersource').val(),
+                    powersourcevoltage:$('#powersourcevoltage').val(),
+                    powersourcesurrent:$('#powersourcesurrent').val(),
+                    batterylevel:$('#batterylevel').val(),
+
+                    supportedbindingmodes:$('#supportedbindingmodes').val(),
+                    hardwareversion:$('#hardwareversion').val(),
+                    softwareversion:$('#softwareversion').val(),
+        }, 
+        complete: function(msg){ 
+            var jsonData = eval("("+msg.responseText+")");
+            console.log(jsonData.succ);    
+            alert(jsonData.info);
+            reload();
+        }  
+    });  
+    $('#exampleModal').modal('hide');
+}  
+        </script> 
+     </body>
 </html>
+        
+
+
+
+

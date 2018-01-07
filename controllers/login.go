@@ -24,6 +24,7 @@ func (c *LoginController) Get() {
 	if isExit == "true" {
 		c.Ctx.SetCookie("name", "", -1, "/")
 		c.Ctx.SetCookie("pwd", "", -1, "/")
+		c.Ctx.SetCookie("hname", "", -1, "/")
 		c.Redirect("/", 301)
 		return
 	}
@@ -33,6 +34,7 @@ func (c *LoginController) Post() {
 	c.TplName = "login.html"
 	uname := c.Input().Get("uname")
 	pwd := c.Input().Get("pwd")
+	hname := c.Input().Get("hospname")
 
 	autoLogin := c.Input().Get("autoLogin") == "on"
 
@@ -51,6 +53,10 @@ func (c *LoginController) Post() {
 		io.WriteString(h, uname+pwd)
 		pwd = base64.StdEncoding.EncodeToString(h.Sum(nil))
 		c.Ctx.SetCookie("pwd", pwd, maxAge, "/")
+
+		hname0 := base64.StdEncoding.EncodeToString([]byte(hname))
+		c.Ctx.SetCookie("hname", hname0, maxAge, "/")
+
 		/* TODO add session support
 		c.SetSession(uname, pwd)
 		*/
@@ -67,6 +73,7 @@ func (c *LoginController) Post() {
 }
 
 func checkAccount(ctx *context.Context) bool {
+
 	ck, err := ctx.Request.Cookie("name")
 	if err != nil {
 		return false
@@ -79,16 +86,19 @@ func checkAccount(ctx *context.Context) bool {
 	}
 	pwd := ck.Value
 
-	/*
-		TODO add the session support in the furture to reduce query user table
-
-		sid := ctx.Input.CruSession.Get(uname)
-		logs.Debug("get session", sid)
-	*/
+	ck, err = ctx.Request.Cookie("hname")
+	if err != nil {
+		return false
+	}
+	hname, err := base64.StdEncoding.DecodeString(ck.Value)
+	if err != nil {
+		fmt.Println(err)
+	}
+	Hospital = string(hname)
+	fmt.Println(Hospital)
 
 	p := models.User{Email: uname, Password: ""}
 	q, err := models.GetAllUers(p)
-	//fmt.Println("q, err =", q, err)
 
 	if len(q) < 1 {
 		logs.Debug("Query user table failure")

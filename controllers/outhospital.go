@@ -3,17 +3,24 @@ package controllers
 import (
 	"fmt"
 	"ht_iot/models"
+	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
+	"github.com/gocql/gocql"
 )
 
+//var Hospitalslice []models.HospitalPatientInfo
+
+/* OuthospitalController...*/
 type OuthospitalController struct {
 	beego.Controller
 }
 
+/* Get...*/
 func (this *OuthospitalController) Get() {
 	this.TplName = "outhospital.html"
-	this.Data["IsOconfig"] = true
+	this.Data["Isouthospital"] = true
 
 	flag := checkAccount(this.Ctx)
 	this.Data["ISLogin"] = flag
@@ -21,85 +28,95 @@ func (this *OuthospitalController) Get() {
 		this.Redirect("/login", 302)
 		return
 	}
-
-	/*
-		fmt.Println("IsLogin0:  ", IsLogin)
-		this.Data["IsOconfig"] = true
-		this.TplName = "outhospital.html"
-		//	this.Data["ISLogin"] = IsLogin
-		flag := checkAccount(this.Ctx)
-		fmt.Println("O flag:  ", flag)
-		this.Data["ISLogin"] = flag
-		if !flag {
-			this.Redirect("/login", 302)
-			return
-		}
-
-			if !IsLogin {
-				this.Redirect("/login", 302)
-				return
-			}
-	*/
-	/*	flag := checkAccount(this.Ctx)
-		this.Data["IsLogin"] = flag
-		if !flag {
-			this.Redirect("/login", 302)
-			return
-		}
-	*/
-	var h models.HospitalPatientInfo
-	var Hospitalslicetmp []models.HospitalPatientInfo
-
-	op := this.Input().Get("op")
-	id, _ := this.GetInt("id")
-
-	switch op {
-	case "check":
-		{
-			h.Hospitalname = this.GetString("hospital_name")
-			h.Hospitalzone = this.GetString("hospital_zone")
-			h.Hospitalbed = this.GetString("hospital_bed")
-			h.Patientname = this.GetString("p_name")
-			h.Patientsex = this.GetString("p_sex")
-			h.Hospitaldeviceid = this.GetString("p_device")
-			/*			p := models.User{Email: "yong@test.com"}
-						q, _ := models.GetAllUers(p)
-						fmt.Println(q)
-			*/
-			fmt.Println("h=", h.Hospitalname)
-			p := models.HospitalPatientInfo{Hospitalname: h.Hospitalname, Hospitalzone: h.Hospitalzone, Patientname: h.Patientname}
-			Hospitalslicetmp, _ = models.GetPatient(p)
-			fmt.Println("h=", Hospitalslicetmp)
-			/*
-				for _, d := range Hospitalslice {
-					if ((len(h.HospitalID) == 0) || (h.HospitalID == d.HospitalID)) &&
-						((len(h.HospitalZone) == 0) || (h.HospitalZone == d.HospitalZone)) &&
-						(((h.HospitalBed) == 0) || (h.HospitalBed == d.HospitalBed)) &&
-						((len(h.PatientName) == 0) || (h.PatientName == d.PatientName)) &&
-						(((h.HospitalDeviceID) == 0) || (h.HospitalDeviceID == d.HospitalDeviceID)) {
-						Hospitalslicetmp = append(Hospitalslicetmp, d)
-					}
-
-				}
-			*/break
-
-		}
-
-	case "del":
-		{
-			Hospitalslice = append(Hospitalslice[:id], Hospitalslice[id+1:]...)
-			break
-		}
-	}
-	//	this.Ctx.WriteString(fmt.Sprint(Hospitalslice))
-	//	fmt.Println(Hospitalslice)
-	//	this.Data["IsPconfig"] = true
-	this.Data["Hospitalsilce"] = &Hospitalslicetmp
-	fmt.Println("IsLogin1:  ", IsLogin)
-	this.TplName = "outhospital.html"
-
+	//	fmt.Println("Hospital =", Hospital)
 }
 
-func (this *OuthospitalController) Post() {
-	this.TplName = "outhospital.html"
+func (this *OuthospitalController) GetPat() {
+	logs.Debug("Input the data in Pconfig")
+
+	var h models.HospitalPatientInfo
+	{
+		h.Hospitalname = this.GetString("hospitalname")
+		h.Hospitalzone = this.GetString("hospitalzone")
+		h.Hospitalbed = this.GetString("hospitalbed")
+		h.Patientname = this.GetString("patientname")
+		h.Hospitaldeviceid = this.GetString("hospitaldeviceid")
+	}
+	Hospitalslice = append(Hospitalslice, h)
+	Getstruct := In{Succ: "add", Info: ""}
+	this.Data["json"] = &Getstruct
+	this.ServeJSON()
+}
+
+func (this *OuthospitalController) PostPat() {
+	logs.Debug("Read the Patient information")
+	var Mystruct models.HospitalTable
+	var err error
+	Hospitalslice, err = models.GetAllPatient()
+
+	if err == nil {
+		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
+	} else {
+		Mystruct.Data = nil
+	}
+
+	fmt.Println(Mystruct)
+	this.Data["json"] = &Mystruct
+	this.ServeJSON()
+}
+
+func (this *OuthospitalController) Line() {
+	logs.Debug("Line change in Pconfig table")
+	var d models.HospitalPatientInfo
+	var Getstruct In
+	var hv bool
+
+	actions := this.GetString("action")
+	id, _ := this.GetInt("id")
+
+	if actions == "Add" {
+
+		d.Id = gocql.TimeUUID()
+		d.Patiententrtime = time.Now()
+		d.Hospitalname = Hospitalslice[id].Hospitalname
+		d.Hospitalzone = Hospitalslice[id].Hospitalzone
+		d.Hospitalbed = Hospitalslice[id].Hospitalbed
+		d.Patientname = Hospitalslice[id].Patientname
+		d.Hospitaldeviceid = Hospitalslice[id].Hospitaldeviceid
+
+		//		h.Patiententrtime = time.Now()
+		d.Channelid, d.Deviceid, hv = models.GetPaientIDs(d.Hospitalname, d.Hospitaldeviceid)
+		if hv {
+			_ = models.InsertPatient(d)
+			Getstruct.Info = "添加成功"
+			Getstruct.Succ = "add"
+			if len(Hospitalslice) > 1 {
+				Hospitalslice = append(Hospitalslice[:id], Hospitalslice[id+1:]...)
+				Getstruct.Succ = "add"
+				Getstruct.Info = "注册成功"
+			} else {
+				Hospitalslice = nil
+				Getstruct.Succ = "nil"
+				Getstruct.Info = "注册成功"
+			}
+		} else {
+			Getstruct.Info = "无该医院终端ID, 添加失败"
+			Getstruct.Succ = "add"
+		}
+		//	mystruct = Out{Succ: str, Refresh: Out.Refresh}
+	}
+	if actions == "Del" {
+		if len(Hospitalslice) > 1 {
+			Hospitalslice = append(Hospitalslice[:id], Hospitalslice[id+1:]...)
+			Getstruct.Info = "取消成功"
+			Getstruct.Succ = "del"
+		} else {
+			Hospitalslice = nil
+			Getstruct.Info = "取消成功"
+			Getstruct.Succ = "nil"
+		}
+
+	}
+	this.Data["json"] = &Getstruct
+	this.ServeJSON()
 }

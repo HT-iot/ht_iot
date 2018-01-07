@@ -2,25 +2,19 @@ package controllers
 
 import (
 	"fmt"
+	"ht_iot/models"
+	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
+	"github.com/gocql/gocql"
 )
 
-var Hospitalslice []Out
+var Hospitalslice []models.HospitalPatientInfo
 
-type Out struct {
-	Hospitalname     string `json:"hospitalname"`
-	Hospitalzone     string `json:"hospitalzone"`
-	Hospitalbed      string `json:"hospitalbed"`
-	Patientname      string `json:"patientname"`
-	Hospitaldeviceid string `json:"hospitaldeviceid"`
-}
-
-type Jsonout struct {
-	Draw            int   `json:"draw"`
-	Recordstotal    int   `json:"recordstotal"`
-	Recordsfiltered int   `json:"recordsfiltered"`
-	Data            []Out `json:"data"`
+type In struct {
+	Succ string `json:"succ"`
+	Info string `json:"info"`
 }
 
 /* PconfigController...*/
@@ -28,21 +22,6 @@ type PconfigController struct {
 	beego.Controller
 }
 
-/*
-func (this *PconfigController) Prepare() {
-	this.TplName = "pconfig.html"
-	this.Data["IsPconfig"] = true
-
-	flag := checkAccount(this.Ctx)
-	this.Data["ISLogin"] = flag
-	if !flag {
-		this.Redirect("/login", 302)
-		return
-	}
-	this.Data["Hospitalsilce"] = &Hospitalslice
-	this.TplName = "pconfig.html"
-}
-*/
 /* Get...*/
 func (this *PconfigController) Get() {
 	this.TplName = "pconfig.html"
@@ -54,138 +33,141 @@ func (this *PconfigController) Get() {
 		this.Redirect("/login", 302)
 		return
 	}
-	var Mystruct Jsonout
-	if len(Hospitalslice) > 0 {
-		Mystruct.Draw = len(Hospitalslice)
-		Mystruct.Recordstotal = len(Hospitalslice)
-		Mystruct.Recordsfiltered = -1
+	//	fmt.Println("Hospital =", Hospital)
+}
+
+func (this *PconfigController) Post() {
+	logs.Debug("Read the Patient information")
+	var Mystruct models.HospitalTable
+	var err error
+	Hospitalslice, err = models.GetAllPatient()
+
+	if err == nil {
 		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
+	} else {
+		Mystruct.Data = nil
 	}
+
+	fmt.Println(Mystruct)
+	this.Data["json"] = &Mystruct
+	this.ServeJSON()
 }
 
 func (this *PconfigController) GetPat() {
-	type In struct {
-		Succ string `json:"Succ"`
-	}
-	var h Out
+	logs.Debug("Input the data in Pconfig")
+	var hv bool
+	var Getstruct In
+	var h models.HospitalPatientInfo
 	{
 		h.Hospitalname = this.GetString("hospitalname")
 		h.Hospitalzone = this.GetString("hospitalzone")
 		h.Hospitalbed = this.GetString("hospitalbed")
 		h.Patientname = this.GetString("patientname")
-		//		h.Patientsex = this.GetString("p_sex")
+		h.Patientsex = this.GetString("patientsex")
+		h.Patientid = this.GetString("patientid")
 		h.Hospitaldeviceid = this.GetString("hospitaldeviceid")
-		fmt.Println("h=", h)
 	}
-	Hospitalslice = append(Hospitalslice, h)
 
-	Getstruct := In{Succ: "add"}
+	h.Id = gocql.TimeUUID()
+	h.Patiententrtime = time.Now()
+
+	h.Channelid, h.Deviceid, hv = models.GetPaientIDs(h.Hospitalname, h.Hospitaldeviceid)
+	if hv {
+		_ = models.InsertPatient(h)
+		Getstruct.Info = "添加成功"
+		Getstruct.Succ = "succ"
+	} else {
+		Getstruct.Info = "无该医院终端ID, 添加失败"
+		Getstruct.Succ = "fail"
+	}
 
 	this.Data["json"] = &Getstruct
-
 	this.ServeJSON()
-
 }
 
 func (this *PconfigController) PostPat() {
+	logs.Debug("the Patient information")
+	var Mystruct models.HospitalTable
+	var err error
+	Hospitalslice, err = models.GetAllPatient()
 
-	fmt.Println("Post")
+	if err == nil {
+		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
+	} else {
+		Mystruct.Data = nil
+	}
 
-	var Mystruct Jsonout
-
-	Mystruct.Draw = len(Hospitalslice)
-	Mystruct.Recordstotal = len(Hospitalslice)
-	Mystruct.Recordsfiltered = -1
-	Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
-
-	/*
-		Mystruct.Data = append(Mystruct.Data, Out{
-			Name:       "Ashton Cox",
-			Position:   "Junior Technical Author",
-			Salary:     "$86,0",
-			StartDate:  "2009/01/12",
-			Salary2:    "$86000",
-			StartDate2: "2010/01/12",
-			StartDate3: "2011/01/12",
-			Office:     "San Francisco",
-			Extn:       "1562",
-		})
-		Mystruct.Data = append(Mystruct.Data, Out{
-			Name:       "Ashton 2",
-			Position:   "Junior Technical Author",
-			Salary:     "$86000",
-			StartDate:  "2009/01/12",
-			Salary2:    "$86,000",
-			StartDate2: "2010/01/12",
-			StartDate3: "2011/01/12",
-			Office:     "San Francisco",
-			Extn:       "1562",
-		})
-
-		Mystruct.Data = append(Mystruct.Data, Out{
-			Name:       "Ashton 3",
-			Position:   "Junior Technical Author",
-			Salary:     "$8600",
-			StartDate:  "2009/01/12",
-			Salary2:    "$86,000",
-			StartDate2: "2010/01/12",
-			StartDate3: "2011/01/12",
-			Office:     "San Francisco",
-			Extn:       "1562",
-		})
-
-
-			: {
-				Name:       "Ashton Cox",
-				Position:   "Junior Technical Author",
-				Salary:     "$86,000",
-				StartDate:  "2009/01/12",
-				Salary2:    "$86,000",
-				StartDate2: "2010/01/12",
-				StartDate3: "2011/01/12",
-				Office:     "San Francisco",
-				Extn:       "1562",
-			},
-			{
-				Name:       "Ashton Cox",
-				Position:   "Junior Technical Author",
-				Salary:     "$86,000",
-				StartDate:  "2009/01/12",
-				Salary2:    "$86,000",
-				StartDate2: "2009/01/12",
-				StartDate3: "2009/01/12",
-				Office:     "San Francisco",
-				Extn:       "15",
-			}}
-	*/ /*
-
-
-			var h models.HospitalPatientInfo
-
-		lineNO, _ := this.GetInt("id")
-		fmt.Println("Line:", lineNO)
-
-		Hospitalslice[lineNO].Id = gocql.TimeUUID()
-		h = Hospitalslice[lineNO]
-		//		h.Patiententrtime = time.Now()
-		hv := falseh.Channelid, h.Deviceid, hv = models.GetPaientIDs(Hospitalslice[lineNO].Hospitalname, Hospitalslice[lineNO].Hospitaldeviceid)
-		if hv {
-			_ = models.InsertPatient(h)
-			Hospitalslice = append(Hospitalslice[:lineNO], Hospitalslice[lineNO+1:]...)
-
-			mystruct.Succ = "添加成功"
-			mystruct.Refresh = "44"
-			this.Data["Hospitalsilce"] = &Hospitalslice
-		} else {
-			mystruct.Succ = "添加失败, 无该医院终端ID"
-			mystruct.Refresh = "00"
-		}
-		//	mystruct = Out{Succ: str, Refresh: Out.Refresh}
-	*/
+	fmt.Println(Mystruct)
 	this.Data["json"] = &Mystruct
-
 	this.ServeJSON()
+}
 
-	//	this.Data["Hospitalsilce"] = &Hospitalslice
-	//	this.TplName = "pconfig.html"
+func (this *PconfigController) GetLine() {
+	logs.Debug("Post Line")
+
+}
+
+func (this *PconfigController) PostLine() {
+	logs.Debug("Post Line")
+
+	//	var d models.HospitalPatientInfo
+	var err error
+	var Mystruct models.HospitalTable
+	//	d.Hospitaldeviceid = Hospitalslice[id].Hospitaldeviceid
+
+	//		h.Patiententrtime = time.Now()
+	//	d.Hospitalname = this.GetString("hospitalname")
+	device := this.GetString("deviceid")
+	d := models.HospitalPatientInfo{
+		//Hospitalname: name,
+		//Hospitalzone: zone,
+		Deviceid: device}
+
+	fmt.Println("PostLine d Patientid=", d)
+
+	Hospitalslice, err = models.GetPatient(d)
+
+	if err == nil {
+		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
+	} else {
+		Mystruct.Data = nil
+	}
+	fmt.Println("PostLine=", Mystruct)
+	this.Data["json"] = &Mystruct
+	this.ServeJSON()
+	/*
+			if (err == nil) {
+				_ = models.InsertPatient(d)
+				Getstruct.Info = "添加成功"
+				Getstruct.Succ = "add"
+				if len(Hospitalslice) > 1 {
+					Hospitalslice = append(Hospitalslice[:id], Hospitalslice[id+1:]...)
+					Getstruct.Succ = "add"
+					Getstruct.Info = "注册成功"
+				} else {
+					Hospitalslice = nil
+					Getstruct.Succ = "nil"
+					Getstruct.Info = "注册成功"
+				}
+			} else {
+				Getstruct.Info = "无该医院终端ID, 添加失败"
+				Getstruct.Succ = "add"
+			}
+			//	mystruct = Out{Succ: str, Refresh: Out.Refresh}
+		}
+		if actions == "Del" {
+			if len(Hospitalslice) > 1 {
+				Hospitalslice = append(Hospitalslice[:id], Hospitalslice[id+1:]...)
+				Getstruct.Info = "取消成功"
+				Getstruct.Succ = "del"
+			} else {
+				Hospitalslice = nil
+				Getstruct.Info = "取消成功"
+				Getstruct.Succ = "nil"
+			}
+
+		}
+		this.Data["json"] = &Getstruct
+		this.ServeJSON()
+	*/
 }

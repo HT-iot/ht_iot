@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/astaxie/beego/logs"
-	"github.com/gocql/gocql"
 	"github.com/scylladb/gocqlx"
 	"github.com/scylladb/gocqlx/qb"
 )
@@ -15,10 +14,10 @@ func GetDeviceInfo(d DeviceInfo) ([]DeviceInfo, error) {
 	log := logs.GetBeeLogger()
 	log.Info("Get Device information")
 
-	sel := qb.Select("device_info").Limit(100).AllowFiltering()
+	sel := qb.Select("device_info").AllowFiltering()
 	if len(d.Hospitalname) > 0 {
-		sel = qb.Select("device_info").Where(qb.Eq("hospitalname")).Limit(100).AllowFiltering()
-		if d.Hospitaldeviceid > 0 {
+		sel = qb.Select("device_info").Where(qb.Eq("hospitalname")).AllowFiltering()
+		if len(d.Hospitaldeviceid) > 0 {
 			sel.Where(qb.Eq("hospitaldeviceid"))
 		}
 		if len(d.Channelid) > 0 {
@@ -27,10 +26,15 @@ func GetDeviceInfo(d DeviceInfo) ([]DeviceInfo, error) {
 		if len(d.Deviceid) > 0 {
 			sel.Where(qb.Eq("deviceid"))
 		}
+	} else {
+		if len(d.Deviceid) > 0 {
+			sel = qb.Select("device_info").Where(qb.Eq("deviceid")).AllowFiltering()
+		}
 	}
-	fmt.Println("d", d)
+
+	//
 	stmt, names := sel.ToCql()
-	fmt.Println("stmt,names", stmt, names)
+	fmt.Println("stmt,names =", stmt, names)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
 	defer q.Release()
 
@@ -53,13 +57,16 @@ func UpdateDeviceItem(d DeviceInfo) error {
 			"batterylevel", "memoryfree", "errorcode", "reseterrorcode", "currenttime", "utcoffset",
 			"timezone", "supportedbindingmodes", "devicetype", "hardwareversion", "softwareversion",
 			"hospitaldeviceid").
-		Where(qb.Eq("id")).
+		Where(qb.Eq("hospitalname"), qb.Eq("channelid"), qb.Eq("deviceid")).
 		ToCql()
+	fmt.Println("Update d=", d)
 
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
 
+	fmt.Println("q=", q)
+
 	if err := q.ExecRelease(); err != nil {
-		fmt.Println(err)
+		fmt.Println("err=", err)
 		return err
 	}
 
@@ -69,7 +76,7 @@ func UpdateDeviceItem(d DeviceInfo) error {
 func InputDevices(hospital_name string) error {
 
 	p := ChannelsByUser{Name: hospital_name}
-	sel := qb.Select("channels_by_user").Where(qb.Eq("name")).Limit(100).AllowFiltering()
+	sel := qb.Select("channels_by_user").Where(qb.Eq("name")).AllowFiltering()
 
 	stmt, names := sel.ToCql()
 
@@ -90,9 +97,9 @@ func InputDevices(hospital_name string) error {
 	for _, v := range people {
 		for _, w := range v.Connected {
 			if CheckDevice(w) != true {
-				fmt.Println("device:", v)
+				//				fmt.Println("device:", v)
 				d.Hospitalname = v.Name
-				d.Id, _ = gocql.ParseUUID(w)
+				//				d.Id, _ = gocql.ParseUUID(w)
 				d.Deviceid = w
 				d.Channelid = v.ID.String()
 				_ = InsertDevice(d)
@@ -129,7 +136,7 @@ func InsertDevice(d DeviceInfo) bool {
 	log := logs.GetBeeLogger()
 	log.Info("Insert Device information")
 
-	stmt, names := qb.Insert("device_info").Columns("id", "hospitalname", "manufacturer",
+	stmt, names := qb.Insert("device_info").Columns("hospitalname", "manufacturer",
 		"modelnumber", "deviceid", "firmwareversion", "reboot",
 		"factoryreset", "availablepowersource", "powersourcevoltage", "powersourcesurrent",
 		"batterylevel", "memoryfree", "errorcode", "reseterrorcode", "currenttime", "utcoffset",

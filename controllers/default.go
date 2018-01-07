@@ -12,6 +12,7 @@ type MainController struct {
 }
 
 var IsLogin, IsStatus, IsPconfig, IsOconfig bool
+var Hospital string
 
 //Get .....
 func (c *MainController) Get() {
@@ -28,6 +29,7 @@ func (c *MainController) Get() {
 	if isExit == "true" {
 		c.Ctx.SetCookie("uname", "", -1, "/")
 		c.Ctx.SetCookie("pwd", "", -1, "/")
+		c.Ctx.SetCookie("hname", "", -1, "/")
 		IsLogin = false
 		c.Data["ISLogin"] = IsLogin
 		c.Redirect("/", 302)

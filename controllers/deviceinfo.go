@@ -136,12 +136,19 @@ func (this *DeviceinfoController) Post() {
 	var Mystruct models.DeviceTable
 	p := models.DeviceInfo{}
 	Deviceinfo, err = models.GetDeviceInfo(p)
+
+	fmt.Println("Hospitalslice:", len(Deviceinfo))
+	Mystruct.Data = make([]models.DeviceInfo, len(Deviceinfo))
+	copy(Mystruct.Data,Deviceinfo)
+/*
+
+
 	if len(Deviceinfo) > 0 {
 		Mystruct.Data = append(Mystruct.Data, Deviceinfo...)
 	} else {
 		Mystruct.Data = nil
 	}
-	this.Data["json"] = &Mystruct
+*/	this.Data["json"] = &Mystruct
 	this.ServeJSON()
 }
 

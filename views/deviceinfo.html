@@ -195,7 +195,7 @@
                 scrollCollapse: false,
                 jQueryUI: false,
                 autoWidth: true,
-                autoSearch: false
+                autoSearch: true
         };
 
         employee.filed = [
@@ -221,7 +221,11 @@
              '<label for="name">请输入导入终端的医院名称：</label> '+
              '<input type = "text" placeholder = "医院名称"  id="hospital_filter"></input>'+
              '<button type="button"  class="btn btn-primary" id="hospital_merge">合并数据</button>';
-*/      
+*/        employee.status = [
+                {"searchable": false, "orderable": false, "targets": 0},//第一行不进行排序和搜索
+                {defaultContent: '', targets: ['_all']} //所有列设置默认值为空字符串
+          ];
+   
              
            var eloancn = {};
         
@@ -233,9 +237,8 @@
            //dataTables方法封装
         
            function dataTablesInit(elo) {
-       
                eloancn.table.grid = $('#' + elo.property.tableId).DataTable({
-        //               "processing": true,
+    
                     "serverSide": false,
                     "ajax": {
                         "url": "/deviceinfo",
@@ -243,21 +246,21 @@
                         "dataType":"json",
                         },
 
-                        "columnDefs": elo.status,//列表状态
-                        "columns": elo.filed,//字段
-            
+                    "destroy": true,
                        "lengthChange": elo.gridInit.lengthChange,//是否允许用户改变表格每页显示的记录数，默认是开启
                        "paging": elo.gridInit.paging,//是否开启本地分页，默认是开启
-            //               "processing": elo.gridInit.processing,//是否显示中文提示
+                       "processing": elo.gridInit.processing,//是否显示中文提示
                        "scrollCollapse": elo.gridInit.scrollCollapse,  //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
                        "serverSide": elo.gridInit.serverSide, //开启服务器模式，默认是关闭
                        "scrollY": elo.gridInit.scrollY,//设置高
                        "scrollX": elo.gridInit.scrollX,//设置宽度
                        "scrollXInner": elo.gridInit.scrollXInner,//设置内宽度
                        "scrollCollapse": elo.gridInit.scrollCollapse,//设置折叠
-                           "jQueryUI": elo.gridInit.jQueryUI,//jquery 风格
+                        "jQueryUI": elo.gridInit.jQueryUI,//jquery 风格
                        "autoWidth": elo.gridInit.autoWidth, //是否自适应宽度
                        "searching": elo.gridInit.searching, //是否自适应宽度
+                       "columnDefs": elo.status,//列表状态
+                        "columns": elo.filed,//字段
             //               "bSort": false,
             
         
@@ -285,14 +288,16 @@
                            "sSortDescending": ": 以降序排列此列"
                        }
                    },
-
+/*                   "dom": "<'row'<'#pattool.col-sm-2'><'col-sm-2'l><'col-sm-8 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+               "initComplete": function () {
+                   $("#pattool").append('<button type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>');
+*/  
                     "dom": "<'row'<'#devtool.col-sm-4'><'col-sm-2'l><'col-sm-6 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
                     "initComplete": function () {
                         $("#devtool").append('<label for="name">请输入导入终端的医院名称：</label> '+
-             '<input type = "text" placeholder = "医院名称"  id="hospital_filter"></input>'+
-             '<button type="button"  class="btn btn-primary" id="hospital_merge">合并数据</button>');
-  
-  
+                            '<input type = "text" placeholder = "医院名称"  id="hospital_filter"></input>'+
+                            '<button type="button"  class="btn btn-primary" id="hospital_merge">合并数据</button>');
+ 
                         if (elo.gridInit.search) {
                             $search = $("input[type='search']");
                        //隐藏默认的搜索框

@@ -70,7 +70,7 @@ func (s *StatusController) GetStatus() {
 
 	var data models.DataTable
 	data.Data = Patients
-
+	fmt.Println("Patients",Patients)
 	s.Data["json"] = &data
 	s.ServeJSON()
 }

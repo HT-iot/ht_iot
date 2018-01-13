@@ -202,8 +202,6 @@
               {defaultContent: '', targets: ['_all']} //所有列设置默认值为空字符串
             ];
    
-
-
        employee.filed = [
            {"data": "Hospitalname"},
            {"data": "Hospitalzone"},
@@ -218,17 +216,15 @@
                     $(nTd).html("<button type='button' data-toggle='modal' data-target='#patientModal' data-whatever=" + sData + ">修改</button> <button class=‘btn btn-default btn-xs’ type=‘button’ name='buttonitem2' onclick='button2(" + iRow + "," + iCol + ")'>出院</button> ")
 //                    $(nTd).html("<input type='button' class ='btn btn-success btn-sm' value='修改' onclick='button1(" + iRow + ")'>  <input type='button' class ='btn btn-warning btn-sm' value='出院' onclick='button2(" + iRow + ")'>")
 */
-               "data": "Deviceid",
+               "data": "Deviceid", 
                "createdCell": function (nTd, sData, oData, iRow, iCol) {
                     $(nTd).html("<button type='button' data-toggle='modal' id='reload2' data-target='#patientModal' data-whatever="+ sData +">编辑 </button><button type='button'  id='delete' onclick='button2(" + iRow + "," + iCol + ")'>出院</button>")
-
-                }
+                    },
+                "defaultContent":" "
            },
           ];
 
-          employee.buttons =
-            '<button type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>'
-      
+          
        var eloancn = {};
    
        eloancn.table = {
@@ -236,10 +232,12 @@
            statusTitle: "请选择一条数据！"
        };
    
+  //     $("#pattool").append('<button type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>');
+   
        //dataTables方法封装
    
        function dataTablesInit(elo) {
-   
+         
            eloancn.table.grid = $('#' + elo.property.tableId).DataTable({
  //               "processing": true,
                 "serverSide": false,
@@ -248,7 +246,7 @@
                     "type": "Get",
                     "dataType":"json",
                 },     
-           
+                "destroy": true,
                "lengthChange": elo.gridInit.lengthChange,//是否允许用户改变表格每页显示的记录数，默认是开启
                "paging": elo.gridInit.paging,//是否开启本地分页，默认是开启
                "processing": elo.gridInit.processing,//是否显示中文提示
@@ -291,9 +289,10 @@
                },
 //               "dom": "<'#" + elo.property.buttonId + ".col-sm-2'><'row'<'col-sm-2'lf>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
                "dom": "<'row'<'#pattool.col-sm-2'><'col-sm-2'l><'col-sm-8 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
-//               "buttons":        "[ 'colvis' ]",
-              "initComplete": function () {
-                   $("#pattool").append(elo.buttons);
+               "initComplete": function () {
+                   $("#pattool").append('<button type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>');
+                
+
                    if (elo.gridInit.search) {
                        $search = $("input[type='search']");
                        //隐藏默认的搜索框

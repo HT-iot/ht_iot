@@ -217,11 +217,11 @@
             },
         ];
 
-             employee.buttons =
+/*             employee.buttons =
              '<label for="name">请输入导入终端的医院名称：</label> '+
              '<input type = "text" placeholder = "医院名称"  id="hospital_filter"></input>'+
              '<button type="button"  class="btn btn-primary" id="hospital_merge">合并数据</button>';
-      
+*/      
              
            var eloancn = {};
         
@@ -286,9 +286,13 @@
                        }
                    },
 
-                    "dom": "<'row'<'#" + elo.property.buttonId + ".col-sm-6'><'col-sm-3'l><'col-sm-3 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+                    "dom": "<'row'<'#devtool.col-sm-4'><'col-sm-2'l><'col-sm-6 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
                     "initComplete": function () {
-                        $("#" + elo.property.buttonId).append(elo.buttons);
+                        $("#devtool").append('<label for="name">请输入导入终端的医院名称：</label> '+
+             '<input type = "text" placeholder = "医院名称"  id="hospital_filter"></input>'+
+             '<button type="button"  class="btn btn-primary" id="hospital_merge">合并数据</button>');
+  
+  
                         if (elo.gridInit.search) {
                             $search = $("input[type='search']");
                        //隐藏默认的搜索框

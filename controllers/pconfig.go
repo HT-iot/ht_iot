@@ -88,16 +88,19 @@ func (this *PconfigController) PostPat() {
 func (this *PconfigController) GetPat() {
 	logs.Debug("the Patient information")
 	var Mystruct models.HospitalTable
-	var err error
+//	var err error
 	Hospitalslice, err = models.GetAllPatient()
 
-	if err == nil {
+	fmt.Println("Hospitalslice:", len(Hospitalslice))
+	Mystruct.Data = make([]models.HospitalPatientInfo, len(Hospitalslice))
+	copy(Mystruct.Data,Hospitalslice)
+/*	if err == nil {
 		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
 	} else {
-		Mystruct.Data = nil
+		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
 	}
-
-	fmt.Println(Mystruct)
+*/
+	fmt.Println("Mystruct:", Mystruct.Data)
 	this.Data["json"] = &Mystruct
 	this.ServeJSON()
 }

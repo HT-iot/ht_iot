@@ -191,7 +191,7 @@
             ];
 
             table = createTable(columns);
-            console.log(columns);
+//            console.log(columns);
             $("#rebulidTable").click(function () {
                     getbuildtable();
             });
@@ -268,7 +268,7 @@
  
     //公共方法，多次初始化调用
     function createTable(columns) {
-     
+        console.log("xxx=",columns);
         return $("#example").DataTable({
             ajax: '/api/status',
             dataSrc: 'data',
@@ -310,6 +310,9 @@
         });
        
     }
+
+
+
 
     $('#statusModal').on('show.bs.modal', function (event) {  
         console.log("xxx");

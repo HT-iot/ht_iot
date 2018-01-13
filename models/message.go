@@ -93,7 +93,23 @@ type DataTable struct {
 	Data []PatientInfo `json:"data"`
 }
 
+type Warnpara struct{
+	Pulsmin             int16 `json:"pulsmin"`
+	Pulsmax             int16 `json:"pulsmax"`
+	Oxgenmin            int16 `json:"oxgenmin"`
+	Oxgenmax            int16 `json:"oxgenmax"`
+	Pressurelowmin      int16 `json:"pressurelowmin"`
+	Pressurelowmax      int16 `json:"pressurelowmax"`
+	Pressurehighmin     int16 `json:"pressurehighmin"`
+	Pressurehighmax     int16 `json:"pressurehighmax"`
+	Monitoraddress     	string `json:"monitoraddress"`
+	Monitorradius     	int16 `json:"monitorradius"`
+	MonitorLongitude   	float64 `json:"monitorlongitude"`
+	MonitorLatitude     float64  `json:"monitorlatitude"`	
+}
+
 type PatientInfo struct {
+	Runstatus	     string  `json:"runstatus"`
 	Hospitalname     string  `json:"hospitalname"`
 	Hospitalzone     string  `json:"hospitalzone"`
 	Hospitalbed      string  `json:"hospitalbed"`
@@ -102,9 +118,11 @@ type PatientInfo struct {
 	Channelid        string  `json:"channelid"`
 	Deviceid         string  `json:"deviceid"`
 	Puls             float64 `json:"puls"`
-	Pressure         float64 `json:"pressure"`
 	Oxgen            float64 `json:"oxgen"`
-	Position         string  `json:"position"`
+	Pressurelow      float64 `json:"pressurelow"`
+	Pressurehigh     float64 `json:"pressurehigh"`
+	Longitude        float64 `json:"longitude"`
+	Latitude         float64  `json:"latitude"`
 }
 
 const (
@@ -150,12 +168,12 @@ func GetMsg(p *PatientInfo) error {
 		if err := gocqlx.Select(&msg, q.Query); err != nil {
 			log.Error("GetMsg: select Err:" + err.Error())
 		}
-
+//need pressure low
 		if len(msg) != 0 {
-			(*p).Pressure = msg[0].V
+			(*p).Pressurehigh = msg[0].V
 			log.Debug(PressureString + "value is " + strconv.FormatFloat(msg[0].V, 'f', 6, 64))
 		} else {
-			(*p).Pressure = 0
+			(*p).Pressurehigh = 0
 			log.Error("Can't find in DB, set the value to zero")
 		}
 	}

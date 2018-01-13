@@ -4,7 +4,9 @@
   <style type="text/css">
      body {
        padding: 80px 0;
-       vertical-align:middle
+       vertical-align:middle;
+       font-size: medium;
+       font-family: "Microsoft YaHei", Arial, Helvetical, sans-serif, "宋体";
      }   
     </style>
 </head>
@@ -81,51 +83,56 @@
                         <hr><br>
                                <label class="col-sm-4 control-label" for = "name">医院名称</label> 
                                <div class="col-sm-8">
-                                   <input type = "text" placeholder = "请医院名称" id="col1_filter"></input> 
+                                   <input type = "text" placeholder = "请医院名称" id="col01_filter"></input> 
                               </div>
                                
                                <label class="col-sm-4 control-label" for = "name">病 区 号</label> 
                                <div class="col-sm-8">
-                                   <input type = "text"  id="col2_filter" placeholder = "请输入病区号" ></input> 
+                                   <input type = "text"  id="col02_filter" placeholder = "请输入病区号" ></input> 
                                </div>
                        
                                <label class="col-sm-4 control-label" for = "name">病 床 号</label> 
                                <div class="col-sm-8">
-                                   <input type = "text"  id="col3_filter" placeholder = "请输入病床号"></input> 
+                                   <input type = "text"  id="col03_filter" placeholder = "请输入病床号"></input> 
                                </div>
                                <hr><br><br>
 
                                <label class="col-sm-4 control-label" for = "name">患者姓名</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text" data-column="4" id="col4_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                                   <input type = "text" id="col04_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
                                </div> 
                                <label class="col-sm-4 control-label" for = "name">患者性别</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text"  data-column="4" id="col5_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                                   <input type = "text"  data-column="5" id="col05_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
                                </div> 
                                <label class="col-sm-4 control-label" for = "name">患者身份证</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text" data-column="4" id="col6_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                                   <input type = "text" data-column="6" id="col06_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
                                </div> 
                                <hr><br><br>
                                <label class="col-sm-4 control-label" for = "name">终 端 号</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text"  data-column="5" id="col7_filter" placeholder = "请输入终端号" name = "p_device"></input> 
+                                   <input type = "text"  data-column="7" id="col07_filter" placeholder = "请输入终端号" name = "p_device"></input> 
                                </div> 
+                               <input type="text" style="display:none" id="col08_filter" name = "d_deviceid" />
+                               <input type="text" style="display:none" id="col09_filter" name = "d_channelid" />
+<!--                               <input type="text" style="display:none" id="col08_filter" name = "d_device" />   -->
+                               
+
                              </form> 
                             <hr><br><br> <br>
              
                 </div>  
                 <div class="modal-footer">  
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
-                    <button type="button" class="btn btn-primary" onclick="update2()">保存</button>  
+                    <button type="button" class="btn btn-primary" onclick="update2()">更新</button>  
                 </div>  
             </div>  
         </div>  
     </div>  
 
      <div class="container-fluid">
-        <table id="example" class="display">
+        <table id="example" class="display" border="1">
             <thead>
             <tr>
                 <th >医院名称</th>   
@@ -180,20 +187,20 @@
            serverSide: false,
            search: true,
            processing: false,
-           scrollY: 400,
+           scrollY: "100%",
            scrollX: "100%",
            scrollXInner: "100%",
            scrollCollapse: false,
            jQueryUI: false,
            autoWidth: true,
-           autoSearch: false
+           autoSearch: true
        };
    
 
        employee.status = [
-/*           {"searchable": false, "orderable": false, "targets": 0},//第一行不进行排序和搜索
+              {"searchable": false, "orderable": false, "targets": 0},//第一行不进行排序和搜索
               {defaultContent: '', targets: ['_all']} //所有列设置默认值为空字符串
-    */          ];
+            ];
    
 
 
@@ -206,21 +213,21 @@
            {"data": "Hospitaldeviceid"},
            {"data": "Patiententrtime"},
            {
- /*             "data": "Deviceid",
+ /*           "data": "Deviceid",
               "createdCell": function (nTd, sData, oData, iRow, iCol) {
                     $(nTd).html("<button type='button' data-toggle='modal' data-target='#patientModal' data-whatever=" + sData + ">修改</button> <button class=‘btn btn-default btn-xs’ type=‘button’ name='buttonitem2' onclick='button2(" + iRow + "," + iCol + ")'>出院</button> ")
 //                    $(nTd).html("<input type='button' class ='btn btn-success btn-sm' value='修改' onclick='button1(" + iRow + ")'>  <input type='button' class ='btn btn-warning btn-sm' value='出院' onclick='button2(" + iRow + ")'>")
 */
-                "data": "Deviceid",
+               "data": "Deviceid",
                "createdCell": function (nTd, sData, oData, iRow, iCol) {
-                    $(nTd).html("<button type='button' data-toggle='modal' data-target='#patientModal' data-whatever="+ sData +">编辑 </button>")
+                    $(nTd).html("<button type='button' data-toggle='modal' id='reload2' data-target='#patientModal' data-whatever="+ sData +">编辑 </button><button type='button'  id='delete' onclick='button2(" + iRow + "," + iCol + ")'>出院</button>")
 
                 }
            },
           ];
 
           employee.buttons =
-            '<button class="btn btn-primary" type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>'
+            '<button type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>'
       
        var eloancn = {};
    
@@ -238,11 +245,10 @@
                 "serverSide": false,
                 "ajax": {
                     "url": "/api/pconfig",
-                    "type": "POST",
+                    "type": "Get",
                     "dataType":"json",
                 },     
-                "columnDefs": elo.status,//列表状态
-                "columns": elo.filed,//字段
+           
                "lengthChange": elo.gridInit.lengthChange,//是否允许用户改变表格每页显示的记录数，默认是开启
                "paging": elo.gridInit.paging,//是否开启本地分页，默认是开启
                "processing": elo.gridInit.processing,//是否显示中文提示
@@ -254,8 +260,11 @@
                "scrollCollapse": elo.gridInit.scrollCollapse,//设置折叠
                "jQueryUI": elo.gridInit.jQueryUI,//jquery 风格
                "autoWidth": elo.gridInit.autoWidth, //是否自适应宽度
+               "searching":elo.gridInit.searching,
+               "columnDefs": elo.status,//列表状态
+               "columns": elo.filed,//字段
 //               "bSort": false,
-                "buttons":"导出csv",
+              
                 "language": {
                    "sProcessing": "处理中...",
                    "sLengthMenu": "显示 _MENU_ 项结果",
@@ -280,18 +289,20 @@
                        "sSortDescending": ": 以降序排列此列"
                    }
                },
-               "dom": "<'row'<'col-sm-2'l><'#" + elo.property.buttonId + ".col-sm-10'><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
-               "initComplete": function () {
+//               "dom": "<'#" + elo.property.buttonId + ".col-sm-2'><'row'<'col-sm-2'lf>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+               "dom": "<'row'<'#" + elo.property.buttonId + ".col-sm-2'><'col-sm-2'l><'col-sm-8 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+//               "buttons":        "[ 'colvis' ]",
+              "initComplete": function () {
                    $("#" + elo.property.buttonId).append(elo.buttons);
                    if (elo.gridInit.search) {
                        $search = $("input[type='search']");
                        //隐藏默认的搜索框
    
-                       $search.parent().hide();
+ //                      $search.parent().hide();
                    }
                    //加载完成之后 初始化checkbox
    
-                   checkbox(elo.property.tableId);
+//                   checkbox(elo.property.tableId);
    
    
                    $("#reload").click(function () {
@@ -315,7 +326,7 @@
    
                    //checkbox全选
    
-                   $("#" + elo.property.checkAllId).click(function () {
+/*                   $("#" + elo.property.checkAllId).click(function () {
                        if ($(this).prop("checked")) {
                            $("input[name='checkList']").prop("checked", true);
                            $("tr").addClass('selected');
@@ -324,7 +335,7 @@
                            $("tr").removeClass('selected');
                        }
                    });
-   
+*/   
    
                } 
            });
@@ -347,7 +358,7 @@
            });
    
            //鼠标经过高亮
-   
+/*   
            var lastIdx = null;
            eloancn.table.grid.on('mouseover', 'td', function () {
    
@@ -355,7 +366,9 @@
                    var colIdx = eloancn.table.grid.cell(this).index().column;
                    if (colIdx !== lastIdx) {
                        $(eloancn.table.grid.cells().nodes()).removeClass('highlight');
-                       $(eloancn.table.grid.column(colIdx).nodes()).addClass('highlight');
+                       $(eloancn.table.grid.column(colIdx).nodes()).removeClass('highlight');
+//                       $(eloancn.table.grid.column(colIdx).nodes()).addClass('highlight');
+
                    }
                }
            });
@@ -371,7 +384,7 @@
                 filterColumn($(this).attr('data-column'));
             }
         });
-
+*/
          }
 
 //////////////////////
@@ -467,59 +480,7 @@ function checkbox(tableId) {
         }
     }
 
-
-//////////////////////////
-    
-    function button1(iRow){
-
-
-
-        $.ajax({ 
-            type: "post", 
-            url: "/line/pconfig", 
-            dataType:"json" ,
-            data: {
-                action:"Add",
-                id:iRow
-             }, 
-             complete: function(msg){ 
-                var jsonData = eval("("+msg.responseText+")");
-                alert(jsonData.info);
-                if (jsonData.succ  == "nil"){
-                    eloancn.table.grid.clear().draw();
-                }  else {
-                    if (jsonData.succ  == "add"){
-                        reload();
-                        }
-                }
-             
-            }
-        });
-    };
-
-      function button2(iRow){
-        $.ajax({ 
-            type: "post", 
-            url: "/line/pconfig", 
-            dataType:"json" ,
-            data: {
-                action:"Del",
-                id:iRow
-             }, 
-             complete: function(msg){ 
-                var jsonData = eval("("+msg.responseText+")");
-                if (jsonData.succ  == "nil"){
-                    eloancn.table.grid.clear().draw();
-                }  else {
-                    if (jsonData.succ  == "del"){
-                        reload();
-                    }
-                }
-                alert(jsonData.info);
-            }
-        });
-    };
-      
+   
      
        //重新加载数据
    
@@ -534,101 +495,17 @@ function checkbox(tableId) {
            alert (dettable);
            dttable.destroy();
        }
-       
      
         $(document).ready(function(){
               dataTablesInit(employee);
         });
-
-        $("#submit_data_in").click(function(){
-               var col1 =  $("#col1_filter").val();
-            
-               if (col1.length == 0) 
-               {
-                    alert ("请输入医院名");  
-                    return false;
-               }
-               var col2 =  $("#col2_filter").val();
-    
-               if (col2.length ==0) 
-               {
-                    alert ("请输入病区号");  
-                    return false;
-               }
-               var col3 =  $("#col3_filter").val();
-               if (col3.length == 0) 
-               {
-                    alert ("请输入病床号");  
-                    return false;;
-               }
-               var col4 =  $("#col4_filter").val();
-               if (col4.length == 0) 
-               {
-                    alert ("请输入姓名");  
-                    return false;;
-               }
-               var col5 =  $("#col5_filter").val();
-               if (col5.length == 0) 
-               {
-                    alert ("请输入终端号");  
-                    return false;;
-               }
-            $.ajax({ 
-            type: "get", 
-            url: "/api/pconfig", 
-            dataType:"json" ,
-            data: {
-                hospitalname:col1,
-		        hospitalzone:col2,
-                hospitalbed:col3,
-                patientname:col4,
-                hospitaldeviceid:col5
-                }, 
-                complete: function(msg){ 
-                    var jsonData = eval("("+msg.responseText+")");
-                    if (jsonData.succ  == "add"){
-                        reload();
-                    }
-                }
-            });
-        });   
 
         
         $('#exampleModal').on('show.bs.modal', function (event) {  
            var button = $(event.relatedTarget); // 触发事件的按钮  
             var recipient = button.data('whatever'); // 解析出data-whatever内容  
             var modal = $(this);  
- /*           $.ajax({ 
-                type: "get", 
-                url: "/api/pconfig", 
-                dataType:"json",
-                data: {
-                    deviceid:recipient,
-                }, 
-                complete: function(msg){ 
-                        var jsonData = eval("("+msg.responseText+")");
-                        console.log(jsonData[0].Hospitalname);
-                        modal.find('.modal-body #name1').val(jsonData[0].Hospitalname);
-                        modal.find('.modal-body #name2').val(jsonData[0].Hospitaldeviceid); 
-                        modal.find('.modal-body #name3').val(jsonData[0].Deviceid);      
-                        modal.find('.modal-body #name4').val(jsonData[0].Channelid);   
-
-                        modal.find('.modal-body #manufacturer').val(jsonData[0].Manufacturer);      
-                        modal.find('.modal-body #modelnumber').val(jsonData[0].Modelnumber);   
-                        modal.find('.modal-body #firmwareversion').val(jsonData[0].Firmwareversion);      
-                        modal.find('.modal-body #devicetype').val(jsonData[0].Devicetype);   
-
-                        modal.find('.modal-body #availablepowersource').val(jsonData[0].Availablepowersource);      
-                        modal.find('.modal-body #powersourcevoltage').val(jsonData[0].Powersourcevoltage);                   
-                        modal.find('.modal-body #powersourcesurrent').val(jsonData[0].Powersourcesurrent);      
-                        modal.find('.modal-body #batterylevel').val(jsonData[0].Batterylevel);                   
-
-                        modal.find('.modal-body #supportedbindingmodes').val(jsonData[0].Supportedbindingmodes);                   
-                        modal.find('.modal-body #hardwareversion').val(jsonData[0].Hardwareversion);      
-                        modal.find('.modal-body #softwareversion').val(jsonData[0].Softwareversion);  
-                },
-            });
- */
+ 
            modal.find('.modal-title').text('添加新患者信息：')  
 //            modal.find('.modal-body #name3').val(recipient)  
 //            modal.find('.modal-body input').val(recipient)  
@@ -638,7 +515,7 @@ function checkbox(tableId) {
         //提交更改  
     function update() {  
         $.ajax({  
-            type: "get",  
+            type: "post",  
             url: "/api/pconfig", 
             dataType:"json",
             data: {
@@ -660,8 +537,6 @@ function checkbox(tableId) {
         $('#exampleModal').modal('hide');
     };
 
-  
-
         $('#patientModal').on('show.bs.modal', function (event) {  
           var button = $(event.relatedTarget); // 触发事件的按钮  
             var recipient = button.data('whatever'); // 解析出data-whatever内容  
@@ -669,7 +544,7 @@ function checkbox(tableId) {
             modal.find('.modal-title2').text('患者信息更改：' + recipient);
             console.log(recipient);
             $.ajax({ 
-                type: "post", 
+                type: "get", 
                 url: "/line/pconfig", 
                 dataType:"json",
                 data: {
@@ -678,35 +553,41 @@ function checkbox(tableId) {
                 complete: function(msg){ 
                         var jsonData = eval("("+msg.responseText+")");
                         console.log(jsonData);
-                        modal.find('.modal-body #col1_filter').val(jsonData[0].Hospitalname);
-                        modal.find('.modal-body #col2_filter').val(jsonData[0].Hospitalzone); 
-                        modal.find('.modal-body #col3_filter').val(jsonData[0].Hospitalbed);      
-                        modal.find('.modal-body #col4_filter').val(jsonData[0].Patientname);   
+                        modal.find('.modal-body #col01_filter').val(jsonData[0].Hospitalname);
+                        modal.find('.modal-body #col02_filter').val(jsonData[0].Hospitalzone); 
+                        modal.find('.modal-body #col03_filter').val(jsonData[0].Hospitalbed);      
+                        modal.find('.modal-body #col04_filter').val(jsonData[0].Patientname);   
 
-                        modal.find('.modal-body #col5_filter').val(jsonData[0].Patientsex);      
-                        modal.find('.modal-body #col6_filter').val(jsonData[0].Patientid);   
-                        modal.find('.modal-body #col7_filter').val(jsonData[0].Hospitaldeviceid);      
-                       
-                },
+                        modal.find('.modal-body #col05_filter').val(jsonData[0].Patientsex);      
+                        modal.find('.modal-body #col06_filter').val(jsonData[0].Patientid);   
+                        modal.find('.modal-body #col07_filter').val(jsonData[0].Hospitaldeviceid);
+                        modal.find('.modal-body #col08_filter').val(jsonData[0].Deviceid);
+                        modal.find('.modal-body #col09_filter').val(jsonData[0].Channelid);      
+                 },
             });
- 
-//            modal.find('.modal-body #name3').val(recipient)  
-//            modal.find('.modal-body input').val(recipient)  
        });
 
 function update2() {  
+    var buttonp = $("#reload2"); // 触发事件的按钮  
+    var recipient = buttonp.data('whatever'); // 解析出data-whatever内容 
+
+     console.log(buttonp);  
+    console.log(recipient);
+    
     $.ajax({  
-        type: "get",  
+        type: "post",  
         url: "/line/pconfig", 
         dataType:"json",
         data: {
-                    hospitalname:$('#col1_filter').val(),
-                    hospitalzone :$('#col2_filter').val(),
-                    hospitalbed:$('#col3_filter').val(),
-                    patientname:$('#col4_filter').val(),
-                    patientsex:$('#col5_filter').val(),
-                    patientid:$('#col6_filter').val(),
-                    hospitaldeviceid:$('#col7_filter').val()
+                    hospitalname:   $('#col01_filter').val(),
+                    hospitalzone:   $('#col02_filter').val(),
+                    hospitalbed:    $('#col03_filter').val(),
+                    patientname:    $('#col04_filter').val(),
+                    patientsex:     $('#col05_filter').val(),
+                    patientid:      $('#col06_filter').val(),
+                    hospitaldeviceid:$('#col07_filter').val(),
+                    deviceid:       $('#col08_filter').val(),
+                    channelid:       $('#col09_filter').val()
         }, 
         complete: function(msg){ 
             var jsonData = eval("("+msg.responseText+")");

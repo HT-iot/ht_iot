@@ -31,20 +31,101 @@ func (this *OuthospitalController) Get() {
 	//	fmt.Println("Hospital =", Hospital)
 }
 
+
+type Column struct {
+	checkfield [2]string
+	headfield [][2]string 
+}
+
 func (this *OuthospitalController) GetPat() {
 	logs.Debug("Input the data in Pconfig")
+/*	
+	var col [1]Column
+	fmt.Println(col);
 
-	var h models.HospitalPatientInfo
-	{
-		h.Hospitalname = this.GetString("hospitalname")
-		h.Hospitalzone = this.GetString("hospitalzone")
-		h.Hospitalbed = this.GetString("hospitalbed")
-		h.Patientname = this.GetString("patientname")
-		h.Hospitaldeviceid = this.GetString("hospitaldeviceid")
+	col[0].checkfield = [2]string {"hospitalname", "医院名称"}
+	col[0].headfield = [][2]string {{"hospitalname","医院名称"}}
+
+
+	col[1].checkfield[0] = "hospitalzone"
+	col[1].checkfield[1] = "病区号"
+	col[1].headfield[0][0] = "hospitalzone"
+	col[1].headfield[0][1] = "病区号"
+
+	col[2].checkfield[0] = "hospitalbed"
+	col[2].checkfield[1] = "病床号"
+	col[2].headfield[0][0] = "hospitalbed"
+	col[2].headfield[0][1] = "病床号"
+
+	col[3].checkfield[0] = "patientname"
+	col[3].checkfield[1] = "姓名"
+	col[3].headfield[0][0] = "patientname"
+	col[3].headfield[0][1] = "姓名"
+
+	col[4].checkfield[0] = "hospitaldeviceid"
+	col[4].checkfield[1] = "终端号"
+	col[4].headfield[0][0] = "hospitaldeviceid"
+	col[4].headfield[0][1] = "终端号"
+
+	col[5].checkfield[0] = "puls"
+	col[5].checkfield[1] = "脉搏"
+	col[5].headfield[0][0] = "puls"
+	col[5].headfield[0][1] = "脉搏"
+
+	col[6].checkfield[0] = "oxgen"
+	col[6].checkfield[1] = "血氧"
+	col[6].headfield[0][0] = "oxgen"
+	col[6].headfield[0][1] = "血氧"
+
+	col[7].checkfield[0] = "pressure"
+	col[7].checkfield[1] = "血压"
+	col[7].headfield[0][0] = "pressurehigh"
+	col[7].headfield[0][1] = "收缩压"
+	col[7].headfield[1][0] = "pressurelow"
+	col[7].headfield[1][1] = "舒张压"
+
+	col[8].checkfield[0] = "poistion"
+	col[8].checkfield[1] = "位置"
+	col[8].headfield[0][0] = "longitude"
+	col[8].headfield[0][1] = "经度"
+	col[8].headfield[1][0] = "latitude"
+	col[8].headfield[1][1] = "纬度"
+
+
+	col := [][2]string{
+		{"hospitalname","医院名称"},
+		{"hospitalzone", "病区号"}, 
+		{"hospitalbed", "病床号"}, 
+		{"patientname", "姓名"},
+		{"hospitaldeviceid", "终端号"}, 
+		{"puls", "脉搏"}, 
+		{"oxgen", "血氧"},
+		{"pressure", "血压"},
+		{"position", "位置"},
+	
 	}
-	Hospitalslice = append(Hospitalslice, h)
-	Getstruct := In{Succ: "add", Info: ""}
-	this.Data["json"] = &Getstruct
+*/
+	col := [][2]string{
+		{"runstatus","运行状态"},          
+		{"hospitalname","医院名称"},
+		{"hospitalzone", "病区号"}, 
+		{"hospitalbed", "病床号"}, 
+		{"patientname", "姓名"},
+		{"hospitaldeviceid", "终端号"}, 
+		{"puls", "脉搏"}, 
+		{"oxgen", "血氧"},
+		{"pressurehigh", "收缩压"},
+		{"pressurelow", "舒张压"},
+		{"longitude", "经度"},
+	{"latitude", "纬度"},
+	
+	}
+
+
+	//col := []string{"hospitalzone", "hospitalbed", "patientname", "hospitaldeviceid", "puls", "pressure", "oxgen"}
+	//	col := []string{"病区号", "病床号", "姓名", "终端号", "脉搏", "血压", "血氧"}
+
+	this.Data["json"] = &col
 	this.ServeJSON()
 }
 

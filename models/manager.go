@@ -27,7 +27,7 @@ var tables = []string{
 		patientid text,
 		patientsex text,
 		meta map<text, text>,
-		PRIMARY KEY ((hospitalname),id, hospitalzone, patientname, hospitaldeviceid)
+		PRIMARY KEY ((hospitalname),deviceid, channelid)
 		)`,
 
 	`CREATE TABLE IF NOT EXISTS manager.device_info (
@@ -391,41 +391,20 @@ func GetPaientIDs(name, hid string) (ch, de string, hv bool) {
 	return "", "", false
 }
 
-/*
-func GetDeviceInfo(d DeviceInfo) ([]DeviceInfo, error) {
-	// Insert with query parameters bound from struct.
+func UpdatePatient(h HospitalPatientInfo) bool {
+	// // Easy update with all parameters bound from struct.
 
-	log := logs.GetBeeLogger()
-	log.Info("Get Device information")
-	fmt.Println("d =", d)
-
-	sel := qb.Select("device_info").Limit(100).AllowFiltering()
-	if len(d.Hospitalname) != 0 {
-		sel = qb.Select("device_info").Where(qb.Eq("hospitalname")).Limit(100).AllowFiltering()
-		if d.Hospitaldeviceid != 0 {
-			sel.Where(qb.Eq("Hospitaldeviceid"))
-		}
-		if len(d.Channelid) != 0 {
-			sel.Where(qb.Eq("Channelid"))
-		}
-		if len(d.Deviceid) != 0 {
-			sel.Where(qb.Eq("Deviceid"))
-		}
+	//		p.Email = append(p.Email, "patricia1.citzen@gocqlx_test.com")
+	stmt, names := qb.Update("hospital_by_patient").
+		Set("hospitalzone", "hospitalbed", "patientname", "patientsex", "patientid", "hospitaldeviceid").
+		Where(qb.Eq("hospitalname"), qb.Eq("deviceid"), qb.Eq("channelid")).
+		ToCql()
+	fmt.Println("Update h=", h)
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
+	fmt.Println("q=", q)
+	if err := q.ExecRelease(); err != nil {
+		fmt.Println("err=", err)
+		return false
 	}
-
-	stmt, names := sel.ToCql()
-
-	fmt.Println("stmt =", stmt)
-	fmt.Println("names =", names)
-
-	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
-	fmt.Println("q.Query=  ", q.Query)
-	defer q.Release()
-
-	var deviceinfo []DeviceInfo
-	if err := gocqlx.Select(&deviceinfo, q.Query); err != nil {
-		fmt.Println("select Err:", err)
-	}
-	return deviceinfo, nil
+	return true
 }
-*/

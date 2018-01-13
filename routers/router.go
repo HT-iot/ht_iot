@@ -19,14 +19,15 @@ func init() {
 
 	beego.Router("/status", &controllers.StatusController{})
 	beego.Router("/api/status", &controllers.StatusController{}, "get:GetStatus;post:PostStatus")
-
+	beego.Router("/warn/status", &controllers.StatusController{}, "get:GetWarnStatus;post:PostWarnStatus")
+	
 	beego.Router("/pconfig", &controllers.PconfigController{})
 	beego.Router("/api/pconfig", &controllers.PconfigController{}, "get:GetPat;post:PostPat")
-	beego.Router("/line/pconfig", &controllers.PconfigController{}, "post:GetLine;post:PostLine")
+	beego.Router("/line/pconfig", &controllers.PconfigController{}, "get:GetLine;post:PostLine")
 
-	beego.Router("/outhospital", &controllers.OuthospitalController{})
-	beego.Router("/api/outhospital", &controllers.OuthospitalController{}, "get:GetPat;post:PostPat")
-	beego.Router("/line/outhospital", &controllers.OuthospitalController{}, "post:Line")
+//	beego.Router("/outhospital", &controllers.OuthospitalController{})
+//	beego.Router("/api/outhospital", &controllers.OuthospitalController{}, "get:GetPat;post:PostPat")
+//	beego.Router("/line/outhospital", &controllers.OuthospitalController{}, "post:Line")
 
 	beego.Router("/deviceinfo", &controllers.DeviceinfoController{})
 	beego.Router("/api/deviceinfo", &controllers.DeviceinfoController{}, "get:GetModal;post:PostModal")

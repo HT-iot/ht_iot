@@ -53,7 +53,7 @@ func (this *PconfigController) Post() {
 	this.ServeJSON()
 }
 
-func (this *PconfigController) GetPat() {
+func (this *PconfigController) PostPat() {
 	logs.Debug("Input the data in Pconfig")
 	var hv bool
 	var Getstruct In
@@ -85,7 +85,7 @@ func (this *PconfigController) GetPat() {
 	this.ServeJSON()
 }
 
-func (this *PconfigController) PostPat() {
+func (this *PconfigController) GetPat() {
 	logs.Debug("the Patient information")
 	var Mystruct models.HospitalTable
 	var err error
@@ -102,12 +102,44 @@ func (this *PconfigController) PostPat() {
 	this.ServeJSON()
 }
 
-func (this *PconfigController) GetLine() {
-	logs.Debug("Post Line")
+func (this *PconfigController) PostLine() {
+	logs.Debug("Update Line")
+
+	var hv bool
+	var Getstruct In
+	var h models.HospitalPatientInfo
+	{
+		h.Hospitalname = this.GetString("hospitalname")
+		h.Hospitalzone = this.GetString("hospitalzone")
+		h.Hospitalbed = this.GetString("hospitalbed")
+		h.Patientname = this.GetString("patientname")
+		h.Patientsex = this.GetString("patientsex")
+		h.Patientid = this.GetString("patientid")
+		h.Hospitaldeviceid = this.GetString("hospitaldeviceid")
+		h.Deviceid = this.GetString("deviceid")
+		h.Channelid = this.GetString("channelid")
+	}
+
+	//	h.Id = gocql.TimeUUID()
+	//	h.Patiententrtime = time.Now()
+	fmt.Println("h=", h)
+
+	hv = models.UpdatePatient(h)
+	if hv {
+		//	_ = models.InsertPatient(h)
+		Getstruct.Info = "添加成功"
+		Getstruct.Succ = "succ"
+	} else {
+		Getstruct.Info = "无该医院终端ID, 添加失败"
+		Getstruct.Succ = "fail"
+	}
+
+	this.Data["json"] = &Getstruct
+	this.ServeJSON()
 
 }
 
-func (this *PconfigController) PostLine() {
+func (this *PconfigController) GetLine() {
 	logs.Debug("Post Line")
 
 	//	var d models.HospitalPatientInfo
@@ -132,8 +164,8 @@ func (this *PconfigController) PostLine() {
 	} else {
 		Mystruct.Data = nil
 	}
-	fmt.Println("PostLine=", Mystruct)
-	this.Data["json"] = &Mystruct
+	//	fmt.Println("PostLine=", Mystruct)
+	this.Data["json"] = &Hospitalslice
 	this.ServeJSON()
 	/*
 			if (err == nil) {

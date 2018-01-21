@@ -218,7 +218,8 @@
 */
                "data": "Deviceid", 
                "createdCell": function (nTd, sData, oData, iRow, iCol) {
-                    $(nTd).html("<button type='button' data-toggle='modal' id='reload2' data-target='#patientModal' data-whatever="+ sData +">编辑 </button><button type='button'  id='delete' onclick='button2(" + iRow + "," + iCol + ")'>出院</button>")
+                    $(nTd).html("<button type='button'  data-toggle='modal' id='reload2' data-target='#patientModal' data-whatever="+ sData +
+                    ">编辑 </button><button type='button'  id='delete' onclick='button2(" + iRow + "," + iCol + ")'>出院</button>")
                     },
                 "defaultContent":" "
            },
@@ -232,10 +233,7 @@
            statusTitle: "请选择一条数据！"
        };
    
-  //     $("#pattool").append('<button type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>');
-   
-       //dataTables方法封装
-   
+     
        function dataTablesInit(elo) {
          
            eloancn.table.grid = $('#' + elo.property.tableId).DataTable({
@@ -290,7 +288,7 @@
 //               "dom": "<'#" + elo.property.buttonId + ".col-sm-2'><'row'<'col-sm-2'lf>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
                "dom": "<'row'<'#pattool.col-sm-2'><'col-sm-2'l><'col-sm-8 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
                "initComplete": function () {
-                   $("#pattool").append('<button type="button" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>');
+                   $("#pattool").append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>');
                 
 
                    if (elo.gridInit.search) {
@@ -307,34 +305,6 @@
                    $("#reload").click(function () {
                        reload();
                    });
-   
-                   $("#batchIds").click(function () {
-                       batchIds();
-                   });
-   
-                   $("#selection").click(function () {
-                       selection();
-                   });
-                   $("#search").click(function () {
-                       search();
-                   });
-                   $("#clearSearch").click(function () {
-                       clearSearch("form-controlSearch");
-                   });
-   
-   
-                   //checkbox全选
-   
-/*                   $("#" + elo.property.checkAllId).click(function () {
-                       if ($(this).prop("checked")) {
-                           $("input[name='checkList']").prop("checked", true);
-                           $("tr").addClass('selected');
-                       } else {
-                           $("input[name='checkList']").prop("checked", false);
-                           $("tr").removeClass('selected');
-                       }
-                   });
-*/   
    
                } 
            });
@@ -356,34 +326,6 @@
                console.log(json);
            });
    
-           //鼠标经过高亮
-/*   
-           var lastIdx = null;
-           eloancn.table.grid.on('mouseover', 'td', function () {
-   
-               if (typeof(eloancn.table.grid.cell(this).index()) != "undefined") {
-                   var colIdx = eloancn.table.grid.cell(this).index().column;
-                   if (colIdx !== lastIdx) {
-                       $(eloancn.table.grid.cells().nodes()).removeClass('highlight');
-                       $(eloancn.table.grid.column(colIdx).nodes()).removeClass('highlight');
-//                       $(eloancn.table.grid.column(colIdx).nodes()).addClass('highlight');
-
-                   }
-               }
-           });
-   
-           eloancn.table.grid.on('mouseleave', function () {
-               $(eloancn.table.grid.cells().nodes()).removeClass('highlight');
-           });
-           //自动搜索方法
-
-        $('.form-controlSearch').on('keyup change', function () {
-            elo.gridInit.autoSearch = $("#autoSearch").prop("checked");
-            if (elo.gridInit.autoSearch) {
-                filterColumn($(this).attr('data-column'));
-            }
-        });
-*/
          }
 
 //////////////////////
@@ -479,8 +421,7 @@ function checkbox(tableId) {
         }
     }
 
-   
-     
+    
        //重新加载数据
    
        function reload() {
@@ -578,6 +519,7 @@ function update2() {
         url: "/line/pconfig", 
         dataType:"json",
         data: {
+                  
                     hospitalname:   $('#col01_filter').val(),
                     hospitalzone:   $('#col02_filter').val(),
                     hospitalbed:    $('#col03_filter').val(),

@@ -30,105 +30,6 @@ func (this *DeviceinfoController) Get() {
 	}
 }
 
-/*
-	op := this.Input().Get("op")
-
-	fmt.Println("op", op)
-
-	switch op {
-	case "Check":
-		{
-			//		d = this.getfromhtml()
-			d.Hospitalname = this.GetString("hospital_name")
-
-			fmt.Println("Hospitalname", d.Hospitalname)
-			this.Data["Hospitalname"] = d.Hospitalname
-			d.Hospitaldeviceid = this.GetString("hospitaldeviceid")
-			d.Channelid = this.GetString("channel_id")
-			d.Deviceid = this.GetString("device_id")
-			p := models.DeviceInfo{Hospitalname: d.Hospitalname, Hospitaldeviceid: d.Hospitaldeviceid,
-				Channelid: d.Channelid, Deviceid: d.Deviceid}
-			fmt.Println("p", p)
-			Deviceinfo, _ = models.GetDeviceInfo(p)
-			if len(Deviceinfo) > 0 {
-				id = 0
-				//				d = Deviceinfo[id]
-				this.writetohtml(id)
-			} else {
-				id = -1
-				this.Data["hospital_name_v"] = d.Hospitalname
-				this.Data["hospitaldeviceid_v"] = d.Hospitaldeviceid
-				this.Data["device_id_v"] = d.Deviceid
-				this.Data["channel_id_v"] = d.Channelid
-			}
-			break
-		}
-
-	case "Update":
-		{
-			d = this.getfromhtml()
-			d.Id = Deviceinfo[id].Id
-			_ = models.UpdateDeviceItem(d)
-			//	this.Data["hospital_value"] = Deviceinfo[id].Hospitalname
-			Deviceinfo, _ = models.GetDeviceInfo(d)
-			if len(Deviceinfo) > 0 {
-				id = 0
-				//				d = Deviceinfo[id]
-				this.writetohtml(id)
-			} else {
-				id = -1
-				this.Data["hospital_name_v"] = d.Hospitalname
-				this.Data["hospitaldeviceid_v"] = d.Hospitaldeviceid
-				this.Data["device_id_v"] = d.Deviceid
-				this.Data["channel_id_v"] = d.Channelid
-			}
-			break
-		}
-	case "Edit":
-		{
-			id, _ = this.GetInt("id")
-			fmt.Println("id", id)
-			this.writetohtml(id)
-			break
-		}
-	case "Merge":
-		{
-			str := this.Input().Get("hospital_name")
-			fmt.Println("str", str)
-			_ = models.InputDevices(str)
-			p := models.DeviceInfo{Hospitalname: d.Hospitalname}
-			Deviceinfo, _ = models.GetDeviceInfo(p)
-			fmt.Println("Deviceinfo", Deviceinfo)
-			if len(Deviceinfo) > 0 {
-				id = 0
-				//				d = Deviceinfo[id]
-				this.writetohtml(id)
-			} else {
-				id = -1
-			}
-			break
-
-			break
-		}
-	default:
-		{
-			if id >= 0 {
-				this.writetohtml(id)
-			}
-			break
-
-		}
-	}
-	//	this.Ctx.WriteString(fmt.Sprint(Hospitalslice))
-	//	fmt.Println(Hospitalslice)
-	//	this.Data["IsPconfig"] = true
-	//	this.Data["Deviceinfo"] = &Deviceinfo
-	//		fmt.Println("IsLogin1:  ", IsLogin)
-	this.Data["Deviceinfo"] = &Deviceinfo
-	this.TplName = "deviceinfo.html"
-
-}
-*/
 
 func (this *DeviceinfoController) Post() {
 	this.TplName = "deviceinfo.html"
@@ -140,15 +41,7 @@ func (this *DeviceinfoController) Post() {
 	fmt.Println("Hospitalslice:", len(Deviceinfo))
 	Mystruct.Data = make([]models.DeviceInfo, len(Deviceinfo))
 	copy(Mystruct.Data,Deviceinfo)
-/*
-
-
-	if len(Deviceinfo) > 0 {
-		Mystruct.Data = append(Mystruct.Data, Deviceinfo...)
-	} else {
-		Mystruct.Data = nil
-	}
-*/	this.Data["json"] = &Mystruct
+	this.Data["json"] = &Mystruct
 	this.ServeJSON()
 }
 
@@ -238,3 +131,4 @@ func (this *DeviceinfoController) getfromhtml() models.DeviceInfo {
 
 	return h
 }
+

@@ -90,20 +90,27 @@ type Message struct {
 */
 
 type DataTable struct {
-	Data []PatientInfo `json:"data"`
+/*	Totalpatient	int `json:"totalpatient"`
+	Totaluses		int `json:"totaluses"`
+	Totalunuses		int `json:"totalunuses"`
+	Totalurgent		int `json:"totalurgent"`
+	Totalpuls		int `json:"totalpuls"`
+	Totaloxgen		int `json:"totaloxgen"`
+	Totalpress		int `json:"totalpress"`
+*/	Data 			[]PatientInfo `json:"data"`
 }
 
 type Warnpara struct{
-	Pulsmin             int16 `json:"pulsmin"`
-	Pulsmax             int16 `json:"pulsmax"`
-	Oxgenmin            int16 `json:"oxgenmin"`
-	Oxgenmax            int16 `json:"oxgenmax"`
-	Pressurelowmin      int16 `json:"pressurelowmin"`
-	Pressurelowmax      int16 `json:"pressurelowmax"`
-	Pressurehighmin     int16 `json:"pressurehighmin"`
-	Pressurehighmax     int16 `json:"pressurehighmax"`
+	Pulsmin             float64 `json:"pulsmin"`
+	Pulsmax             float64 `json:"pulsmax"`
+	Oxgenmin            float64 `json:"oxgenmin"`
+	Oxgenmax            float64 `json:"oxgenmax"`
+	Pressurelowmin      float64 `json:"pressurelowmin"`
+	Pressurelowmax      float64 `json:"pressurelowmax"`
+	Pressurehighmin     float64 `json:"pressurehighmin"`
+	Pressurehighmax     float64 `json:"pressurehighmax"`
 	Monitoraddress     	string `json:"monitoraddress"`
-	Monitorradius     	int16 `json:"monitorradius"`
+	Monitorradius     	float64 `json:"monitorradius"`
 	MonitorLongitude   	float64 `json:"monitorlongitude"`
 	MonitorLatitude     float64  `json:"monitorlatitude"`	
 }
@@ -122,7 +129,8 @@ type PatientInfo struct {
 	Pressurelow      float64 `json:"pressurelow"`
 	Pressurehigh     float64 `json:"pressurehigh"`
 	Longitude        float64 `json:"longitude"`
-	Latitude         float64  `json:"latitude"`
+	Latitude         float64 `json:"latitude"`
+	Ops 			 string  `json:"ops"`	
 }
 
 const (

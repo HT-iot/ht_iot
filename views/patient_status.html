@@ -21,11 +21,36 @@
             font-family: "Microsoft YaHei", Arial, Helvetical, sans-serif, "宋体";
         }
     </style>
-
+   
 </head>
 
 {{template "navbar" .}}
 <body>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/highcharts-more.js"></script>  
+        <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+
+        <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="recordModalLabel">  
+            <div class="modal-dialog  modal-md" role="document">  
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span  
+                            aria-hidden="true">×</span></button>  
+                        <h4 class="modal-title" id="statusModalLabel">记录浏览</h4>  
+                    </div>  
+                    <div class="modal-body">  
+                        
+                    </div>     
+                    <div class="modal-footer">  
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
+<!---                        <button type="button" class="btn btn-primary" onclick="update()">保存</button>  -->
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+
+
+
         <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel">  
                 <div class="modal-dialog  modal-md" role="document">  
                     <div class="modal-content">  
@@ -37,51 +62,65 @@
                         <div class="modal-body">  
                             
                             <h3 class = "text-center" >体征参数设置</h3> <br>
+                             <table class="formdata"> 
+                                    <tr > 
+                                        <th class="col-sm-2 col-md-offset-2"></th>
+                                        <th align="center"scope="col" class="col-sm-3 "></th> 
+                                        <th scope="col" class="col-sm-3"></th> 
+                                    </tr> 
+                                <tr> 
+                                    <th scope="row" class="col-sm-2 col-md-offset-2 text-right">病区号:</th> 
+                                    <td><input type="text" name="hospital_zone" id="hospital_zone"/></td> 
+                                    <td></td>
+                                </tr> 
+                            </table> 
+                            <br> 
+                            <p></p>    
+                            
                             <table class="formdata"> 
                                 <tr > 
                                     <th class="col-sm-2 col-md-offset-2"></th>
                                     <th align="center"scope="col" class="col-sm-3 ">下限</th> 
                                     <th scope="col" class="col-sm-3">上限</th> 
                                 </tr> 
-                            <tr> 
-                                <th scope="row" class="col-sm-2 col-md-offset-2  text-right">脉搏：</th> 
+                                <tr> 
+                                    <th scope="row" class="col-sm-2 col-md-offset-2  text-right">脉搏：</th> 
                                     <td><input type="number" name="puls_min" id="puls_min"/></td> 
                                     <td><input type="number" name="puls_max" id="puls_max"/></td> 
-                            </tr> 
-                            <tr> 
-                                <th scope="row"  class="col-sm-2 col-md-offset-2  text-right">血氧：</th> 
+                                </tr> 
+                                <tr> 
+                                    <th scope="row"  class="col-sm-2 col-md-offset-2  text-right">血氧：</th> 
                                     <td><input type="number" name="oxgen_min" id="oxgen_min"/></td> 
                                     <td><input type="number" name="oxgen_max" id="oxgen_max"/></td> 
-                            </tr> 
-                            <tr> 
-                                <th scope="row" class="col-sm-2 col-md-offset-2 text-right">舒张压：</th> 
+                                </tr> 
+                                <tr> 
+                                    <th scope="row" class="col-sm-2 col-md-offset-2 text-right">舒张压：</th> 
                                     <td><input type="number" name="pressurelow_min" id="pressurelow_min"/></td> 
                                     <td><input type="number" name="pressurelow_max" id="pressurelow_max"/></td> 
-                            </tr> 
-                            <tr> 
-                                <th scope="row" class="col-sm-2 col-md-offset-2  text-right">收缩压：</th> 
+                                </tr> 
+                                <tr> 
+                                    <th scope="row" class="col-sm-2 col-md-offset-2  text-right">收缩压：</th> 
                                     <td><input type="number" name="pressurehigh_min" id="pressurehigh_min"/></td> 
                                     <td><input type="number" name="pressurehigh_max" id="pressurehigh_max"/></td> 
-                            </tr> 
-                        </table> 
+                                </tr> 
+                            </table> 
+                            <br> 
+                            <p></p> 
 
-                        <br> 
-                        <p></p> 
-
-                        <table class="formdata"> 
-                            <h3 class = "text-center" >位置参数设置</h3> <br>
-                            <tr> 
-                                <th class="col-sm-2 col-md-offset-2"></th>
-                                <th scope="col" class="col-sm-3">中心点地址</th> 
-                                <th scope="col" class="col-sm-3">限制半径</th>
-                            </tr> 
-                            <tr> 
-                                <th scope="row"  class="col-sm-2 col-md-offset-2  text-right">位置：</th> 
-                                <td><input type="text" name="monitor_address" id="monitor_address"/></td> 
-                                <td><input type="number" name="monitor_radius" id="monitor_radius"/></td> 
-                            </tr> 
-                        </table> 
-                             <hr><br><br> <br>
+                            <table class="formdata"> 
+                                <h3 class = "text-center" >位置参数设置</h3> <br>
+                                <tr> 
+                                    <th class="col-sm-2 col-md-offset-2"></th>
+                                    <th scope="col" class="col-sm-3">中心点地址</th> 
+                                    <th scope="col" class="col-sm-3">限制半径</th>
+                                </tr> 
+                                <tr> 
+                                    <th scope="row"  class="col-sm-2 col-md-offset-2  text-right">位置：</th> 
+                                    <td><input type="text" name="monitor_address" id="monitor_address"/></td> 
+                                    <td><input type="number" name="monitor_radius" id="monitor_radius"/></td> 
+                                </tr> 
+                            </table> 
+                             <br><br><br>
                      
                         </div>  
                         <div class="modal-footer">  
@@ -92,8 +131,11 @@
                 </div>  
             </div>  
    
-    <div class="container-fluid">
- 
+    <div class="container">
+        <div id="container-urgent" style="width: 200px; height: 150px; float: left"></div>
+        <div id="container-detach" style="width: 200px; height: 150px; float: left"></div>
+        <div id="container-puls" style="width: 200px; height: 150px; float: left"></div>
+        <div id="container-oxgen" style="width: 200px; height: 150px; float: left"></div>
     </div>
 
     <div class="container-fluid">
@@ -101,16 +143,31 @@
             <ul id="dynamicColumns"></ul>
             <button id="rebulidTable">   重建</button>
             <br><br>
-        <!--table里不需要写th-->
-<!--        <table id="example" class="table table-striped table-bordered" border="1">  -->
-                <table id="example" class="display" border="1">
+            <table id="example" class="display" border="1">
         </table>
     </div>
 
     <script>
         var table;
         var int0;
-        var colunmsStr = "runstatus,hospitalname，hospitalzone,hospitalbed,patientname,hospitaldeviceid,puls, oxgen,pressurehigh,pressurelow,longitude,latitude";
+        var Totalpatient, Totaloxgen, Totalpuls,Totalurgent,Totaluses,Totalunuses,Totalpress;               
+
+        var hospitalconfig = {
+            "hospitalname":"",
+            "hospitalzone":"",
+            "pulsmin":50,
+            "pulsmax":120,
+            "oxgenmin":90,
+            "oxgenmax":110,
+            "pressurelowmin":50,
+            "pressurelowmax":120,
+            "pressurehighmin":70,
+            "pressurehighmax":200,
+            "monitoraddress":"",
+            "monitorradius":9999999
+        };
+
+        var colunmsStr = "runstatus,hospitalname，hospitalzone,hospitalbed,patientname,hospitaldeviceid,puls, oxgen,pressurehigh,pressurelow,longitude,latitude,ops";
         var columsName = {
             "runstatus": "运行状态",            
             "hospitalname": "医院名称",
@@ -124,81 +181,139 @@
             "pressurelow": "舒张压",
             "longitude":"经度",
             "latitude":"纬度",
+            "ops":"操作",
           };
 
           var  createdCellName = {
             "runstatus": (function(td, cellData, rowData, row, col){
-                if (rowData.hospitalbed == '124' ){
+                if (((rowData.hospitalbed != '')&&(rowData.patientname != '')) &&
+                    ((rowData.puls >= hospitalconfig.pulsmax)||(rowData.puls <= hospitalconfig.pulsmin) ||
+                    (rowData.oxgen >= hospitalconfig.oxgenmax)||(rowData.oxgen <= hospitalconfig.oxgenmin) ||
+                    (rowData.pressurehigh >= hospitalconfig.pressurehighmax)||(rowData.pressurehigh <= hospitalconfig.pressurehighmin)||
+                    (rowData.pressurelow >= hospitalconfig.pressurelowmax)||(rowData.pressurelow <= hospitalconfig.Pressurelowmin)))
+                {          
                     $(td).html('离线');
-                    $(td).parents().css('background-color', 'blue'); 
-                    $(td).css('background-color', 'blue');};
-                    }),
-            "hospitalname": (function(td, cellData, rowData, row, col){}),
-            "hospitalzone": (function(td, cellData, rowData, row, col){}),
-            "hospitalbed": (function(td, cellData, rowData, row, col){}),
-            "patientname": (function(td, cellData, rowData, row, col){}),
-            "hospitaldeviceid": (function(td, cellData, rowData, row, col){}),
-            "puls": (function(td, cellData, rowData, row, col){}),
-            "oxgen":(function(td, cellData, rowData, row, col){}),
-            "pressurehigh":(function(td, cellData, rowData, row, col){}),
-            "pressurelow":(function(td, cellData, rowData, row, col){}),
+//                    $(td).parents().css('background-color', 'pink'); 
+                    $(td).css('background-color', 'pink');};
+                }),
+            "hospitalname": (function(td, cellData, rowData, row, col){
+                if (((rowData.hospitalbed != '')&&(rowData.patientname != '')) &&
+                    ((rowData.puls >= hospitalconfig.pulsmax)||(rowData.puls <= hospitalconfig.pulsmin) ||
+                    (rowData.oxgen >= hospitalconfig.oxgenmax)||(rowData.oxgen <= hospitalconfig.oxgenmin) ||
+                    (rowData.pressurehigh >= hospitalconfig.pressurehighmax)||(rowData.pressurehigh <= hospitalconfig.pressurehighmin)||
+                    (rowData.pressurelow >= hospitalconfig.pressurelowmax)||(rowData.pressurelow <= hospitalconfig.Pressurelowmin)))
+                {          
+                    $(td).css('background-color', 'pink');};
+                }),
+            "hospitalzone": (function(td, cellData, rowData, row, col){
+                if (((rowData.hospitalbed != '')&&(rowData.patientname != '')) &&
+                    ((rowData.puls >= hospitalconfig.pulsmax)||(rowData.puls <= hospitalconfig.pulsmin) ||
+                    (rowData.oxgen >= hospitalconfig.oxgenmax)||(rowData.oxgen <= hospitalconfig.oxgenmin) ||
+                    (rowData.pressurehigh >= hospitalconfig.pressurehighmax)||(rowData.pressurehigh <= hospitalconfig.pressurehighmin)||
+                    (rowData.pressurelow >= hospitalconfig.pressurelowmax)||(rowData.pressurelow <= hospitalconfig.Pressurelowmin)))
+                {          
+                    $(td).css('background-color', 'pink');};
+                }),
+           
+            "hospitalbed": (function(td, cellData, rowData, row, col){
+                if (((rowData.hospitalbed != '')&&(rowData.patientname != '')) &&
+                    ((rowData.puls >= hospitalconfig.pulsmax)||(rowData.puls <= hospitalconfig.pulsmin) ||
+                    (rowData.oxgen >= hospitalconfig.oxgenmax)||(rowData.oxgen <= hospitalconfig.oxgenmin) ||
+                    (rowData.pressurehigh >= hospitalconfig.pressurehighmax)||(rowData.pressurehigh <= hospitalconfig.pressurehighmin)||
+                    (rowData.pressurelow >= hospitalconfig.pressurelowmax)||(rowData.pressurelow <= hospitalconfig.Pressurelowmin)))
+                {          
+                    $(td).css('background-color', 'pink');};
+                }),
+
+            "patientname": (function(td, cellData, rowData, row, col){
+                if (((rowData.hospitalbed != '')&&(rowData.patientname != '')) &&
+                    ((rowData.puls >= hospitalconfig.pulsmax)||(rowData.puls <= hospitalconfig.pulsmin) ||
+                    (rowData.oxgen >= hospitalconfig.oxgenmax)||(rowData.oxgen <= hospitalconfig.oxgenmin) ||
+                    (rowData.pressurehigh >= hospitalconfig.pressurehighmax)||(rowData.pressurehigh <= hospitalconfig.pressurehighmin)||
+                    (rowData.pressurelow >= hospitalconfig.pressurelowmax)||(rowData.pressurelow <= hospitalconfig.Pressurelowmin)))
+                {          
+                    $(td).css('background-color', 'pink');};
+                }),
+            
+            "hospitaldeviceid": (function(td, cellData, rowData, row, col){
+                if (((rowData.hospitalbed != '')&&(rowData.patientname != '')) &&
+                    ((rowData.puls >= hospitalconfig.pulsmax)||(rowData.puls <= hospitalconfig.pulsmin) ||
+                    (rowData.oxgen >= hospitalconfig.oxgenmax)||(rowData.oxgen <= hospitalconfig.oxgenmin) ||
+                    (rowData.pressurehigh >= hospitalconfig.pressurehighmax)||(rowData.pressurehigh <= hospitalconfig.pressurehighmin)||
+                    (rowData.pressurelow >= hospitalconfig.pressurelowmax)||(rowData.pressurelow <= hospitalconfig.Pressurelowmin)))
+                {          
+                    $(td).css('background-color', 'pink');};
+                }),
+            
+            "puls": (function(td, cellData, rowData, row, col){
+                if (rowData.puls >= hospitalconfig.pulsmax){
+                    $(td).css('background-color', 'red');};
+                if (rowData.puls <= hospitalconfig.pulsmin){
+                    $(td).css('background-color', 'yellow');};
+                }),
+            "oxgen":(function(td, cellData, rowData, row, col){
+                if (rowData.oxgen >= hospitalconfig.oxgenmax){
+                    $(td).css('background-color', 'red');};
+                if (rowData.oxgen <= hospitalconfig.oxgenmin){
+                    $(td).css('background-color', 'yellow');};
+                }),
+            "pressurehigh":(function(td, cellData, rowData, row, col){
+                if (rowData.pressurehigh >= hospitalconfig.pressurehighmax){
+                    $(td).css('background-color', 'red');};
+                if (rowData.pressurehigh <= hospitalconfig.pressurehighmin){
+                    $(td).css('background-color', 'yellow');};
+            }),
+
+            "pressurelow":(function(td, cellData, rowData, row, col){
+                if (rowData.pressurelow >= hospitalconfig.pressurelowmax){
+                    $(td).css('background-color', 'red');};
+                if (rowData.pressurelow <= hospitalconfig.Pressurelowmin){
+                    $(td).css('background-color', 'yellow');};
+            }),
             "longitude":(function(td, cellData, rowData, row, col){}),
             "latitude":(function(td, cellData, rowData, row, col){}),
+            "ops":(function(td, cellData, rowData, row, col){
+                $(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever="+ cellData +">当天记录</button>" +
+                "<button type='button' id='record5' onclick='button2(" + row + "," + col + ")'>五天记录</button>")
+            }),
           };
-      
-
+ 
         var status = [
               {"searchable": false, "orderable": false, "targets": 0},//第一行不进行排序和搜索
               {defaultContent: '', targets: ['_all']} //所有列设置默认值为空字符串
             ];
 
         $(function () {
+            getHospitalconfig();
             getAllColumnsName();
+   
  //第一次初始化,加载所有列
-/*            var columns = [
-                {"data": "runstatus", "title": columsName["runstatus"],  "createdCell": function (td, cellData, rowData, row, col) {
-                     console.log(cellData);
-                     if ( rowData.hospitalbed == "124" ){ 
-                        cellData = "Run"; $(td).parents().css('background-color', 'blue'); $(td).css('background-color', 'blue');
-                        };
-                    }},
-                {"data": "hospitalname", "title": columsName["hospitalname"]},
-                {"data": "hospitalzone", "title": columsName["hospitalzone"]},
-                {"data": "hospitalbed", "title": columsName["hospitalbed"]},
-                {"data": "patientname", "title": columsName["patientname"]},
-                {"data": "hospitaldeviceid", "title": columsName["hospitaldeviceid"]},
-                {"data": "puls", "title": columsName["puls"]},
-                {"data": "oxgen", "title": columsName["oxgen"]},
-                {"data": "pressurehigh", "title": columsName["pressurehigh"]},
-                {"data": "pressurelow", "title": columsName["pressurelow"]},
-                {"data": "longitude", "title": columsName["longitude"]},
-                {"data": "latitude", "title": columsName["latitude"]},
-            ];
-*/            var columns = [
+            var columns = [
                 {"data": "runstatus", "title": columsName["runstatus"],"createdCell":createdCellName["runstatus"]},
                 {"data": "hospitalname", "title": columsName["hospitalname"],"createdCell":createdCellName["hospitalname"]},
-//                {"data": "hospitalname", "title": columsName["hospitalname"],"createdCell":createdCellName["runstatus"]},
                 {"data": "hospitalzone", "title": columsName["hospitalzone"],"createdCell":createdCellName["hospitalzone"]},
-                {"data": "hospitalbed", "title": columsName["hospitalbed"],"createdCell":createdCellName["runstatus"]},
-                {"data": "patientname", "title": columsName["patientname"],"createdCell":createdCellName["runstatus"]},
-                {"data": "hospitaldeviceid", "title": columsName["hospitaldeviceid"],"createdCell":createdCellName["runstatus"]},
-                {"data": "puls", "title": columsName["puls"],"createdCell":createdCellName["runstatus"]},
-                {"data": "oxgen", "title": columsName["oxgen"],"createdCell":createdCellName["runstatus"]},
-                {"data": "pressurehigh", "title": columsName["pressurehigh"],"createdCell":createdCellName["runstatus"]},
-                {"data": "pressurelow", "title": columsName["pressurelow"],"createdCell":createdCellName["runstatus"]},
-                {"data": "longitude", "title": columsName["longitude"],"createdCell":createdCellName["runstatus"]},
-                {"data": "latitude", "title": columsName["latitude"],"createdCell":createdCellName["runstatus"]},
+                {"data": "hospitalbed", "title": columsName["hospitalbed"],"createdCell":createdCellName["hospitalbed"]},
+                {"data": "patientname", "title": columsName["patientname"],"createdCell":createdCellName["patientname"]},
+                {"data": "hospitaldeviceid", "title": columsName["hospitaldeviceid"],"createdCell":createdCellName["hospitaldeviceid"]},
+                {"data": "puls", "title": columsName["puls"],"createdCell":createdCellName["puls"]},
+                {"data": "oxgen", "title": columsName["oxgen"],"createdCell":createdCellName["oxgen"]},
+                {"data": "pressurehigh", "title": columsName["pressurehigh"],"createdCell":createdCellName["pressurehigh"]},
+                {"data": "pressurelow", "title": columsName["pressurelow"],"createdCell":createdCellName["pressurehigh"]},
+                {"data": "longitude", "title": columsName["longitude"],"createdCell":createdCellName["longitude"]},
+                {"data": "latitude", "title": columsName["latitude"],"createdCell":createdCellName["latitude"]},
+                {"data": "ops", "title": columsName["ops"],"createdCell":createdCellName["ops"]},
             ];
 
             table = createTable(columns);
-//            console.log(columns);
+            chartdiagram();
             $("#rebulidTable").click(function () {
                     getbuildtable();
             });
-
+         
             int0 = setInterval(function () {
+                chartdiagram();
                 table.ajax.reload();
-            }, 10000);
+            }, 100000);
          });
 
 
@@ -229,7 +344,6 @@
             table = createTable(columnsArray);
         };
 
-
     function getAllColumnsName(){
             $.ajax({
             type: "post",  
@@ -245,6 +359,18 @@
                 }
             }
         });
+    }
+
+function  getHospitalconfig(){
+    $.ajax({
+            type: "get",  
+            url: "/info/status",
+            dataType:"json",
+            complete: function(msg){ 
+                var jsonData = eval("("+msg.responseText+")");
+                    hospitalconfig = jsonData;
+           }
+       });
     }
 
     var gridInit = {
@@ -263,15 +389,20 @@
            autoWidth: true,
            autoSearch: true
        };
-
-    
  
     //公共方法，多次初始化调用
     function createTable(columns) {
-        console.log("xxx=",columns);
+//        console.log("xxx=",columns);
         return $("#example").DataTable({
-            ajax: '/api/status',
-            dataSrc: 'data',
+                "ajax":{
+                    url: '/api/status',
+                    type: "get",  
+                    dataType:"json",
+                    dataSrc: "data",
+//                    function(msg){ 
+//                                                return msg.data;
+//                }
+                },
             //因为需要多次初始化，所以需要设置允许销毁实例
             "destroy": true,
             //列的配置信息通过变量传进来
@@ -303,77 +434,371 @@
                 }
             },
             "dom": "<'row'<'#mytool.col-sm-2'><'col-sm-4'l><'col-sm-6 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
-            "initComplete": function () {
-                $("#mytool").append('<button type="button" id="reload" data-toggle="modal" data-target="#statusModal">告警设置</button>'); 
- //               $("#mytool").append(dynamicColumns);
+            "initComplete": function (msg) {
+                $("#mytool").append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#statusModal">告警设置</button>'); 
+//                console.log(msg);
             }
+          
         });
-       
     }
 
-
-
-
     $('#statusModal').on('show.bs.modal', function (event) {  
-        console.log("xxx");
-    
-    
-    $.ajax({  
-        type: "post",  
-        url: "/warn/status", 
-        dataType:"json",
-        data: {
-                    pulsmin:            $('#puls_min').val(),
-                    pulsmax:            $('#puls_max').val(),
-                    oxgenmin:           $('#oxgen_min').val(),
-                    oxgenmax:           $('#oxgen_max').val(),
-                    ressurelowmin:      $('#ressurelow_min').val(),
-                    pressurelowmax:     $('#pressurelow_max').val(),
-                    pressurehighmin:    $('#pressurehigh_min').val(),
-                    pressurehighmax:    $('#pressurehigh_max').val(),
-                    monitoraddress:     $('#monitor_address').val(),
-                    monitorradius:      $('#monitor_radius').val()
-        }, 
-        complete: function(msg){ 
-            var jsonData = eval("("+msg.responseText+")");
-            console.log(jsonData.succ);    
-            alert(jsonData.info);
-            reload();
-        }  
-    });  
-    $('#patientModal').modal('hide');
+        var modal = $(this);
+        modal.find('.modal-title').text(hospitalconfig.hospitalname + ' ' + ' 患者告警信息');
+        modal.find('.modal-body #puls_min').val(hospitalconfig.hospitalzone);
   
-   /*      
-          var button = $(event.relatedTarget); // 触发事件的按钮  
-            var recipient = button.data('whatever'); // 解析出data-whatever内容  
-            var modal = $(this);  
-            modal.find('.modal-title2').text('患者信息更改：' + recipient);
-            console.log(recipient);
-            $.ajax({ 
-                type: "get", 
-                url: "/line/pconfig", 
-                dataType:"json",
-                data: {
-                    deviceid:recipient,
-                },
-                complete: function(msg){ 
-                        var jsonData = eval("("+msg.responseText+")");
-                        console.log(jsonData);
-                        modal.find('.modal-body #col01_filter').val(jsonData[0].Hospitalname);
-                        modal.find('.modal-body #col02_filter').val(jsonData[0].Hospitalzone); 
-                        modal.find('.modal-body #col03_filter').val(jsonData[0].Hospitalbed);      
-                        modal.find('.modal-body #col04_filter').val(jsonData[0].Patientname);   
+        modal.find('.modal-body #puls_min').val(hospitalconfig.pulsmin);
+        modal.find('.modal-body #puls_max').val(hospitalconfig.pulsmax); 
 
-                        modal.find('.modal-body #col05_filter').val(jsonData[0].Patientsex);      
-                        modal.find('.modal-body #col06_filter').val(jsonData[0].Patientid);   
-                        modal.find('.modal-body #col07_filter').val(jsonData[0].Hospitaldeviceid);
-                        modal.find('.modal-body #col08_filter').val(jsonData[0].Deviceid);
-                        modal.find('.modal-body #col09_filter').val(jsonData[0].Channelid);      
-                 },
-            });
-     */
-       });
+        modal.find('.modal-body #oxgen_min').val(hospitalconfig.oxgenmin);
+        modal.find('.modal-body #oxgen_max').val(hospitalconfig.oxgenmax); 
 
+        modal.find('.modal-body #pressurelow_min').val(hospitalconfig.pressurelowmin);
+        modal.find('.modal-body #pressurelow_max').val(hospitalconfig.pressurelowmax); 
+
+        modal.find('.modal-body #pressurehigh_min').val(hospitalconfig.pressurehighmin);
+        modal.find('.modal-body #pressurehigh_max').val(hospitalconfig.pressurehighmax); 
+
+        modal.find('.modal-body #monitor_address').val(hospitalconfig.monitoraddress);
+        modal.find('.modal-body #monitor_radius').val(hospitalconfig.monitorradius); 
+        
+    });
+
+
+    function update() {  
+    
+        var modal = $(this);
+  
+        hospitalconfig.hospitalzone = $('.modal-body #hospital_zone').val();
+        hospitalconfig.pulsmin = $('.modal-body #puls_min').val();
+        hospitalconfig.pulsmax = $('.modal-body #puls_max').val(); 
+
+        hospitalconfig.oxgenmin = $('.modal-body #oxgen_min').val();
+        hospitalconfig.oxgenmax = $('.modal-body #oxgen_max').val(); 
+
+        hospitalconfig.pressurelowmin = $('.modal-body #pressurelow_min').val();
+        hospitalconfig.pressurelowmax = $('.modal-body #pressurelow_max').val(); 
+
+        hospitalconfig.pressurehighmin = $('.modal-body #pressurehigh_min').val();
+        hospitalconfig.pressurehighmax = $('.modal-body #pressurehigh_max').val(); 
+
+        hospitalconfig.monitoraddress = $('.modal-body #monitor_address').val();
+        hospitalconfig.monitorradius = $('.modal-body #monitor_radius').val(); 
+ 
+        console.log(hospitalconfig);
+        $.ajax({  
+            type: "post",  
+            url: "/info/status", 
+            dataType:"json",
+            data: {
+                Hospitalname:hospitalconfig.hospitalname,
+                Hospitalzone:hospitalconfig.hospitalzone,
+                Pulsmin:hospitalconfig.pulsmin,
+                Pulsmax:hospitalconfig.pulsmax,
+                Oxgenmin:hospitalconfig.oxgenmin,
+                Oxgenmax:hospitalconfig.oxgenmax,
+            
+                Pressurelowmin:hospitalconfig.pressurelowmin,
+                Pressurelowmax:hospitalconfig.pressurelowmax,
+                Pressurehighmin:hospitalconfig.pressurehighmin,
+                Pressurehighmax:hospitalconfig.pressurehighmax,
+
+                Monitoraddress:hospitalconfig.monitoraddress,
+                Monitorradius:hospitalconfig.monitorradius,
+            }, 
+            complete: function(msg){ 
+                var jsonData = eval("("+msg.responseText+")");
+                console.log(jsonData.succ);    
+                alert(jsonData.info);
+            }  
+        }); 
+     
+        $('#statusModal').modal('hide');
+        reload();
+    };
+///////////////////////////////////
+function chartdiagram(){
+ 
+    $.ajax({  
+            type: "get",  
+            url: "/warn/status", 
+            dataType:"json",
+            complete: function(msg){ 
+                var jsonData = eval("("+msg.responseText+")");
+                Totalpatient = jsonData.totalpatient;
+                Totaloxgen = jsonData.totaloxgen;
+                Totalpuls = jsonData.totalpuls;
+                Totalurgent = jsonData.totalurgent;
+                Totaluses = jsonData.totaluses;
+                Totalunuses = jsonData.totalunuses;
+                Totalpress = jsonData.totalpress;
+                console.log("jsonData=",jsonData);
+                diagram();
+            }  
+        }); 
+}
+
+function diagram(){
+
+    var chart = { type: 'solidgauge'};
+    var title = '';
+    var pane = {
+        center: ['50%', '85%'],
+        size: '140%',
+        startAngle: -90,
+        endAngle: 90,
+        background: {
+            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+            innerRadius: '60%',
+            outerRadius: '100%',
+            shape: 'arc'
+        }
+    };
+    var tooltip = {enabled: false};
+// the value ---  Urgent
+    var yAxis = {
+        stops: [[1.0, '#DF5353']], // red
+        lineWidth: 0,
+        minorTickInterval: null,
+        tickPixelInterval: 400,
+        tickWidth: 0,
+        title: { y: -70 },
+        labels: { y: 16 },
+        min: 0,
+        max: Totalpatient,
+        title: {
+            text: '无信号患者告警',
+            y:-55,
+            style:{
+                fontSize: '16px',
+                color: '#3E576F'
+            }
+        }
+    };	  
+ 
+    var plotOptions = {
+        solidgauge: {
+            dataLabels: {
+                y: 5,
+                borderWidth: 0,
+                useHTML: true
+            }
+        }
+    };
+ 
+    var credits = {enabled: false};
+    var series = [{
+        name: 'Speed',
+        data: [Totalurgent],
+        dataLabels: {
+            format: '<div style="text-align:center"><span style="font-size:15px;color:' +
+            ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+            '<span style="font-size:12px;color:silver">人数</span></div>'
+        },
+    }];
+    
+    var json = {};   
+    json.chart = chart; 
+    json.title = title;       
+    json.pane = pane; 
+    json.tooltip = tooltip; 
+    json.yAxis = yAxis; 
+    json.credits = credits; 
+    json.series = series;     
+    $('#container-urgent').highcharts(json);    
+	
+///////////////////////////////////////////////
+
+   // the value of unuse
+    var yAxis = {
+        stops: [
+            [1.0, '#DF5353'] // red
+        ],
+        lineWidth: 0,
+        minorTickInterval: null,
+        tickPixelInterval: 400,
+        tickWidth: 0,
+        title: {y: -70},
+        labels: {y: 16},
+	    min: 0,
+        max: Totalpatient,
+        title: {
+            text: '未使用患者告警',
+            y:-55,
+            style:{
+                fontSize: '16px',
+                color: '#3E576F'
+            }
+        }
+    };	  
+ 
+    var series = [{
+        name: 'Unuse',
+        data: [Totalunuses],
+        dataLabels: {
+            format: '<div style="text-align:center"><span style="font-size:15px;color:' +
+            ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+            '<span style="font-size:12px;color:silver">人数</span></div>'
+        },
+    }];
+	  
+    var json = {};   
+    json.chart = chart; 
+    json.title = title;       
+    json.pane = pane; 
+    json.tooltip = tooltip; 
+    json.yAxis = yAxis; 
+    json.credits = credits; 
+    json.series = series;     
+    $('#container-detach').highcharts(json);   
+   
+   ///////////////////////////////////////////////
+   // the value puls
+    yAxis = {
+        stops: [
+            [1.0, '#DF5353'] // red
+        ],
+        lineWidth: 0,
+        minorTickInterval: null,
+        tickPixelInterval: 400,
+        tickWidth: 0,
+        title: { y: -70},
+        labels: { y: 16},
+	    min: 0,
+        max: Totalpatient,
+        title: {
+            text: '脉搏告警',
+            y:-55,
+            style:{
+                fontSize: '16px',
+                color: '#3E576F'
+            }
+        }
+    };	  
+   
+    series = [{
+        name: 'Puls',
+        data: [Totalpuls],
+        dataLabels: {
+            format: '<div style="text-align:center"><span style="font-size:15px;color:' +
+            ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+            '<span style="font-size:12px;color:silver">人数</span></div>'
+        },
+        tooltip: {
+            valueSuffix: ' revolutions/min'
+        }
+    }];
+   
+    json.yAxis = yAxis;   
+    json.series = series;     
+    $('#container-puls').highcharts(json);  
+
+
+///////////////////////////////////////////////
+   // the value oxgen
+    yAxis = {
+        stops: [
+//          [0.1, '#55BF3B'], // green
+//          [0.5, '#DDDF0D'], // yellow
+            [1.0, '#DF5353'] // red
+        ],
+        lineWidth: 0,
+        minorTickInterval: null,
+        tickPixelInterval: 400,
+        tickWidth: 0,
+        title: { y: -70},
+        labels: {y: 16},
+        min: 0,
+        max: Totalpatient,
+        title: {
+            text: '血氧告警',
+            y:-55,
+            style:{
+                fontSize: '16px',
+                color: '#3E576F'
+            }
+        }
+   };	  
+   
+   series = [{
+      name: 'Oxgen',
+      data: [Totaloxgen],
+      dataLabels: {
+         format: '<div style="text-align:center"><span style="font-size:15px;color:' +
+         ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+         '<span style="font-size:12px;color:silver">人数</span></div>'
+      },
+      tooltip: {
+         valueSuffix: ' revolutions/min'
+      }
+    }];
+   
+    json.yAxis = yAxis;   
+    json.series = series;     
+    $('#container-oxgen').highcharts(json);  
+
+///////////////////////////////////////////////
+/*
+    var chartFunction = function() {
+      // Speed
+        var chart = $('#container-urgent').highcharts();
+        var point;
+      consloe.log(Totalpatient);
+      consloe.log(Totalurgent);
+      if (chart) {
+        point = chart.series[0].points[0];
+         point.update(Totalurgent);
+      }
+
+	    chart = $('#container-detach').highcharts();
+      if (chart) {
+        point = chart.series[0].points[0];
+         point.update(Totalunuses);
+      }
+	   
+      // RPM
+      chart = $('#container-puls').highcharts();
+      if (chart) {
+        point = chart.series[0].points[0];
+         point.update(Totalpuls);
+      }
+
+       // RPM
+       chart = $('#container-oxgen').highcharts();
+      if (chart) {
+         point = chart.series[0].points[0];
+         point.update(totaloxgen);
+      }
+   };   
+   
+   // Bring life to the dials
+//   setInterval(chartFunction, 2000);
+*/
+};
+
+
+
+//5days record
+function button2(row, col) {  
+    $('#recordModal').on('show.bs.modal', function (event) {
+
+    });
+};
+
+
+$('#recordl').on('show.bs.modal', function (event) {
+
+});
+
+$('#record2').on('show.bs.modal', function (event) {
+
+});
+//1days record
+
+//$(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever="+ cellData +">当天记录</button>" +
+//                "<button type='button' id='record5' onclick='button2(" + row + "," + col + ")'>五天记录</button>")
+
+/////////////////////////////////
     </script>
 </body>
 </html>

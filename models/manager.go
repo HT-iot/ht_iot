@@ -58,12 +58,27 @@ var tables = []string{
 		PRIMARY KEY ((hospitalname),deviceid,channelid)
 		)`,
 
-	/* These Table will be created by manager application
-	`CREATE TABLE IF NOT EXISTS users (
-		email text,
-		password text,
-		PRIMARY KEY (email)
+	 
+	`CREATE TABLE IF NOT EXISTS hospitalconfig (
+		hospitalname text,
+		hospitalzone text,
+		pulsmin double,   
+		pulsmax double,   
+		oxgenmin double,    
+		oxgenmax idoublent,     
+		pressurelowmin double,
+		pressurelowmax double,
+		pressurehighmin double,
+		pressurehighmax double,
+		monitoraddress text, 
+		monitorradius double,
+		latitude double,
+		longitude double,
+		ops text,
+		PRIMARY KEY (hospitalname)
 	)`,
+
+/*
 	`CREATE TABLE IF NOT EXISTS clients_by_user (
 		user text,
 		id timeuuid,
@@ -111,6 +126,30 @@ type ChannelsByUser struct {
 	Name      string
 	Connected []string
 }
+
+type HospitalInfoTable struct {
+	Data HospitalInfoConfig `json:"data"`
+}
+
+/*医院病区监控的阈值信息*/
+type HospitalInfoConfig struct {
+	Hospitalname  	string 		`json:"hospitalname"`
+	Hospitalzone 	string 		`json:"hospitalzone"`
+	Pulsmin 		float64   	`json:"pulsmin"`
+	Pulsmax 		float64   	`json:"pulsmax"`
+	Oxgenmin 		float64    	`json:"oxgenmin"`
+	Oxgenmax 		float64     `json:"oxgenmax"`
+	Pressurelowmin 	float64 	`json:"pressurelowmin"`
+	Pressurelowmax 	float64 	`json:"pressurelowmax"`
+	Pressurehighmin float64		`json:"pressurehighmin"`
+	Pressurehighmax float64 	`json:"pressurehighmax"`
+	Monitoraddress 	string  	`json:"monitoraddress"`
+	Monitorradius 	float64 	`json:"monitorradius"`
+	Latitude 		float64 	`json:"latitude"`
+	Longitude 		float64 	`json:"longitude"`
+	Ops 			string 		`json:"ops"`
+}
+
 
 type HospitalTable struct {
 	Data []HospitalPatientInfo `json:"data"`
@@ -407,4 +446,96 @@ func UpdatePatient(h HospitalPatientInfo) bool {
 		return false
 	}
 	return true
+}
+
+
+//Update hospital db data  	err := models.UpdateWarnInfo(h)
+func UpdateWarnInfo(h HospitalInfoConfig) bool {
+	// // Easy update with all parameters bound from struct.
+
+	//		p.Email = append(p.Email, "patricia1.citzen@gocqlx_test.com")
+	sel:= qb.Update("hospitalconfig").
+		Set("hospitalzone","pulsmin", "pulsmax", "oxgenmin", "oxgenmax", "pressurelowmin", "pressurelowmax",
+			"pressurehighmin", "pressurehighmax","monitoraddress", "monitorradius").
+		Where(qb.Eq("hospitalname"))
+	
+		if len("hospitalzone") != 0 {
+			sel.Where(qb.Eq("hospitalzone"))
+		}
+
+		stmt, names := sel.ToCql()
+
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
+	fmt.Println("q=", q)
+	if err := q.ExecRelease(); err != nil {
+		fmt.Println("err=", err)
+		return false
+	}
+	return true
+}
+
+
+func InsertWarnInfo(h HospitalInfoConfig) error {
+	// Insert with query parameters bound from struct.
+	log := logs.GetBeeLogger()
+	log.Info("Insert hospital config information")
+
+	stmt, names := qb.Insert("hospitalconfig").Columns("hospitalname","hospitalzone",
+		"pulsmin", "pulsmax", "oxgenmin", "oxgenmax", "pressurelowmin",
+		"pressurelowmax","pressurehighmin", "pressurehighmax","monitoraddress", "monitorradius").
+		ToCql()
+
+		//	fmt.Println("stmt =", stmt)
+		//	fmt.Println("h =", h)
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
+	//	fmt.Println("q =", q)
+
+	if err := q.ExecRelease(); err != nil {
+		log.Critical("Insert hospital config information: select:" + err.Error())
+		return err
+	}
+	return nil
+}
+
+func GetWarnInfo(hospitalname,hospitalzone string ) (HospitalInfoConfig, error) {
+	log := logs.GetBeeLogger()
+	log.Debug("Get Hospital config information")
+
+	d := HospitalInfoConfig{Hospitalname:hospitalname, Hospitalzone: hospitalzone}
+	fmt.Println("XXX d=", d)
+	sel := qb.Select("hospitalconfig").Where(qb.Eq("hospitalname")).Limit(1).AllowFiltering()
+
+	if len("hospitalzone") != 0 {
+		sel.Where(qb.Eq("hospitalzone"))
+	}
+	
+	stmt, names := sel.ToCql()
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
+
+	defer q.Release()
+
+
+	var h []HospitalInfoConfig
+	if err := gocqlx.Select(&h, q.Query); err != nil {
+		log.Error("GetHospital config: select Err:" + err.Error())
+	}
+
+	fmt.Println("Get h=", h, len(h))
+	if len(h) == 0{
+		d.Hospitalname = hospitalname
+		d.Hospitalzone = hospitalzone
+		d.Pulsmin = 40
+		d.Pulsmax = 120
+		d.Oxgenmin = 90
+		d.Oxgenmax = 110
+		
+		d.Pressurelowmin = 50
+		d.Pressurelowmax = 120
+		d.Pressurehighmin = 70
+		d.Pressurehighmax = 180
+		d.Monitoraddress = "深圳市眼科"
+		d.Monitorradius = 999999
+		return d,nil
+	}
+	return d, nil
 }

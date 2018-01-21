@@ -124,6 +124,8 @@ type PatientInfo struct {
 	Hospitaldeviceid string  `json:"hospitaldeviceid"`
 	Channelid        string  `json:"channelid"`
 	Deviceid         string  `json:"deviceid"`
+	Reporttime		 string  `json:"reporttime"`		//
+	Bodycapacitance	 string  `json:"bodycapacitance"`
 	Puls             float64 `json:"puls"`
 	Oxgen            float64 `json:"oxgen"`
 	Pressurelow      float64 `json:"pressurelow"`

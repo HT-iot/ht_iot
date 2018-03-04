@@ -21,15 +21,14 @@
             font-family: "Microsoft YaHei", Arial, Helvetical, sans-serif, "宋体";
         }
     </style>
-   
+     <script src="/static/js/echarts.js"></script>
+     
 </head>
 
 {{template "navbar" .}}
 <body>
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/highcharts-more.js"></script>  
-        <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
-
+         
+        
         <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="recordModalLabel">  
             <div class="modal-dialog  modal-md" role="document">  
                 <div class="modal-content">  
@@ -65,7 +64,7 @@
                              <table class="formdata"> 
                                     <tr > 
                                         <th class="col-sm-2 col-md-offset-2"></th>
-                                        <th align="center"scope="col" class="col-sm-3 "></th> 
+                                        <th align="center" scope="col" class="col-sm-3 "></th> 
                                         <th scope="col" class="col-sm-3"></th> 
                                     </tr> 
                                 <tr> 
@@ -80,7 +79,7 @@
                             <table class="formdata"> 
                                 <tr > 
                                     <th class="col-sm-2 col-md-offset-2"></th>
-                                    <th align="center"scope="col" class="col-sm-3 ">下限</th> 
+                                    <th align="center" scope="col" class="col-sm-3 ">下限</th> 
                                     <th scope="col" class="col-sm-3">上限</th> 
                                 </tr> 
                                 <tr> 
@@ -131,26 +130,26 @@
                 </div>  
             </div>  
    
-    <div class="container">
-        <div id="container-urgent" style="width: 200px; height: 150px; float: left"></div>
-        <div id="container-detach" style="width: 200px; height: 150px; float: left"></div>
-        <div id="container-puls" style="width: 200px; height: 150px; float: left"></div>
-        <div id="container-oxgen" style="width: 200px; height: 150px; float: left"></div>
+    <div class="container-fluid" >
+        <div id="container-urgent"  style="width: 100%; height: 150px;" ></div>
+    <!--    <div id="container-detach"  style="width: 200px; height: 150px; float: left"></div>
+        <div id="container-puls"    style="width: 200px; height: 150px; float: left"></div>
+        <div id="container-oxgen"   style="width: 200px; height: 150px; float: left"></div>
+        -->
+
     </div>
 
     <div class="container-fluid">
-
             <ul id="dynamicColumns"></ul>
             <button id="rebulidTable">   重建</button>
             <br><br>
-            <table id="example" class="display" border="1">
-        </table>
+            <table id="example" class="display" border="1">    </table>
     </div>
 
     <script>
         var table;
         var int0;
-        var Totalpatient, Totaloxgen, Totalpuls,Totalurgent,Totaluses,Totalunuses,Totalpress;               
+        var Totalpatien, Totaloxgen, Totalpuls,Totalurgent,Totaluses,Totalunuses,Totalpress;               
 
         var hospitalconfig = {
             "hospitalname":"",
@@ -361,8 +360,8 @@
         });
     }
 
-function  getHospitalconfig(){
-    $.ajax({
+    function  getHospitalconfig(){
+        $.ajax({
             type: "get",  
             url: "/info/status",
             dataType:"json",
@@ -538,244 +537,335 @@ function chartdiagram(){
         }); 
 }
 
-function diagram(){
 
-    var chart = { type: 'solidgauge'};
-    var title = '';
-    var pane = {
-        center: ['50%', '85%'],
-        size: '140%',
-        startAngle: -90,
-        endAngle: 90,
-        background: {
-            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
-            innerRadius: '60%',
-            outerRadius: '100%',
-            shape: 'arc'
-        }
-    };
-    var tooltip = {enabled: false};
-// the value ---  Urgent
-    var yAxis = {
-        stops: [[1.0, '#DF5353']], // red
-        lineWidth: 0,
-        minorTickInterval: null,
-        tickPixelInterval: 400,
-        tickWidth: 0,
-        title: { y: -70 },
-        labels: { y: 16 },
-        min: 0,
-        max: Totalpatient,
-        title: {
-            text: '无信号患者告警',
-            y:-55,
-            style:{
-                fontSize: '16px',
-                color: '#3E576F'
-            }
-        }
-    };	  
- 
-    var plotOptions = {
-        solidgauge: {
-            dataLabels: {
-                y: 5,
-                borderWidth: 0,
-                useHTML: true
-            }
-        }
-    };
- 
-    var credits = {enabled: false};
-    var series = [{
-        name: 'Speed',
-        data: [Totalurgent],
-        dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-            ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-            '<span style="font-size:12px;color:silver">人数</span></div>'
+    var myChart = echarts.init(document.getElementById('container-urgent'));
+    /*
+    myChart.option = {
+        legend: {},
+        tooltip: {},
+        dataset: {
+            source: [
+                ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+                ['Matcha Latte', 41.1, 30.4, 65.1, 53.3, 83.8, 98.7],
+                ['Milk Tea', 86.5, 92.1, 85.7, 83.1, 73.4, 55.1],
+                ['Cheese Cocoa', 24.1, 67.2, 79.5, 86.4, 65.2, 82.5],
+                ['Walnut Brownie', 55.2, 67.1, 69.2, 72.4, 53.9, 39.1]
+            ]
         },
-    }];
+   
+    title: [{
+        text: '在线构建',
+        subtext: '总计 ' ,
+        x: '15%',
+        y: '15%',
+        textAlign: 'center'
+    }, {
+        text: '各版本下载',
+       
+        x: '40%',
+        textAlign: 'center'
+    }, {
+        text: '主题下载',
+      
+        x: '60%',
+        y: '15%',
+        textAlign: 'center'
+    }],
     
-    var json = {};   
-    json.chart = chart; 
-    json.title = title;       
-    json.pane = pane; 
-    json.tooltip = tooltip; 
-    json.yAxis = yAxis; 
-    json.credits = credits; 
-    json.series = series;     
-    $('#container-urgent').highcharts(json);    
-	
-///////////////////////////////////////////////
-
-   // the value of unuse
-    var yAxis = {
-        stops: [
-            [1.0, '#DF5353'] // red
-        ],
-        lineWidth: 0,
-        minorTickInterval: null,
-        tickPixelInterval: 400,
-        tickWidth: 0,
-        title: {y: -70},
-        labels: {y: 16},
-	    min: 0,
-        max: Totalpatient,
-        title: {
-            text: '未使用患者告警',
-            y:-55,
-            style:{
-                fontSize: '16px',
-                color: '#3E576F'
-            }
+    series:    [
+                {
+        type: 'pie',
+        radius: ['10%', '20%'],
+        center: ['20%', '50%'],
+        color: ['#00FF00','#FF0000','#000000','#0000FF'],
+        label: {
+                normal: {
+                    show: false,
+                    position: 'inner'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '14',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+        // No encode specified, by default, it is '2012'.
+    }, {
+        type: 'pie',
+        radius: ['10%', '20%'],
+        center: ['40%', '50%'],
+          label: {
+                normal: {
+                    show: false,
+                    position: 'inner'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '14',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+        encode: {
+        itemName: 'product',
+        value: '2013'
         }
-    };	  
- 
-    var series = [{
-        name: 'Unuse',
-        data: [Totalunuses],
-        dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-            ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-            '<span style="font-size:12px;color:silver">人数</span></div>'
-        },
-    }];
-	  
-    var json = {};   
-    json.chart = chart; 
-    json.title = title;       
-    json.pane = pane; 
-    json.tooltip = tooltip; 
-    json.yAxis = yAxis; 
-    json.credits = credits; 
-    json.series = series;     
-    $('#container-detach').highcharts(json);   
-   
-   ///////////////////////////////////////////////
-   // the value puls
-    yAxis = {
-        stops: [
-            [1.0, '#DF5353'] // red
-        ],
-        lineWidth: 0,
-        minorTickInterval: null,
-        tickPixelInterval: 400,
-        tickWidth: 0,
-        title: { y: -70},
-        labels: { y: 16},
-	    min: 0,
-        max: Totalpatient,
-        title: {
-            text: '脉搏告警',
-            y:-55,
-            style:{
-                fontSize: '16px',
-                color: '#3E576F'
-            }
+    }, {
+        type: 'pie',
+        radius: 30,
+        center: ['60%', '30%'],
+        encode: {
+            itemName: 'product',
+            value: '2014'
         }
-    };	  
-   
-    series = [{
-        name: 'Puls',
-        data: [Totalpuls],
-        dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-            ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-            '<span style="font-size:12px;color:silver">人数</span></div>'
-        },
-        tooltip: {
-            valueSuffix: ' revolutions/min'
+    }, {
+        type: 'pie',
+        radius: 30,
+        center: ['80%', '30%'],
+        encode: {
+            itemName: 'product',
+            value: '2015'
         }
-    }];
-   
-    json.yAxis = yAxis;   
-    json.series = series;     
-    $('#container-puls').highcharts(json);  
-
-
-///////////////////////////////////////////////
-   // the value oxgen
-    yAxis = {
-        stops: [
-//          [0.1, '#55BF3B'], // green
-//          [0.5, '#DDDF0D'], // yellow
-            [1.0, '#DF5353'] // red
-        ],
-        lineWidth: 0,
-        minorTickInterval: null,
-        tickPixelInterval: 400,
-        tickWidth: 0,
-        title: { y: -70},
-        labels: {y: 16},
-        min: 0,
-        max: Totalpatient,
-        title: {
-            text: '血氧告警',
-            y:-55,
-            style:{
-                fontSize: '16px',
-                color: '#3E576F'
-            }
-        }
-   };	  
-   
-   series = [{
-      name: 'Oxgen',
-      data: [Totaloxgen],
-      dataLabels: {
-         format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-         ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-         '<span style="font-size:12px;color:silver">人数</span></div>'
-      },
-      tooltip: {
-         valueSuffix: ' revolutions/min'
-      }
-    }];
-   
-    json.yAxis = yAxis;   
-    json.series = series;     
-    $('#container-oxgen').highcharts(json);  
-
-///////////////////////////////////////////////
-/*
-    var chartFunction = function() {
-      // Speed
-        var chart = $('#container-urgent').highcharts();
-        var point;
-      consloe.log(Totalpatient);
-      consloe.log(Totalurgent);
-      if (chart) {
-        point = chart.series[0].points[0];
-         point.update(Totalurgent);
-      }
-
-	    chart = $('#container-detach').highcharts();
-      if (chart) {
-        point = chart.series[0].points[0];
-         point.update(Totalunuses);
-      }
-	   
-      // RPM
-      chart = $('#container-puls').highcharts();
-      if (chart) {
-        point = chart.series[0].points[0];
-         point.update(Totalpuls);
-      }
-
-       // RPM
-       chart = $('#container-oxgen').highcharts();
-      if (chart) {
-         point = chart.series[0].points[0];
-         point.update(totaloxgen);
-      }
-   };   
-   
-   // Bring life to the dials
-//   setInterval(chartFunction, 2000);
-*/
+    }]
 };
 
+
+*/
+
+    myChart.setOption({
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b}: {c} ({d}%)"
+        },
+      });
+
+    function diagram(){
+     
+        myChart.setOption({
+            title: [{
+                    text: '总数',
+                    itemGap:50,
+                    subtext: Totalpatient.toFixed(0),
+                    x: '15%',
+                    y:8,
+                    textAlign: 'center',
+                    subtextStyle:{ fontSize:18 ,
+                    color:"#000000",
+                    fontWeight: 'bold',} 
+                }, {
+                    text: '异常总数',
+                    subtext: Totalurgent.toFixed(0),
+                    x: '30%',
+                    y:8,
+                    textAlign: 'center',
+                    itemGap:50,
+                    subtextStyle:{ fontSize:18 ,
+                    color:"#000000",
+                    fontWeight: 'bold',} 
+                }, {
+                    text: '使用总数\n(正作vs非正作)',
+                    subtext: Totaluses.toFixed(0),
+                    x: '45%',
+                    textAlign: 'center',
+                    itemGap:45,
+                    subtextStyle:{ fontSize:18 ,
+                    color:"#000000",
+                    fontWeight: 'bold',} 
+                
+                },  {
+                    text: '脉搏\n(正常vs非正常)',
+                    subtext: Totalpuls.toFixed(0),
+                    x: '60%',
+                    textAlign: 'center',
+                    itemGap:45,
+                    subtextStyle:{ fontSize:18 ,
+                    color:"#000000",
+                    fontWeight: 'bold',} 
+                },{
+                    text: '血氧\n(正常vs非正常)',
+                    x: '75%',
+                    subtext: Totaloxgen.toFixed(0),
+                    textAlign: 'center',
+                    itemGap:45,
+                    subtextStyle:{ fontSize:18 ,
+                    color:"#000000",
+                    fontWeight: 'bold',} 
+                 
+                }, {
+                    text: '血压\n(正常vs非正常)',
+                    x: '90%',
+                    subtext: Totalpress.toFixed(0),
+                    textAlign: 'center',
+                    itemGap:45,
+                    subtextStyle:{ fontSize:18 ,
+                    color:"#000000",
+                    fontWeight: 'bold',} 
+                }, 
+            ],
+        
+         
+             series: [
+                 {
+                // 根据名字对应到相应的系列
+                    name:'总数',
+                    type:'pie',
+                    radius: ['30%', '50%'],
+                    center: ['15%', '60%'],
+                     avoidLabelOverlap: false,
+                    color: ['#00FF00','#FF0000'],
+
+                    label: {
+                        normal: {
+                        show: false,
+                        position: 'inner'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '16',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                data:[
+                    {value:Totalpatient, name:'总器件数'},
+                    {value:0},
+                ]
+            },
+            {
+                // 根据名字对应到相应的系列
+                    name:'异常总数',
+                    type:'pie',
+                    radius: ['30%', '50%'],
+                    center: ['30%', '60%'],
+                    avoidLabelOverlap: false,
+                    color: ['#FF0000','#00FF00'],
+                    label: {
+                        normal: {
+                        show: false,
+                        position: 'inner'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '16',
+                                fontWeight: 'bold'
+                            }
+                        },
+                    },
+                data:[
+                    {value:Totalurgent, name:'异常', selected:true},
+                    {value:(Totalpatient-Totalurgent), name:'正常'},
+                ]
+            }, {
+                // 根据名字对应到相应的系列
+                    name:'工作状态',
+                    type:'pie',
+                    radius: ['30%', '50%'],
+                    center: ['45%', '60%'],
+                    avoidLabelOverlap: false,
+                    color: ['#00FF00','#FF0000'],
+                    label: {
+                        normal: {
+                        show: false,
+                        position: 'inner'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '16',
+                                fontWeight: 'bold'
+                            }
+                        },
+                    },
+                data:[
+                    {value:Totaluses, name:'工作', selected:true},
+                    {value:Totalunuses, name:'非工作'},
+                ]
+            }, {
+                // 根据名字对应到相应的系列
+                    name:'脉搏状态',
+                    type:'pie',
+                    radius: ['30%', '50%'],
+                    center: ['60%', '60%'],
+                    avoidLabelOverlap: false,
+                    color: ['#00FF00','#FF0000'],
+                    label: {
+                        normal: {
+                        show: false,
+                        position: 'inner'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '16',
+                                fontWeight: 'bold'
+                            }
+                        },
+                    },
+                data:[
+                    {value:Totaluses, name:'工作', selected:true},
+                    {value:Totalunuses, name:'非工作'},
+                ]
+            },
+            {
+                // 根据名字对应到相应的系列
+                    name:'血氧状态',
+                    type:'pie',
+                    radius: ['30%', '50%'],
+                    center: ['75%', '60%'],
+                    avoidLabelOverlap: false,
+                    color: ['#00FF00','#FF0000'],
+                    label: {
+                        normal: {
+                        show: false,
+                        position: 'inner'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '16',
+                                fontWeight: 'bold'
+                            }
+                        },
+                    },
+                data:[
+                    {value:Totaluses, name:'工作', selected:true},
+                    {value:Totalunuses, name:'非工作'},
+                ]
+            },
+            {
+                // 根据名字对应到相应的系列
+                    name:'血压状态',
+                    type:'pie',
+                    radius: ['30%', '50%'],
+                    center: ['90%', '60%'],
+                    avoidLabelOverlap: false,
+                    color: ['#00FF00','#FF0000'],
+                    label: {
+                        normal: {
+                        show: false,
+                        position: 'inner'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '16',
+                                fontWeight: 'bold'
+                            }
+                        },
+                    },
+                data:[
+                    {value:Totaluses, name:'工作', selected:true},
+                    {value:Totalunuses, name:'非工作'},
+                ]
+            },
+            ]  
+    });
+}
 
 
 //5days record

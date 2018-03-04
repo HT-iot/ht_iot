@@ -286,21 +286,6 @@ func Calculatepara()(Patients []models.PatientInfo, Para Warndata){
 	hzone := string("")
 	pHC,_ = models.GetWarnInfo(name, hzone)	
 	
-/*	name := s.GetString("hospital_name")
-	zone := s.GetString("hospital_zone")
-	pName := s.GetString("p_name")
-
-	if name != "" || zone != "" || pName != "" {
-		hp := models.HospitalPatientInfo{
-			//Hospitalname: name,
-			//Hospitalzone: zone,
-			Patientname: pName}
-		hPatients, _ = models.GetPatient(hp)
-	} else {
-		hPatients, _ = models.GetAllPatient()
-	}
-*/
-
 	if name != "" {
 		hp := models.HospitalPatientInfo{Hospitalname: name}
 		hPatients, _ = models.GetPatient(hp)

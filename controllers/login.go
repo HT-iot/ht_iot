@@ -62,8 +62,7 @@ func (c *LoginController) Post() {
 	p := models.User{Email: uname}
 	q, err := models.GetAllUers(p)
 
-	fmt.Println("q, err =", q, err)
-
+	
 	if len(q) > 0 {
 		log.Debug("user input passwd is :" + pwd)
 		log.Debug("db passwd is :" + q[0].Password)
@@ -74,6 +73,8 @@ func (c *LoginController) Post() {
 		}else{
 			log.Debug("passwd compare success !")
 		}
+	}else{
+		log.Error("GetAllUers failure !")
 	}	
 
 	if err == nil {

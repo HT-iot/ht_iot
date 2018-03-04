@@ -218,7 +218,7 @@ func GetUers() (User, error) {
 	var user User
 	var err error
 	if err = gocqlx.Get(&user, q.Query); err != nil {
-		log.Critical("select:" + err.Error())
+		log.Critical("GetUers:" + err.Error())
 	}
 
 	return user, err
@@ -226,26 +226,29 @@ func GetUers() (User, error) {
 
 /*GetUsers  get all data...*/
 func GetAllUers(p User) ([]User, error) {
-
+	log := logs.GetBeeLogger()
 	sel := qb.Select("users").Where(qb.Eq("email")).Limit(100).AllowFiltering()
 
+	/*
 	if p.Password != "" {
 		sel.Where(qb.Eq("password"))
 	}
+	*/
 	stmt, names := sel.ToCql()
 
-	//	fmt.Println("stmt =", stmt)
-	//	fmt.Println("names =", names)
+	//fmt.Println("stmt =", stmt)
+	//fmt.Println("names =", names)
 
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&p)
-	//	fmt.Println("q.Query=  ", q.Query)
+	//fmt.Println("q.Query=  ", q.Query)
 	defer q.Release()
 
 	var people []User
 	var err error
 	if err = gocqlx.Select(&people, q.Query); err != nil {
-		fmt.Println("select Err:", err)
+		log.Critical("GetAllUers:" + err.Error())
 	}
+
 	return people, err
 }
 

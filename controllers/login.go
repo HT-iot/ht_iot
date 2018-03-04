@@ -11,7 +11,25 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
+
+	"golang.org/x/crypto/bcrypt"
 )
+
+const cost int = 10
+
+type bcryptHasher struct{}
+func (c *LoginController) Hash(pwd string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), cost)
+	if err != nil {
+		return "", err
+	}
+
+	return string(hash), nil
+}
+
+func (c *LoginController) Compare(plain, hashed string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(plain))
+}
 
 type LoginController struct {
 	beego.Controller
@@ -31,6 +49,8 @@ func (c *LoginController) Get() {
 }
 
 func (c *LoginController) Post() {
+	log := logs.GetBeeLogger();
+
 	c.TplName = "login.html"
 	uname := c.Input().Get("uname")
 	pwd := c.Input().Get("pwd")
@@ -38,19 +58,32 @@ func (c *LoginController) Post() {
 
 	autoLogin := c.Input().Get("autoLogin") == "on"
 
-	p := models.User{Email: uname, Password: pwd}
+	//p := models.User{Email: uname, Password: pwd}
+	p := models.User{Email: uname}
 	q, err := models.GetAllUers(p)
 
 	fmt.Println("q, err =", q, err)
 
 	if len(q) > 0 {
+		log.Debug("user input passwd is :" + pwd)
+		log.Debug("db passwd is :" + q[0].Password)
+
+		err = c.Compare(pwd, q[0].Password);
+		if  err != nil {
+			log.Debug("passwd compare failure !")
+		}else{
+			log.Debug("passwd compare success !")
+		}
+	}	
+
+	if err == nil {
 		maxAge := 0
 		if autoLogin {
 			maxAge = 1<<31 - 1
 		}
-		c.Ctx.SetCookie("name", uname, maxAge, "/")
+		c.Ctx.SetCookie("name", q[0].Email, maxAge, "/")
 		h := sha1.New()
-		io.WriteString(h, uname+pwd)
+		io.WriteString(h, q[0].Email+q[0].Password)
 		pwd = base64.StdEncoding.EncodeToString(h.Sum(nil))
 		c.Ctx.SetCookie("pwd", pwd, maxAge, "/")
 
@@ -73,6 +106,7 @@ func (c *LoginController) Post() {
 }
 
 func checkAccount(ctx *context.Context) bool {
+	log := logs.GetBeeLogger();
 
 	ck, err := ctx.Request.Cookie("name")
 	if err != nil {
@@ -97,7 +131,7 @@ func checkAccount(ctx *context.Context) bool {
 	Hospital = string(hname)
 	fmt.Println(Hospital)
 
-	p := models.User{Email: uname, Password: ""}
+	p := models.User{Email: uname}
 	q, err := models.GetAllUers(p)
 
 	if len(q) < 1 {
@@ -105,6 +139,9 @@ func checkAccount(ctx *context.Context) bool {
 		IsLogin = false
 		return false
 	}
+
+	log.Debug("user input passwd is :" + pwd)
+	log.Debug("db passwd is :" + q[0].Password)
 
 	h := sha1.New()
 	io.WriteString(h, q[0].Email+q[0].Password)

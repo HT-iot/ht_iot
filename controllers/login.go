@@ -72,37 +72,37 @@ func (c *LoginController) Post() {
 			log.Debug("passwd compare failure !")
 		}else{
 			log.Debug("passwd compare success !")
+			maxAge := 0
+			if autoLogin {
+				maxAge = 1<<31 - 1
+			}
+			c.Ctx.SetCookie("name", q[0].Email, maxAge, "/")
+			h := sha1.New()
+			io.WriteString(h, q[0].Email+q[0].Password)
+			pwd = base64.StdEncoding.EncodeToString(h.Sum(nil))
+			c.Ctx.SetCookie("pwd", pwd, maxAge, "/")
+	
+			hname0 := base64.StdEncoding.EncodeToString([]byte(hname))
+			c.Ctx.SetCookie("hname", hname0, maxAge, "/")
+	
+			/* TODO add session support
+			c.SetSession(uname, pwd)
+			*/
+			IsLogin = true
+			c.Data["ISLogin"] = IsLogin
+	
+			c.TplName = "home.html"
+			return
 		}
 	}else{
 		log.Error("GetAllUers failure !")
 	}	
 
-	if err == nil {
-		maxAge := 0
-		if autoLogin {
-			maxAge = 1<<31 - 1
-		}
-		c.Ctx.SetCookie("name", q[0].Email, maxAge, "/")
-		h := sha1.New()
-		io.WriteString(h, q[0].Email+q[0].Password)
-		pwd = base64.StdEncoding.EncodeToString(h.Sum(nil))
-		c.Ctx.SetCookie("pwd", pwd, maxAge, "/")
 
-		hname0 := base64.StdEncoding.EncodeToString([]byte(hname))
-		c.Ctx.SetCookie("hname", hname0, maxAge, "/")
+	IsLogin = false
+	c.Data["ISLogin"] = IsLogin
+	c.Redirect("/login", 301)
 
-		/* TODO add session support
-		c.SetSession(uname, pwd)
-		*/
-		IsLogin = true
-		c.Data["ISLogin"] = IsLogin
-
-		c.TplName = "home.html"
-	} else {
-		IsLogin = false
-		c.Data["ISLogin"] = IsLogin
-		c.Redirect("/login", 301)
-	}
 	return
 }
 

@@ -542,3 +542,86 @@ func GetWarnInfo(hospitalname,hospitalzone string ) (HospitalInfoConfig, error) 
 	}
 	return d, nil
 }
+
+
+func GetDevfromPatient(h HospitalPatientInfo) (HospitalPatientInfo, error) {
+	// Check the device & channel ID from Patient information.
+
+	log := logs.GetBeeLogger()
+	log.Debug("Get Patient information")
+
+//	sel := qb.Select("hospital_by_patient").Limit(1).AllowFiltering()
+	//sel := qb.Select("hospital_by_patient").Where(qb.Eq("hospitalname")).Limit(MaxNum).AllowFiltering()
+	sel := qb.Select("hospital_by_patient").Where(qb.Eq("hospitalname")).AllowFiltering()
+	if len(h.Hospitalzone) != 0 {
+		sel.Where(qb.Eq("hospitalzone"))
+	}
+	if len(h.Hospitalbed) != 0 {
+		sel.Where(qb.Eq("hospitalbed"))
+	}
+	if len(h.Hospitaldeviceid) != 0 {
+		sel.Where(qb.Eq("hospitaldeviceid"))
+	}
+	if len(h.Patientname) != 0 {
+		sel.Where(qb.Eq("patientname"))
+	}
+	fmt.Println("sel=",sel);
+	stmt, names := sel.ToCql()
+//	logs.Debug(stmt, names)
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
+	defer q.Release()
+	fmt.Println("q=",q);
+	var patient []HospitalPatientInfo
+	if err := gocqlx.Select(&patient, q.Query); err != nil {
+		log.Debug("select Err:", err.Error())
+		return patient[0], err
+	} 
+	fmt.Println("h=",patient);
+	return patient[0], nil
+}
+
+
+
+func GetDevKey(d string) (string) {
+	// Check the device & channel ID from Patient information.
+
+	log := logs.GetBeeLogger()
+	log.Debug("Get Device access key from Deviceid")	
+
+	var Key string;
+
+	err := SessionMgr.Query(`SELECT access_key from clients_by_user WHERE id = ? LIMIT 1 ALLOW FILTERING`, d).Scan(&Key)
+
+	if(err!=nil){
+		log.Debug("select Err:", err.Error())
+	}
+	fmt.Println(Key)
+	return Key
+}
+
+
+
+/*	
+	type Key struct {
+		deviceid    string
+	}
+
+	d0 Key = {deviceid: d}
+
+	sel := qb.Select("clients_by_user").Where(qb.Eq("deviceid")).AllowFiltering()
+	
+	stmt, names := sel.ToCql()
+//	logs.Debug(stmt, names)
+	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d0)
+	defer q.Release()
+	fmt.Println("q=",q);
+	var patient []HospitalPatientInfo
+	if err := gocqlx.Select(&patient, q.Query); err != nil {
+		log.Debug("select Err:", err.Error())
+		return patient[0], err
+	} 
+	fmt.Println("h=",patient);
+	return patient[0], nil
+	
+}
+*/

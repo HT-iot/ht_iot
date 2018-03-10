@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"ht_iot/models"
 	"time"
@@ -170,39 +171,40 @@ func (this *PconfigController) GetLine() {
 	//	fmt.Println("PostLine=", Mystruct)
 	this.Data["json"] = &Hospitalslice
 	this.ServeJSON()
-	/*
-			if (err == nil) {
-				_ = models.InsertPatient(d)
-				Getstruct.Info = "添加成功"
-				Getstruct.Succ = "add"
-				if len(Hospitalslice) > 1 {
-					Hospitalslice = append(Hospitalslice[:id], Hospitalslice[id+1:]...)
-					Getstruct.Succ = "add"
-					Getstruct.Info = "注册成功"
-				} else {
-					Hospitalslice = nil
-					Getstruct.Succ = "nil"
-					Getstruct.Info = "注册成功"
-				}
-			} else {
-				Getstruct.Info = "无该医院终端ID, 添加失败"
-				Getstruct.Succ = "add"
-			}
-			//	mystruct = Out{Succ: str, Refresh: Out.Refresh}
-		}
-		if actions == "Del" {
-			if len(Hospitalslice) > 1 {
-				Hospitalslice = append(Hospitalslice[:id], Hospitalslice[id+1:]...)
-				Getstruct.Info = "取消成功"
-				Getstruct.Succ = "del"
-			} else {
-				Hospitalslice = nil
-				Getstruct.Info = "取消成功"
-				Getstruct.Succ = "nil"
-			}
+	
+}
 
-		}
-		this.Data["json"] = &Getstruct
-		this.ServeJSON()
-	*/
+
+func (this *PconfigController) GetDevInfo() {
+	logs.Debug("Get Dev and channel information from Patient")
+
+	var hv error
+	
+	type DevOut struct {
+		Deviceid string `json:"deviceid"`
+		Channelid string `json:"channelid"`
+		Devicekey string `json:"devicekey"`
+		Succ string `json:"succ"`
+	}
+
+	var Getstruct DevOut
+	var ho,h models.HospitalPatientInfo
+	json.Unmarshal(this.Ctx.Input.RequestBody, &h)
+	
+	ho, hv = models.GetDevfromPatient(h)
+	if (hv == nil) {
+		var key = models.GetDevKey(ho.Deviceid)
+		Getstruct.Deviceid = ho.Deviceid
+		Getstruct.Channelid = ho.Channelid
+		Getstruct.Devicekey = key
+		Getstruct.Succ = "succ"
+
+	} else {
+		Getstruct.Succ = "fail"
+		return;
+	}
+
+	this.Data["json"] = &Getstruct
+	this.ServeJSON()
+	
 }

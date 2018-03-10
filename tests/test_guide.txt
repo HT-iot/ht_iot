@@ -3,7 +3,7 @@ python cassandradump.py --keyspace manager --keyspace message_writer --export-fi
 python cassandradump.py --import-file ./cassandra_dump.cql
 
 #Create user
-curl -s -S -i -X POST -H "Content-Type: application/senml+json" www.cloud4iot.cn:8180/tokens -d '{"email":"yangtao@email.com", "password":"123"}'
+curl -s -S -i -X POST -H "Content-Type: application/senml+json" www.cloud4iot.cn:8180/users -d '{"email":"yangtao@email.com", "password":"123"}'
 #Get user Token
 curl -s -S -i -X POST -H "Content-Type: application/senml+json" www.cloud4iot.cn:8180/tokens -d '{"email":"yangtao@email.com", "password":"123"}'
 #Create Device

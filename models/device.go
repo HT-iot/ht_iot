@@ -78,8 +78,7 @@ func InputDevices(hospital_name string) error {
 	p := ChannelsByUser{Name: hospital_name}
 	sel := qb.Select("channels_by_user").Where(qb.Eq("name")).AllowFiltering()
 
-	stmt, names := sel.ToCql()
-
+	stmt, names := sel.ToCql()	
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&p)
 	//	fmt.Println("q.Query=  ", q.Query)
 	defer q.Release()

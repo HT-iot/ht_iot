@@ -405,6 +405,17 @@ func GetPaientIDs(name, hid string) (ch, de string, hv bool) {
 	log := logs.GetBeeLogger()
 	log.Info("Patient to Device mapping")
 
+	err := SessionMgr.Query(`SELECT Channelid, Deviceid from device_info WHERE Hospitalname = ? AND hospitaldeviceid=? AND Used !=? LIMIT 1 ALLOW FILTERING`, name,hid,true).Scan(&ch,&de)
+
+	if(err!=nil){
+		log.Debug("select Err:", err.Error())
+		return "","", false
+	}
+	fmt.Println(ch,de)
+	return ch,de,true
+
+
+/*
 	d := DeviceInfo{Hospitalname: name, Hospitaldeviceid: hid}
 	sel := qb.Select("device_info").Where(qb.Eq("hospitalname")).AllowFiltering()
 	//	fmt.Println("d:", d)
@@ -431,6 +442,7 @@ func GetPaientIDs(name, hid string) (ch, de string, hv bool) {
 		return ch, de, true
 	}
 	return "", "", false
+*/	
 }
 
 func UpdatePatient(h HospitalPatientInfo) bool {
@@ -550,8 +562,6 @@ func GetDevfromPatient(h HospitalPatientInfo) (HospitalPatientInfo, error) {
 	log := logs.GetBeeLogger()
 	log.Debug("Get Patient information")
 
-//	sel := qb.Select("hospital_by_patient").Limit(1).AllowFiltering()
-	//sel := qb.Select("hospital_by_patient").Where(qb.Eq("hospitalname")).Limit(MaxNum).AllowFiltering()
 	sel := qb.Select("hospital_by_patient").Where(qb.Eq("hospitalname")).AllowFiltering()
 	if len(h.Hospitalzone) != 0 {
 		sel.Where(qb.Eq("hospitalzone"))
@@ -599,29 +609,3 @@ func GetDevKey(d string) (string) {
 	return Key
 }
 
-
-
-/*	
-	type Key struct {
-		deviceid    string
-	}
-
-	d0 Key = {deviceid: d}
-
-	sel := qb.Select("clients_by_user").Where(qb.Eq("deviceid")).AllowFiltering()
-	
-	stmt, names := sel.ToCql()
-//	logs.Debug(stmt, names)
-	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d0)
-	defer q.Release()
-	fmt.Println("q=",q);
-	var patient []HospitalPatientInfo
-	if err := gocqlx.Select(&patient, q.Query); err != nil {
-		log.Debug("select Err:", err.Error())
-		return patient[0], err
-	} 
-	fmt.Println("h=",patient);
-	return patient[0], nil
-	
-}
-*/

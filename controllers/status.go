@@ -182,8 +182,6 @@ func (this *StatusController) PostWarnStatus() {
 		h.Pressurehighmax,_ = this.GetFloat("pressurehighmax")
 		h.Monitoraddress = this.GetString("monitoraddress")
 		h.Monitorradius,_ = this.GetFloat("monitorradius")
-//		h.MonitorLongitude,_ = this.GetFloat("monitorlongitude")
-//		h.MonitorLatitude,_ = this.GetFloat("monitorlatitude")
 	}
 
 	//	h.Id = gocql.TimeUUID()

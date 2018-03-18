@@ -120,3 +120,4 @@ curl -s -S -i -X POST -H "Content-Type: application/senml+json" -H "Authorizatio
 curl -s -S -i -X POST -H "Content-Type: application/senml+json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MjA2NjI5MDMsImlzcyI6Im1haW5mbHV4Iiwic3ViIjoiNGQzOWU1ZjItMjQyYi0xMWU4LThjNzktMDAwYzI5MzlhODE5In0.94B1b99Fuv1yzKtWoI6UOPLqcT6F08BCYpWw5JPtPJk" localhost:7070/channels/bfb1b279-242d-11e8-8c7b-000c2939a819/messages -d '[{"bn":"4d39e5f2-242b-11e8-8c79-000c2939a819:","bt":1.286090086001e+09, "bu":"A","bver":5, "n":"puls","u":"V","v":120.1}, {"n":"pressure","t":-5,"v":1.2}, {"n":"oxgen","t":-4,"v":1.3}]'
 
 
+/usr/bin/aiocoap-client -m post --content-format "application/json" coap://127.0.0.1:5683/channels/8eac4a8b-242d-11e8-8c7a-000c2939a819/messages --payload '[{"bn":"4d39e5f2-242b-11e8-8c79-000c2939a819:","bt":1.286090086001e+09, "bu":"A","bver":5, "n":"puls","u":"V","v":120.1}, {"n":"pressure","t":-5,"v":1.2}, {"n":"oxgen","t":-4,"v":1.3}]'

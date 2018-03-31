@@ -1,7 +1,7 @@
 package controllers
-
+//该代码缺一致性检查
 import (
-	"fmt"
+//	"fmt"
 	"ht_iot/models"
 	"time"
 
@@ -32,13 +32,13 @@ func (this *DeviceinfoController) Get() {
 
 
 func (this *DeviceinfoController) Post() {
-	this.TplName = "deviceinfo.html"
 	logs.Debug("Device information to Device table")
+	this.TplName = "deviceinfo.html"
+
 	var Mystruct models.DeviceTable
 	p := models.DeviceInfo{}
 	Deviceinfo, err = models.GetDeviceInfo(p)
 
-	fmt.Println("Hospitalslice:", len(Deviceinfo))
 	Mystruct.Data = make([]models.DeviceInfo, len(Deviceinfo))
 	copy(Mystruct.Data,Deviceinfo)
 	this.Data["json"] = &Mystruct
@@ -51,10 +51,10 @@ func (this *DeviceinfoController) GetModal() {
 	deviceid := this.GetString("deviceid")
 	var Mystruct models.DeviceTable
 	var devicemodal []models.DeviceInfo
-	p := models.DeviceInfo{Deviceid: deviceid}
 
+	p := models.DeviceInfo{Deviceid: deviceid}
 	devicemodal, err = models.GetDeviceInfo(p)
-	fmt.Println(devicemodal)
+
 	if len(devicemodal) == 1 {
 		Mystruct.Data = append(Mystruct.Data, devicemodal...)
 	} else {
@@ -65,13 +65,12 @@ func (this *DeviceinfoController) GetModal() {
 }
 
 func (this *DeviceinfoController) PostModal() {
-	logs.Debug("Get Device information from Device Modal")
-	//	deviceid := this.GetString("deviceid")
+	logs.Debug("POst Updated Device information to DB")
+
 	var Getstruct In
 	d = this.getfromhtml()
-	//	hd := this.GetString("deviceid")
-	//	d.Id = uuid.FromString(d.Deviceid)
-	fmt.Println("PostModal d=", d)
+
+//	fmt.Println("PostModal d=", d)
 	err := models.UpdateDeviceItem(d)
 
 	if err == nil {
@@ -86,15 +85,14 @@ func (this *DeviceinfoController) PostModal() {
 }
 
 func (this *DeviceinfoController) PostMerge() {
-	logs.Debug("Device information to Device table")
+	logs.Debug("Got the created Device to Device table from DB-channels_by_user")
 	str0 := this.GetString("hospitalname")
 
 	var Getstruct In
-	//	fmt.Println("str", str0, str1, str2)
 	_ = models.InputDevices(str0)
 	p := models.DeviceInfo{Hospitalname: d.Hospitalname}
 	Deviceinfo, _ = models.GetDeviceInfo(p)
-	fmt.Println("Deviceinfo", Deviceinfo)
+//	fmt.Println("Deviceinfo", Deviceinfo)
 	if len(Deviceinfo) > 0 {
 		//				d = Deviceinfo[id]
 		Getstruct.Info = "合并终端成功"

@@ -28,10 +28,6 @@ func init() {
 	beego.Router("/line/pconfig", &controllers.PconfigController{}, "get:GetLine;post:PostLine")
 	beego.Router("/device/pconfig", &controllers.PconfigController{}, "post:GetDevInfo")
 
-//	beego.Router("/outhospital", &controllers.OuthospitalController{})
-//	beego.Router("/api/outhospital", &controllers.OuthospitalController{}, "get:GetPat;post:PostPat")
-//	beego.Router("/line/outhospital", &controllers.OuthospitalController{}, "post:Line")
-
 	beego.Router("/deviceinfo", &controllers.DeviceinfoController{})
 	beego.Router("/api/deviceinfo", &controllers.DeviceinfoController{}, "get:GetModal;post:PostModal")
 	beego.Router("/merge/deviceinfo", &controllers.DeviceinfoController{}, "post:PostMerge")

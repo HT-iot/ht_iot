@@ -43,20 +43,20 @@
 
                                <label class="col-sm-4 control-label" for = "name">患者姓名</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text"  id="col4_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                                   <input type = "text"  id="col4_filter" placeholder = "请输入患者姓名"></input> 
                                </div> 
                                <label class="col-sm-4 control-label" for = "name">患者性别</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text"   id="col5_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                                   <input type = "text"   id="col5_filter" placeholder = "请输入患者性别" ></input> 
                                </div> 
                                <label class="col-sm-4 control-label" for = "name">患者身份证</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text"  id="col6_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                                   <input type = "text"  id="col6_filter" placeholder = "请输入患者身份证" ></input> 
                                </div> 
                                <hr><br><br>
                                <label class="col-sm-4 control-label" for = "name">终 端 号</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text"   id="col7_filter" placeholder = "请输入终端号" name = "p_device"></input> 
+                                   <input type = "text"   id="col7_filter" placeholder = "请输入终端号" ></input> 
                                </div> 
                              </form> 
                             <hr><br><br> <br>
@@ -103,11 +103,11 @@
                                </div> 
                                <label class="col-sm-4 control-label" for = "name">患者性别</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text"  data-column="5" id="col05_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                                   <input type = "text"  data-column="5" id="col05_filter" placeholder = "请输入患者性别" name = "p_name"></input> 
                                </div> 
                                <label class="col-sm-4 control-label" for = "name">患者身份证</label> 
                                <div class="col-sm-8"> 
-                                   <input type = "text" data-column="6" id="col06_filter" placeholder = "请输入患者姓名" name = "p_name"></input> 
+                                   <input type = "text" data-column="6" id="col06_filter" placeholder = "请输入患者身份证" name = "p_name"></input> 
                                </div> 
                                <hr><br><br>
                                <label class="col-sm-4 control-label" for = "name">终 端 号</label> 
@@ -116,8 +116,6 @@
                                </div> 
                                <input type="text" style="display:none" id="col08_filter" name = "d_deviceid" />
                                <input type="text" style="display:none" id="col09_filter" name = "d_channelid" />
-<!--                               <input type="text" style="display:none" id="col08_filter" name = "d_device" />   -->
-                               
 
                              </form> 
                             <hr><br><br> <br>
@@ -289,9 +287,7 @@
                "dom": "<'row'<'#pattool.col-sm-2'><'col-sm-2'l><'col-sm-8 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
                "initComplete": function () {
                    $("#pattool").append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#exampleModal">录入新用户</button>');
-                
-
-                   if (elo.gridInit.search) {
+                       if (elo.gridInit.search) {
                        $search = $("input[type='search']");
                        //隐藏默认的搜索框
    
@@ -452,7 +448,7 @@ function checkbox(tableId) {
         });
 
 
-        //提交更改  
+        //添加新用户，需要做一致性检查  
     function update() {  
         $.ajax({  
             type: "post",  
@@ -477,35 +473,35 @@ function checkbox(tableId) {
         $('#exampleModal').modal('hide');
     };
 
-        $('#patientModal').on('show.bs.modal', function (event) {  
-          var button = $(event.relatedTarget); // 触发事件的按钮  
-            var recipient = button.data('whatever'); // 解析出data-whatever内容  
-            var modal = $(this);  
-            modal.find('.modal-title2').text('患者信息更改：' + recipient);
-            console.log(recipient);
-            $.ajax({ 
-                type: "get", 
-                url: "/line/pconfig", 
-                dataType:"json",
-                data: {
-                    deviceid:recipient,
-                },
-                complete: function(msg){ 
-                        var jsonData = eval("("+msg.responseText+")");
-                        console.log(jsonData);
-                        modal.find('.modal-body #col01_filter').val(jsonData[0].Hospitalname);
-                        modal.find('.modal-body #col02_filter').val(jsonData[0].Hospitalzone); 
-                        modal.find('.modal-body #col03_filter').val(jsonData[0].Hospitalbed);      
-                        modal.find('.modal-body #col04_filter').val(jsonData[0].Patientname);   
+    $('#patientModal').on('show.bs.modal', function (event) {  
+        var button = $(event.relatedTarget); // 触发事件的按钮  
+        var recipient = button.data('whatever'); // 解析出data-whatever内容  
+        var modal = $(this);  
+        modal.find('.modal-title2').text('患者信息更改：' + recipient);
+        console.log(recipient);
+        $.ajax({ 
+            type: "get", 
+            url: "/line/pconfig", 
+            dataType:"json",
+            data: {
+                deviceid:recipient,
+            },
+            complete: function(msg){ 
+                var jsonData = eval("("+msg.responseText+")");
+                console.log(jsonData);
+                modal.find('.modal-body #col01_filter').val(jsonData[0].Hospitalname);
+                modal.find('.modal-body #col02_filter').val(jsonData[0].Hospitalzone); 
+                modal.find('.modal-body #col03_filter').val(jsonData[0].Hospitalbed);      
+                modal.find('.modal-body #col04_filter').val(jsonData[0].Patientname);   
 
-                        modal.find('.modal-body #col05_filter').val(jsonData[0].Patientsex);      
-                        modal.find('.modal-body #col06_filter').val(jsonData[0].Patientid);   
-                        modal.find('.modal-body #col07_filter').val(jsonData[0].Hospitaldeviceid);
-                        modal.find('.modal-body #col08_filter').val(jsonData[0].Deviceid);
-                        modal.find('.modal-body #col09_filter').val(jsonData[0].Channelid);      
-                 },
-            });
-       });
+                modal.find('.modal-body #col05_filter').val(jsonData[0].Patientsex);      
+                modal.find('.modal-body #col06_filter').val(jsonData[0].Patientid);   
+                modal.find('.modal-body #col07_filter').val(jsonData[0].Hospitaldeviceid);
+                modal.find('.modal-body #col08_filter').val(jsonData[0].Deviceid);
+                modal.find('.modal-body #col09_filter').val(jsonData[0].Channelid);      
+            },
+        });
+    });
 
 function update2() {  
     var buttonp = $("#reload2"); // 触发事件的按钮  

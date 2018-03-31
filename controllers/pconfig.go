@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"ht_iot/models"
 	"time"
 
@@ -49,13 +48,13 @@ func (this *PconfigController) Post() {
 		Mystruct.Data = nil
 	}
 
-	fmt.Println(Mystruct)
+//	fmt.Println(Mystruct)
 	this.Data["json"] = &Mystruct
 	this.ServeJSON()
 }
 
 func (this *PconfigController) PostPat() {
-	logs.Debug("Input the data in Pconfig")
+	logs.Debug("add new patient into patient DB")
 	var hv bool
 	var Getstruct In
 	var h models.HospitalPatientInfo
@@ -87,21 +86,15 @@ func (this *PconfigController) PostPat() {
 }
 
 func (this *PconfigController) GetPat() {
-	logs.Debug("the Patient information")
+	logs.Debug("add new patient into patient DB")
 	var Mystruct models.HospitalTable
 //	var err error
 	Hospitalslice, err = models.GetAllPatient()
 
-	fmt.Println("Hospitalslice:", len(Hospitalslice))
+	logs.Debug("Hospitalslice:", len(Hospitalslice))
 	Mystruct.Data = make([]models.HospitalPatientInfo, len(Hospitalslice))
 	copy(Mystruct.Data,Hospitalslice)
-/*	if err == nil {
-		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
-	} else {
-		Mystruct.Data = append(Mystruct.Data, Hospitalslice...)
-	}
-*/
-	fmt.Println("Mystruct:", Mystruct.Data)
+
 	this.Data["json"] = &Mystruct
 	this.ServeJSON()
 }
@@ -126,7 +119,7 @@ func (this *PconfigController) PostLine() {
 
 	//	h.Id = gocql.TimeUUID()
 	//	h.Patiententrtime = time.Now()
-	fmt.Println("h=", h)
+//	fmt.Println("h=", h)
 
 	hv = models.UpdatePatient(h)
 	if hv {
@@ -159,7 +152,7 @@ func (this *PconfigController) GetLine() {
 		//Hospitalzone: zone,
 		Deviceid: device}
 
-	fmt.Println("PostLine d Patientid=", d)
+//	fmt.Println("PostLine d Patientid=", d)
 
 	Hospitalslice, err = models.GetPatient(d)
 
@@ -176,7 +169,7 @@ func (this *PconfigController) GetLine() {
 
 
 func (this *PconfigController) GetDevInfo() {
-	logs.Debug("Get Dev and channel information from Patient")
+	logs.Debug("Get Dev and channel information from Patient for APP")
 
 	var hv error
 	

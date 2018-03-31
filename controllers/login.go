@@ -3,15 +3,12 @@ package controllers
 import (
 	"crypto/sha1"
 	"encoding/base64"
-	"fmt"
 	"ht_iot/models"
 	"io"
 
 	"github.com/astaxie/beego/logs"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,7 +20,6 @@ func (c *LoginController) Hash(pwd string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return string(hash), nil
 }
 
@@ -38,11 +34,12 @@ type LoginController struct {
 func (c *LoginController) Get() {
 	c.TplName = "login.html"
 	isExit := c.GetString("exit")
-	fmt.Println("Login isExit =", isExit)
+//	fmt.Println("Login isExit =", isExit)
 	if isExit == "true" {
 		c.Ctx.SetCookie("name", "", -1, "/")
 		c.Ctx.SetCookie("pwd", "", -1, "/")
 		c.Ctx.SetCookie("hname", "", -1, "/")
+		c.Ctx.SetCookie("zname", "", -1, "/")
 		c.Redirect("/", 301)
 		return
 	}
@@ -55,7 +52,7 @@ func (c *LoginController) Post() {
 	uname := c.Input().Get("uname")
 	pwd := c.Input().Get("pwd")
 	hname := c.Input().Get("hospname")
-
+	zname := c.Input().Get("hospzone")
 	autoLogin := c.Input().Get("autoLogin") == "on"
 
 	//p := models.User{Email: uname, Password: pwd}
@@ -85,9 +82,9 @@ func (c *LoginController) Post() {
 			hname0 := base64.StdEncoding.EncodeToString([]byte(hname))
 			c.Ctx.SetCookie("hname", hname0, maxAge, "/")
 	
-			/* TODO add session support
-			c.SetSession(uname, pwd)
-			*/
+			zname0 := base64.StdEncoding.EncodeToString([]byte(zname))
+			c.Ctx.SetCookie("zname", zname0, maxAge, "/")
+
 			IsLogin = true
 			c.Data["ISLogin"] = IsLogin
 	
@@ -127,10 +124,21 @@ func checkAccount(ctx *context.Context) bool {
 	}
 	hname, err := base64.StdEncoding.DecodeString(ck.Value)
 	if err != nil {
-		fmt.Println(err)
+		log.Error("Hopsital name decode error in Login");
 	}
 	Hospital = string(hname)
-	fmt.Println(Hospital)
+
+	ck, err = ctx.Request.Cookie("zname")
+	if err != nil {
+		return false
+	}
+	zname, err := base64.StdEncoding.DecodeString(ck.Value)
+	if err != nil {
+		log.Error("Hopsital zone decode error in Login");
+	}
+	HospZone = string(zname)
+
+	log.Debug(Hospital, HospZone);
 
 	p := models.User{Email: uname}
 	q, err := models.GetAllUers(p)
@@ -143,6 +151,7 @@ func checkAccount(ctx *context.Context) bool {
 
 	log.Debug("user input passwd is :" + pwd)
 	log.Debug("db passwd is :" + q[0].Password)
+	log.Debug("hospital name is :" + Hospital +HospZone)
 
 	h := sha1.New()
 	io.WriteString(h, q[0].Email+q[0].Password)
@@ -151,9 +160,7 @@ func checkAccount(ctx *context.Context) bool {
 		IsLogin = true
 		return true
 	}
-
 	logs.Debug("Cookie password check failure")
 	IsLogin = false
 	return false
-
 }

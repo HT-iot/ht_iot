@@ -32,15 +32,14 @@ func GetDeviceInfo(d DeviceInfo) ([]DeviceInfo, error) {
 		}
 	}
 
-	//
 	stmt, names := sel.ToCql()
-	fmt.Println("stmt,names =", stmt, names)
+
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
 	defer q.Release()
 
 	var deviceinfo []DeviceInfo
 	if err := gocqlx.Select(&deviceinfo, q.Query); err != nil {
-		fmt.Println("select Err:", err)
+		fmt.Println("select Err in function GetDeviceInfo:", err)
 		return nil, err
 	}
 	return deviceinfo, nil
@@ -59,14 +58,14 @@ func UpdateDeviceItem(d DeviceInfo) error {
 			"hospitaldeviceid").
 		Where(qb.Eq("hospitalname"), qb.Eq("channelid"), qb.Eq("deviceid")).
 		ToCql()
-	fmt.Println("Update d=", d)
+//	fmt.Println("Update d=", d)
 
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
 
-	fmt.Println("q=", q)
+//	fmt.Println("q=", q)
 
 	if err := q.ExecRelease(); err != nil {
-		fmt.Println("err=", err)
+		fmt.Println("Updated failed in UpdateDeviceItem, err=", err)
 		return err
 	}
 
@@ -74,6 +73,8 @@ func UpdateDeviceItem(d DeviceInfo) error {
 }
 
 func InputDevices(hospital_name string) error {
+
+	//issue: there should have some problems if the data is too big
 	p := ChannelsByUser{Name: hospital_name}
 	sel := qb.Select("channels_by_user").Where(qb.Eq("name")).AllowFiltering()
 
@@ -91,13 +92,12 @@ func InputDevices(hospital_name string) error {
 		fmt.Println("select Err:", err)
 		return err
 	}
-	fmt.Println("people:", people)
+	
+//	check if the device is in teh device table, otherwise add.
 	for _, v := range people {
 		for _, w := range v.Connected {
 			if CheckDevice(w) != true {
-				//				fmt.Println("device:", v)
 				d.Hospitalname = v.Name
-				//				d.Id, _ = gocql.ParseUUID(w)
 				d.Deviceid = w
 				d.Channelid = v.ID.String()
 				_ = InsertDevice(d)
@@ -110,9 +110,20 @@ func InputDevices(hospital_name string) error {
 func CheckDevice(device string) bool {
 	log := logs.GetBeeLogger()
 	log.Info("Get Device information")
+//this function need simplify.
+//	d := DeviceInfo{Deviceid: device}
 
-	d := DeviceInfo{Deviceid: device}
+	var Key string;
 
+	err := SessionMgr.Query(`SELECT access_key from device_info WHERE deviceid = ? LIMIT 1 ALLOW FILTERING`, device).Scan(&Key)
+
+	if(err!=nil){
+		log.Debug("select Err:", err.Error());
+		return false
+	}
+	return true
+
+/*	
 	sel := qb.Select("device_info").Where(qb.Eq("deviceid")).Limit(100).AllowFiltering()
 	//	fmt.Println("d:", d)
 	stmt, names := sel.ToCql()
@@ -128,6 +139,7 @@ func CheckDevice(device string) bool {
 		return false
 	}
 	return true
+*/
 }
 
 func InsertDevice(d DeviceInfo) bool {

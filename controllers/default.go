@@ -12,7 +12,7 @@ type MainController struct {
 }
 
 var IsLogin, IsStatus, IsPconfig, IsOconfig bool
-var Hospital string
+var Hospital, HospZone string
 
 //Get .....
 func (c *MainController) Get() {

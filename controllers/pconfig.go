@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"ht_iot/models"
 	"time"
 
@@ -92,7 +91,7 @@ func (this *PconfigController) GetPat() {
 //	var err error
 	Hospitalslice, err = models.GetAllPatient()
 
-	fmt.Println("Hospitalslice:", len(Hospitalslice))
+	logs.Debug("Hospitalslice:", len(Hospitalslice))
 	Mystruct.Data = make([]models.HospitalPatientInfo, len(Hospitalslice))
 	copy(Mystruct.Data,Hospitalslice)
 

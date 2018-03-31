@@ -69,7 +69,7 @@
                                     </tr> 
                                 <tr> 
                                     <th scope="row" class="col-sm-2 col-md-offset-2 text-right">病区号:</th> 
-                                    <td><input type="text" name="hospital_zone" id="hospital_zone"/></td> 
+                                    <td><input type="text" disabled="disabled" name="hospital_zone" id="hospital_zone"/></td> 
                                     <td></td>
                                 </tr> 
                             </table> 
@@ -166,9 +166,9 @@
             "monitorradius":9999999
         };
 
-        var colunmsStr = "runstatus,hospitalname，hospitalzone,hospitalbed,patientname,hospitaldeviceid,puls, oxgen,pressurehigh,pressurelow,longitude,latitude,ops";
+        var colunmsStr = "reporttime,hospitalname，hospitalzone,hospitalbed,patientname,hospitaldeviceid,puls, oxgen,pressurehigh,pressurelow,longitude,latitude,ops";
         var columsName = {
-            "runstatus": "运行状态",            
+            "reporttime": "上报时间",            
             "hospitalname": "医院名称",
             "hospitalzone": "病区号",
             "hospitalbed": "病床号",
@@ -184,14 +184,14 @@
           };
 
           var  createdCellName = {
-            "runstatus": (function(td, cellData, rowData, row, col){
+            "reporttime": (function(td, cellData, rowData, row, col){
                 if (((rowData.hospitalbed != '')&&(rowData.patientname != '')) &&
                     ((rowData.puls >= hospitalconfig.pulsmax)||(rowData.puls <= hospitalconfig.pulsmin) ||
                     (rowData.oxgen >= hospitalconfig.oxgenmax)||(rowData.oxgen <= hospitalconfig.oxgenmin) ||
                     (rowData.pressurehigh >= hospitalconfig.pressurehighmax)||(rowData.pressurehigh <= hospitalconfig.pressurehighmin)||
                     (rowData.pressurelow >= hospitalconfig.pressurelowmax)||(rowData.pressurelow <= hospitalconfig.Pressurelowmin)))
                 {          
-                    $(td).html('离线');
+//                    $(td).html('离线');
 //                    $(td).parents().css('background-color', 'pink'); 
                     $(td).css('background-color', 'pink');};
                 }),
@@ -256,6 +256,13 @@
                 if (rowData.oxgen <= hospitalconfig.oxgenmin){
                     $(td).css('background-color', 'yellow');};
                 }),
+                "pressurelow":(function(td, cellData, rowData, row, col){
+                if (rowData.pressurelow >= hospitalconfig.pressurelowmax){
+                    $(td).css('background-color', 'red');};
+                if (rowData.pressurelow <= hospitalconfig.Pressurelowmin){
+                    $(td).css('background-color', 'yellow');};
+            }),
+
             "pressurehigh":(function(td, cellData, rowData, row, col){
                 if (rowData.pressurehigh >= hospitalconfig.pressurehighmax){
                     $(td).css('background-color', 'red');};
@@ -263,12 +270,7 @@
                     $(td).css('background-color', 'yellow');};
             }),
 
-            "pressurelow":(function(td, cellData, rowData, row, col){
-                if (rowData.pressurelow >= hospitalconfig.pressurelowmax){
-                    $(td).css('background-color', 'red');};
-                if (rowData.pressurelow <= hospitalconfig.Pressurelowmin){
-                    $(td).css('background-color', 'yellow');};
-            }),
+          
             "longitude":(function(td, cellData, rowData, row, col){}),
             "latitude":(function(td, cellData, rowData, row, col){}),
             "ops":(function(td, cellData, rowData, row, col){
@@ -288,7 +290,9 @@
    
  //第一次初始化,加载所有列
             var columns = [
-                {"data": "runstatus", "title": columsName["runstatus"],"createdCell":createdCellName["runstatus"]},
+ //               {"data": "runstatus", "title": columsName["runstatus"],"createdCell":createdCellName["runstatus"]},
+          
+                {"data": "reporttime", "title": columsName["reporttime"],"createdCell":createdCellName["reporttime"]},
                 {"data": "hospitalname", "title": columsName["hospitalname"],"createdCell":createdCellName["hospitalname"]},
                 {"data": "hospitalzone", "title": columsName["hospitalzone"],"createdCell":createdCellName["hospitalzone"]},
                 {"data": "hospitalbed", "title": columsName["hospitalbed"],"createdCell":createdCellName["hospitalbed"]},
@@ -296,8 +300,8 @@
                 {"data": "hospitaldeviceid", "title": columsName["hospitaldeviceid"],"createdCell":createdCellName["hospitaldeviceid"]},
                 {"data": "puls", "title": columsName["puls"],"createdCell":createdCellName["puls"]},
                 {"data": "oxgen", "title": columsName["oxgen"],"createdCell":createdCellName["oxgen"]},
-                {"data": "pressurehigh", "title": columsName["pressurehigh"],"createdCell":createdCellName["pressurehigh"]},
-                {"data": "pressurelow", "title": columsName["pressurelow"],"createdCell":createdCellName["pressurehigh"]},
+                  {"data": "pressurelow", "title": columsName["pressurelow"],"createdCell":createdCellName["pressurelow"]},
+                  {"data": "pressurehigh", "title": columsName["pressurehigh"],"createdCell":createdCellName["pressurehigh"]},
                 {"data": "longitude", "title": columsName["longitude"],"createdCell":createdCellName["longitude"]},
                 {"data": "latitude", "title": columsName["latitude"],"createdCell":createdCellName["latitude"]},
                 {"data": "ops", "title": columsName["ops"],"createdCell":createdCellName["ops"]},
@@ -432,9 +436,12 @@
                     "next": "下一页"
                 }
             },
-            "dom": "<'row'<'#mytool.col-sm-2'><'col-sm-4'l><'col-sm-6 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+            "dom": "<'row'<'#mytool.col-sm-2'><'col-sm-4'l><'#myname.col-sm-2'><'col-sm-4 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
             "initComplete": function (msg) {
                 $("#mytool").append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#statusModal">告警设置</button>'); 
+     //$("#myname").append('<label for = "hospitalname">{{.Hospital}}</label>'); 
+
+ //               $("#myname").append('<label for = "hospitalconfig.hospitalname"></label>'); 
 //                console.log(msg);
             }
           
@@ -444,7 +451,7 @@
     $('#statusModal').on('show.bs.modal', function (event) {  
         var modal = $(this);
         modal.find('.modal-title').text(hospitalconfig.hospitalname + ' ' + ' 患者告警信息');
-        modal.find('.modal-body #puls_min').val(hospitalconfig.hospitalzone);
+        modal.find('.modal-body #hospital_zone').val(hospitalconfig.hospitalzone);
   
         modal.find('.modal-body #puls_min').val(hospitalconfig.pulsmin);
         modal.find('.modal-body #puls_max').val(hospitalconfig.pulsmax); 

@@ -34,7 +34,7 @@ var tables = []string{
 		hospitalname text,
 		manufacturer  text,
 		modelnumber text,
-		Deviceid text,
+		deviceid text,
 		firmwareVersion text,
 		reboot boolean,
 		factoryreset boolean,
@@ -57,15 +57,14 @@ var tables = []string{
 		used boolean,
 		PRIMARY KEY ((hospitalname),deviceid,channelid)
 		)`,
-
 	 
-	`CREATE TABLE IF NOT EXISTS hospitalconfig (
+	`CREATE TABLE IF NOT EXISTS manager.hospital_config (
 		hospitalname text,
 		hospitalzone text,
 		pulsmin double,   
 		pulsmax double,   
 		oxgenmin double,    
-		oxgenmax idoublent,     
+		oxgenmax double,     
 		pressurelowmin double,
 		pressurelowmax double,
 		pressurehighmin double,
@@ -75,32 +74,8 @@ var tables = []string{
 		latitude double,
 		longitude double,
 		ops text,
-		PRIMARY KEY (hospitalname)
+		PRIMARY KEY (hospitalname,hospitalzone)
 	)`,
-
-/*
-	`CREATE TABLE IF NOT EXISTS clients_by_user (
-		user text,
-		id timeuuid,
-		type text,
-		name text,
-		access_key text,
-		meta map<text, text>,
-		PRIMARY KEY ((user), id)
-	)`,
-	`CREATE TABLE IF NOT EXISTS channels_by_user (
-		user text,
-		id timeuuid,
-		name text,
-		connected set<text>,
-		PRIMARY KEY ((user), id)
-	)`,
-	`CREATE MATERIALIZED VIEW IF NOT EXISTS clients_by_channel
-		AS SELECT user, id, connected FROM channels_by_user
-		WHERE id IS NOT NULL
-		PRIMARY KEY (id, user)
-	`,
-	*/
 }
 
 /*User : The Admin user information */
@@ -467,10 +442,10 @@ func UpdatePatient(h HospitalPatientInfo) bool {
 //Update hospital db data  	err := models.UpdateWarnInfo(h)
 func UpdateWarnInfo(h HospitalInfoConfig) bool {
 	// // Easy update with all parameters bound from struct.
-
+	log := logs.GetBeeLogger()
 	//		p.Email = append(p.Email, "patricia1.citzen@gocqlx_test.com")
-	sel:= qb.Update("hospitalconfig").
-		Set("hospitalzone","pulsmin", "pulsmax", "oxgenmin", "oxgenmax", "pressurelowmin", "pressurelowmax",
+	sel:= qb.Update("hospital_config").
+		Set("pulsmin", "pulsmax", "oxgenmin", "oxgenmax", "pressurelowmin", "pressurelowmax",
 			"pressurehighmin", "pressurehighmax","monitoraddress", "monitorradius").
 		Where(qb.Eq("hospitalname"))
 	
@@ -481,9 +456,9 @@ func UpdateWarnInfo(h HospitalInfoConfig) bool {
 		stmt, names := sel.ToCql()
 
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
-	fmt.Println("q=", q)
+
 	if err := q.ExecRelease(); err != nil {
-		fmt.Println("err=", err)
+		log.Error("GetHospital config: select Err:")
 		return false
 	}
 	return true
@@ -495,16 +470,13 @@ func InsertWarnInfo(h HospitalInfoConfig) error {
 	log := logs.GetBeeLogger()
 	log.Info("Insert hospital config information")
 
-	stmt, names := qb.Insert("hospitalconfig").Columns("hospitalname","hospitalzone",
+	stmt, names := qb.Insert("hospital_config").Columns("hospitalname","hospitalzone",
 		"pulsmin", "pulsmax", "oxgenmin", "oxgenmax", "pressurelowmin",
 		"pressurelowmax","pressurehighmin", "pressurehighmax","monitoraddress", "monitorradius").
 		ToCql()
 
-		//	fmt.Println("stmt =", stmt)
-		//	fmt.Println("h =", h)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
-	//	fmt.Println("q =", q)
-
+	
 	if err := q.ExecRelease(); err != nil {
 		log.Critical("Insert hospital config information: select:" + err.Error())
 		return err
@@ -514,45 +486,58 @@ func InsertWarnInfo(h HospitalInfoConfig) error {
 
 func GetWarnInfo(hospitalname,hospitalzone string ) (HospitalInfoConfig, error) {
 	log := logs.GetBeeLogger()
-	log.Debug("Get Hospital config information")
+	log.Debug("Get Hospital defined warning threshold")
 
+	var hinfo []HospitalInfoConfig
 	d := HospitalInfoConfig{Hospitalname:hospitalname, Hospitalzone: hospitalzone}
-	fmt.Println("XXX d=", d)
-	sel := qb.Select("hospitalconfig").Where(qb.Eq("hospitalname")).Limit(1).AllowFiltering()
-
-	if len("hospitalzone") != 0 {
-		sel.Where(qb.Eq("hospitalzone"))
-	}
 	
-	stmt, names := sel.ToCql()
-	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
+	if (len(hospitalname)>0){
+		
+		sel := qb.Select("hospital_config").Where(qb.Eq("hospitalname")).Limit(1).AllowFiltering()
+		if len("hospitalzone") != 0 {
+			sel.Where(qb.Eq("hospitalzone"))
+		}
+	
+		stmt, names := sel.ToCql()
+		q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&d)
+		defer q.Release()
 
-	defer q.Release()
-
-
-	var h []HospitalInfoConfig
-	if err := gocqlx.Select(&h, q.Query); err != nil {
-		log.Error("GetHospital config: select Err:" + err.Error())
-	}
-
-	fmt.Println("Get h=", h, len(h))
-	if len(h) == 0{
-		d.Hospitalname = hospitalname
-		d.Hospitalzone = hospitalzone
+		err := gocqlx.Select(&hinfo, q.Query)
+		
+		if ((err != nil)||(len(hinfo)==0)) {
+//			log.Error("GetHospital config: select Err:")
+			//use default value
+			d.Hospitalname = hospitalname
+			d.Hospitalzone = hospitalzone
+			d.Pulsmin = 40
+			d.Pulsmax = 120
+			d.Oxgenmin = 90
+			d.Oxgenmax = 110
+			d.Pressurelowmin = 50
+			d.Pressurelowmax = 120
+			d.Pressurehighmin = 70
+			d.Pressurehighmax = 180
+			d.Monitoraddress = "深圳市眼科医院"
+			d.Monitorradius = 999999
+			return d, nil
+		} else
+		{
+			return hinfo[0],nil
+		} 
+	}else
+	{
 		d.Pulsmin = 40
 		d.Pulsmax = 120
 		d.Oxgenmin = 90
 		d.Oxgenmax = 110
-		
 		d.Pressurelowmin = 50
 		d.Pressurelowmax = 120
 		d.Pressurehighmin = 70
 		d.Pressurehighmax = 180
-		d.Monitoraddress = "深圳市眼科"
+		d.Monitoraddress = "深圳市眼科医院"
 		d.Monitorradius = 999999
-		return d,nil
+		return d, nil
 	}
-	return d, nil
 }
 
 
@@ -575,18 +560,18 @@ func GetDevfromPatient(h HospitalPatientInfo) (HospitalPatientInfo, error) {
 	if len(h.Patientname) != 0 {
 		sel.Where(qb.Eq("patientname"))
 	}
-	fmt.Println("sel=",sel);
+//	fmt.Println("sel=",sel);
 	stmt, names := sel.ToCql()
 //	logs.Debug(stmt, names)
 	q := gocqlx.Query(SessionMgr.Query(stmt), names).BindStruct(&h)
 	defer q.Release()
-	fmt.Println("q=",q);
+//	fmt.Println("q=",q);
 	var patient []HospitalPatientInfo
 	if err := gocqlx.Select(&patient, q.Query); err != nil {
 		log.Debug("select Err:", err.Error())
 		return patient[0], err
 	} 
-	fmt.Println("h=",patient);
+//	fmt.Println("h=",patient);
 	return patient[0], nil
 }
 

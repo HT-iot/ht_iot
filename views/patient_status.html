@@ -27,10 +27,8 @@
 
 {{template "navbar" .}}
 <body>
-         
-        
         <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="recordModalLabel">  
-            <div class="modal-dialog  modal-md" role="document">  
+            <div class="modal-dialog  modal-lg" role="document">  
                 <div class="modal-content">  
                     <div class="modal-header">  
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span  
@@ -47,8 +45,6 @@
                 </div>  
             </div>  
         </div>  
-
-
 
         <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel">  
                 <div class="modal-dialog  modal-md" role="document">  
@@ -274,9 +270,12 @@
             "longitude":(function(td, cellData, rowData, row, col){}),
             "latitude":(function(td, cellData, rowData, row, col){}),
             "ops":(function(td, cellData, rowData, row, col){
-                $(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever="+ cellData +">当天记录</button>" +
-                "<button type='button' id='record5' onclick='button2(" + row + "," + col + ")'>五天记录</button>")
-            }),
+                $(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever0="+ rowData.hospitalname+"  data-whatever="+ rowData.patientname+">当天记录</button>" +
+                "<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever=‘五天’>当天记录</button>")
+  //              $(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever="+ cellData +">当天记录</button>" +
+  //              "<button type='button' id='record5' onclick='button2(" + row + "," + col + ")'>五天记录</button>")
+//.append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#statusModal">告警设置</button>'); 
+        }),
           };
  
         var status = [
@@ -300,8 +299,8 @@
                 {"data": "hospitaldeviceid", "title": columsName["hospitaldeviceid"],"createdCell":createdCellName["hospitaldeviceid"]},
                 {"data": "puls", "title": columsName["puls"],"createdCell":createdCellName["puls"]},
                 {"data": "oxgen", "title": columsName["oxgen"],"createdCell":createdCellName["oxgen"]},
-                  {"data": "pressurelow", "title": columsName["pressurelow"],"createdCell":createdCellName["pressurelow"]},
-                  {"data": "pressurehigh", "title": columsName["pressurehigh"],"createdCell":createdCellName["pressurehigh"]},
+                {"data": "pressurelow", "title": columsName["pressurelow"],"createdCell":createdCellName["pressurelow"]},
+                {"data": "pressurehigh", "title": columsName["pressurehigh"],"createdCell":createdCellName["pressurehigh"]},
                 {"data": "longitude", "title": columsName["longitude"],"createdCell":createdCellName["longitude"]},
                 {"data": "latitude", "title": columsName["latitude"],"createdCell":createdCellName["latitude"]},
                 {"data": "ops", "title": columsName["ops"],"createdCell":createdCellName["ops"]},
@@ -877,23 +876,34 @@ function chartdiagram(){
 
 //5days record
 function button2(row, col) {  
+/*   
     $('#recordModal').on('show.bs.modal', function (event) {
-
+        console.log(row,col)
     });
+    */
 };
 
 
-$('#recordl').on('show.bs.modal', function (event) {
-
+$('#recordModal').on('show.bs.modal', function (event) {
+ 
+    var button = $(event.relatedTarget) // 触发事件的按钮  
+    var recipient = button.data('whatever') // 解析出data-whatever内容  
+    console.log("recipient", recipient)
+    recipient = button.data('whatever0') // 解析出data-whatever内容  
+    console.log("recipient0", recipient)
+    var modal = $(this)  
+    modal.find('.modal-title').text('Message To ' + recipient)  
+    
 });
 
 $('#record2').on('show.bs.modal', function (event) {
-
+    console.log("record2")
 });
 //1days record
 
 //$(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever="+ cellData +">当天记录</button>" +
 //                "<button type='button' id='record5' onclick='button2(" + row + "," + col + ")'>五天记录</button>")
+//               $("#mytool").append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#statusModal">告警设置</button>'); 
 
 /////////////////////////////////
     </script>

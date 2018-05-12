@@ -353,7 +353,7 @@ func GetDayInfo(deviceid string,Hospitalname string, Patientname string,t2time f
 		Patients[i].Channelid = p.Channel
 		Patients[i].Deviceid = deviceid
 		Patients[i].Recordtime = p.T
-		Patients[i].Reporttime = (time.Unix(int64(p.T),0)).Format("2006-01-02 03:04:05")
+		Patients[i].Reporttime = (time.Unix(int64(p.T),0)).Format("2006-01-02 15:04:05 PM")
 		err := GetDayMsg(&Patients[i])   //assemble the data
 		if err != nil {
 			logs.Error("Get the status failure!")

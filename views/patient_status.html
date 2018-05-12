@@ -36,7 +36,21 @@
                         <h4 class="modal-title" id="statusModalLabel">记录浏览</h4>  
                     </div>  
                     <div class="modal-body">  
-                        
+                        <table id="dayrecord" width=100% class="display" border="1" >   
+<!--                                <thead>
+                                        <tr>
+                                            <th >医院名称</th>   
+                                            <th>病区号</th> 
+                                            <th>病床号</th>   
+                                            <th>姓名</th> 
+                                            <th>性别</th>  
+                                           <th>终端号</th>
+                                           <th>使用时间</th>  
+                                           <th>操作</th> 
+                                        </tr>
+                                        </thead>    
+                                    -->
+                        </table> 
                     </div>     
                     <div class="modal-footer">  
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
@@ -128,11 +142,6 @@
    
     <div class="container-fluid" >
         <div id="container-urgent"  style="width: 100%; height: 150px;" ></div>
-    <!--    <div id="container-detach"  style="width: 200px; height: 150px; float: left"></div>
-        <div id="container-puls"    style="width: 200px; height: 150px; float: left"></div>
-        <div id="container-oxgen"   style="width: 200px; height: 150px; float: left"></div>
-        -->
-
     </div>
 
     <div class="container-fluid">
@@ -270,11 +279,10 @@
             "longitude":(function(td, cellData, rowData, row, col){}),
             "latitude":(function(td, cellData, rowData, row, col){}),
             "ops":(function(td, cellData, rowData, row, col){
-                $(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever0="+ rowData.hospitalname+"  data-whatever="+ rowData.patientname+">当天记录</button>" +
-                "<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever=‘五天’>当天记录</button>")
-  //              $(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever="+ cellData +">当天记录</button>" +
-  //              "<button type='button' id='record5' onclick='button2(" + row + "," + col + ")'>五天记录</button>")
-//.append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#statusModal">告警设置</button>'); 
+                $(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever0="+ rowData.deviceid+" data-whatever1="+ rowData.hospitalname+" data-whatever2="+ rowData.patientname+" data-whatever3='一'>当天</button>" +
+                "<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever0="+ rowData.deviceid+" data-whatever1="+ rowData.hospitalname+" data-whatever2="+ rowData.patientname+" data-whatever3='五'>五天</button>"+
+                "<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever0="+ rowData.deviceid+" data-whatever1="+ rowData.hospitalname+" data-whatever2="+ rowData.patientname+" data-whatever3='全'>全部</button>")
+ 
         }),
           };
  
@@ -289,8 +297,6 @@
    
  //第一次初始化,加载所有列
             var columns = [
- //               {"data": "runstatus", "title": columsName["runstatus"],"createdCell":createdCellName["runstatus"]},
-          
                 {"data": "reporttime", "title": columsName["reporttime"],"createdCell":createdCellName["reporttime"]},
                 {"data": "hospitalname", "title": columsName["hospitalname"],"createdCell":createdCellName["hospitalname"]},
                 {"data": "hospitalzone", "title": columsName["hospitalzone"],"createdCell":createdCellName["hospitalzone"]},
@@ -383,7 +389,7 @@
            serverSide: false,
            search: true,
            processing: false,
-           scrollY: "100%",
+           scrollY: true,
            scrollX: "100%",
            scrollXInner: "100%",
            scrollCollapse: false,
@@ -401,14 +407,12 @@
                     type: "get",  
                     dataType:"json",
                     dataSrc: "data",
-//                    function(msg){ 
-//                                                return msg.data;
-//                }
-                },
+              },
             //因为需要多次初始化，所以需要设置允许销毁实例
             "destroy": true,
             //列的配置信息通过变量传进来
             "columnDefs": status,//列表状态
+            "pageLength": 25,
             "columns": columns,
             "lengthChange": gridInit.lengthChange,//是否允许用户改变表格每页显示的记录数，默认是开启
             "paging": gridInit.paging,//是否开启本地分页，默认是开启
@@ -422,7 +426,7 @@
             "jQueryUI": gridInit.jQueryUI,//jquery 风格
             "autoWidth": gridInit.autoWidth, //是否自适应宽度
             "searching":gridInit.searching,
-
+            "order": [[ 1, 'asc' ], [ 2, 'asc' ], [ 3, 'asc' ]],
             "language": {
                 "lengthMenu": "每页_MENU_ 条记录",
                 "zeroRecords": "没有找到记录",
@@ -438,10 +442,7 @@
             "dom": "<'row'<'#mytool.col-sm-2'><'col-sm-4'l><'#myname.col-sm-2'><'col-sm-4 text-right'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
             "initComplete": function (msg) {
                 $("#mytool").append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#statusModal">告警设置</button>'); 
-     //$("#myname").append('<label for = "hospitalname">{{.Hospital}}</label>'); 
-
- //               $("#myname").append('<label for = "hospitalconfig.hospitalname"></label>'); 
-//                console.log(msg);
+     
             }
           
         });
@@ -545,102 +546,7 @@ function chartdiagram(){
 
 
     var myChart = echarts.init(document.getElementById('container-urgent'));
-    /*
-    myChart.option = {
-        legend: {},
-        tooltip: {},
-        dataset: {
-            source: [
-                ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-                ['Matcha Latte', 41.1, 30.4, 65.1, 53.3, 83.8, 98.7],
-                ['Milk Tea', 86.5, 92.1, 85.7, 83.1, 73.4, 55.1],
-                ['Cheese Cocoa', 24.1, 67.2, 79.5, 86.4, 65.2, 82.5],
-                ['Walnut Brownie', 55.2, 67.1, 69.2, 72.4, 53.9, 39.1]
-            ]
-        },
    
-    title: [{
-        text: '在线构建',
-        subtext: '总计 ' ,
-        x: '15%',
-        y: '15%',
-        textAlign: 'center'
-    }, {
-        text: '各版本下载',
-       
-        x: '40%',
-        textAlign: 'center'
-    }, {
-        text: '主题下载',
-      
-        x: '60%',
-        y: '15%',
-        textAlign: 'center'
-    }],
-    
-    series:    [
-                {
-        type: 'pie',
-        radius: ['10%', '20%'],
-        center: ['20%', '50%'],
-        color: ['#00FF00','#FF0000','#000000','#0000FF'],
-        label: {
-                normal: {
-                    show: false,
-                    position: 'inner'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '14',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-        // No encode specified, by default, it is '2012'.
-    }, {
-        type: 'pie',
-        radius: ['10%', '20%'],
-        center: ['40%', '50%'],
-          label: {
-                normal: {
-                    show: false,
-                    position: 'inner'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '14',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-        encode: {
-        itemName: 'product',
-        value: '2013'
-        }
-    }, {
-        type: 'pie',
-        radius: 30,
-        center: ['60%', '30%'],
-        encode: {
-            itemName: 'product',
-            value: '2014'
-        }
-    }, {
-        type: 'pie',
-        radius: 30,
-        center: ['80%', '30%'],
-        encode: {
-            itemName: 'product',
-            value: '2015'
-        }
-    }]
-};
-
-
-*/
-
     myChart.setOption({
         tooltip: {
             trigger: 'item',
@@ -672,26 +578,16 @@ function chartdiagram(){
                     color:"#000000",
                     fontWeight: 'bold',} 
                 }, {
-                    text: '使用总数\n(正作vs非正作)',
-                    subtext: Totaluses.toFixed(0),
+                    text: '异常使用总数\n(正常vs异常)',
+                    subtext: Totalunuses.toFixed(0),
                     x: '45%',
                     textAlign: 'center',
                     itemGap:45,
                     subtextStyle:{ fontSize:18 ,
                     color:"#000000",
                     fontWeight: 'bold',} 
-                
-                },  {
-                    text: '脉搏\n(正常vs非正常)',
-                    subtext: Totalpuls.toFixed(0),
-                    x: '60%',
-                    textAlign: 'center',
-                    itemGap:45,
-                    subtextStyle:{ fontSize:18 ,
-                    color:"#000000",
-                    fontWeight: 'bold',} 
                 },{
-                    text: '血氧\n(正常vs非正常)',
+                    text: '异常血氧\n(正常vs异常)',
                     x: '75%',
                     subtext: Totaloxgen.toFixed(0),
                     textAlign: 'center',
@@ -699,9 +595,17 @@ function chartdiagram(){
                     subtextStyle:{ fontSize:18 ,
                     color:"#000000",
                     fontWeight: 'bold',} 
-                 
+                },  {
+                    text: '异常脉搏\n(正常vs异常)',
+                    subtext: Totalpuls.toFixed(0),
+                    x: '60%',
+                    textAlign: 'center',
+                    itemGap:45,
+                    subtextStyle:{ fontSize:18 ,
+                    color:"#000000",
+                    fontWeight: 'bold',} 
                 }, {
-                    text: '血压\n(正常vs非正常)',
+                    text: '异常血压\n(正常vs异常)',
                     x: '90%',
                     subtext: Totalpress.toFixed(0),
                     textAlign: 'center',
@@ -788,8 +692,8 @@ function chartdiagram(){
                         },
                     },
                 data:[
-                    {value:Totaluses, name:'工作', selected:true},
-                    {value:Totalunuses, name:'非工作'},
+                    {value:Totaluses, name:'正常', selected:true},
+                    {value:Totalunuses, name:'异常'},
                 ]
             }, {
                 // 根据名字对应到相应的系列
@@ -813,8 +717,8 @@ function chartdiagram(){
                         },
                     },
                 data:[
-                    {value:Totaluses, name:'工作', selected:true},
-                    {value:Totalunuses, name:'非工作'},
+                    {value:(Totaluses-Totalpuls), name:'正常', selected:true},
+                    {value:Totalpuls, name:'异常'},
                 ]
             },
             {
@@ -839,8 +743,8 @@ function chartdiagram(){
                         },
                     },
                 data:[
-                    {value:Totaluses, name:'工作', selected:true},
-                    {value:Totalunuses, name:'非工作'},
+                    {value:(Totaluses-Totaloxgen), name:'工常', selected:true},
+                    {value:Totaloxgen, name:'异常'},
                 ]
             },
             {
@@ -865,8 +769,8 @@ function chartdiagram(){
                         },
                     },
                 data:[
-                    {value:Totaluses, name:'工作', selected:true},
-                    {value:Totalunuses, name:'非工作'},
+                    {value:(Totaluses-Totalpress), name:'工常', selected:true},
+                    {value:Totalpress, name:'异常'},
                 ]
             },
             ]  
@@ -884,28 +788,95 @@ function button2(row, col) {
 };
 
 
+//   data-whatever0="+ rowData.hospitalname+"  data-whatever="+ rowData.patientname+">当天记录</button>" +
+
 $('#recordModal').on('show.bs.modal', function (event) {
  
     var button = $(event.relatedTarget) // 触发事件的按钮  
-    var recipient = button.data('whatever') // 解析出data-whatever内容  
-    console.log("recipient", recipient)
-    recipient = button.data('whatever0') // 解析出data-whatever内容  
-    console.log("recipient0", recipient)
+    var recipient_d = button.data('whatever0') // 解析出data-whatever内容  
+    var recipient_h = button.data('whatever1') // 解析出data-whatever内容  
+    var recipient_p = button.data('whatever2') // 解析出data-whatever内容  
+    var recipient_days = button.data('whatever3') // 解析出data-whatever内容  
+    var days = 0    
+//    console.log("recipient0", recipient_h)
     var modal = $(this)  
-    modal.find('.modal-title').text('Message To ' + recipient)  
+    modal.find('.modal-title').text(recipient_days+'日记录: '+ recipient_h +' '+ recipient_p)  
+    if (recipient_days=='一') {
+        days =1}
+    else{
+        if (recipient_days=='五') days =5
+        else days =3650
+    }
     
+    var columns = [
+                {data: "reporttime",    Width:"25%",   title: columsName["reporttime"]},
+                {data: "patientname",   Width:"15%",   title: columsName["patientname"]},
+                {data: "puls",          Width:"10%",   title: columsName["puls"]},
+                {data: "oxgen",         Width:"10%",   title: columsName["oxgen"]},
+                {data: "pressurelow",   Width:"10%",   title: columsName["pressurelow"]},
+                {data: "pressurehigh",  Width:"10%",   title: columsName["pressurehigh"]},
+                {data: "longitude",     Width:"10%",   title: columsName["longitude"]},
+                {data: "latitude",      Width:"10%",   title: columsName["latitude"]},
+              ];
+            table = RecordTable(columns, recipient_d,recipient_h,recipient_p,recipient_days);
+
 });
+//////用于记录现实表格/////////////////
+ function RecordTable(columns,recipient_d,recipient_h,recipient_p,recipient_days) {
+//        console.log("xxx=",columns);
+        return $("#dayrecord").DataTable({
+                "ajax":{
+                    url: '/day/status',
+                    type: "get",  
+                    dataType:"json",
+                    data: {
+                        deviceid:recipient_d,
+                        hospitalname:recipient_h,
+                        patientname:recipient_p,
+                        days:recipient_days,
+                    },
+              },
+            //因为需要多次初始化，所以需要设置允许销毁实例
+            "destroy": true,
+            //列的配置信息通过变量传进来
+//            "columnDefs": status,//列表状态
+            "fixedHeader": true,
+            "columns": columns,
+           
+            "scrollX":false,
+            "scrollXInner": "100%",
+            "scrollCollapse": gridInit.scrollCollapse,//设置折叠
+       
+            "lengthChange": gridInit.lengthChange,//是否允许用户改变表格每页显示的记录数，默认是开启
+            "paging": gridInit.paging,//是否开启本地分页，默认是开启
+            "processing": gridInit.processing,//是否显示中文提示
+            "scrollCollapse": gridInit.scrollCollapse,  //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+            "serverSide": gridInit.serverSide, //开启服务器模式，默认是关闭
+//            "scrollY": gridInit.scrollY,//设置高
+//            "jQueryUI": gridInit.jQueryUI,//jquery 风格
+            "autoWidth": gridInit.autoWidth, //是否自适应宽度
+ //           "searching":gridInit.searching,
+            "order": [ 0, 'desc' ],
+            "language": {
+                "lengthMenu": "每页_MENU_ 条记录",
+                "zeroRecords": "没有找到记录",
+                "info": "第 _PAGE_ 页 ( 总共 _PAGES_ 页 )",
+                "infoEmpty": "无记录",
+ //               "search": "搜索：",
+ //               "infoFiltered": "(从 _MAX_ 条记录过滤)",
+                "paginate": {
+                    "previous": "上一页",
+                    "next": "下一页"
+                }
+            },
+            "dom": "lrtip"
+         
+        });
+}
 
 $('#record2').on('show.bs.modal', function (event) {
     console.log("record2")
 });
-//1days record
-
-//$(td).html("<button type='button' data-toggle='modal' id='record1' data-target='#recordModal' data-whatever="+ cellData +">当天记录</button>" +
-//                "<button type='button' id='record5' onclick='button2(" + row + "," + col + ")'>五天记录</button>")
-//               $("#mytool").append('<button type="button"  class="btn btn-primary" id="reload" data-toggle="modal" data-target="#statusModal">告警设置</button>'); 
-
-/////////////////////////////////
     </script>
 </body>
 </html>

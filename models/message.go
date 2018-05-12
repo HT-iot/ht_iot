@@ -7,6 +7,7 @@ import (
 	"github.com/scylladb/gocqlx"
 	"github.com/scylladb/gocqlx/qb"
 	"time"
+	"fmt"
 )
 
 /*
@@ -91,14 +92,7 @@ type Message struct {
 */
 
 type DataTable struct {
-/*	Totalpatient	int `json:"totalpatient"`
-	Totaluses		int `json:"totaluses"`
-	Totalunuses		int `json:"totalunuses"`
-	Totalurgent		int `json:"totalurgent"`
-	Totalpuls		int `json:"totalpuls"`
-	Totaloxgen		int `json:"totaloxgen"`
-	Totalpress		int `json:"totalpress"`
-*/	Data 			[]PatientInfo `json:"data"`
+	Data 			[]PatientInfo `json:"data"`
 }
 
 type Warnpara struct{
@@ -125,7 +119,8 @@ type PatientInfo struct {
 	Hospitaldeviceid string  `json:"hospitaldeviceid"`
 	Channelid        string  `json:"channelid"`
 	Deviceid         string  `json:"deviceid"`
-	Reporttime		 string  `json:"reporttime"`		
+	Reporttime		 string  `json:"reporttime"`
+	Recordtime		 float64  `json:"recordtime"`
 	Bodycapacitance	 float64 `json:"bodycapacitance"`
 	Puls             float64 `json:"puls"`
 	Oxgen            float64 `json:"oxgen"`
@@ -291,6 +286,7 @@ func GetMsg(p *PatientInfo) error {
 		}
 	}
 	//需要判断最近时间
+//	log.Debug("时间是：",pulsetime);
 	t1:=time.Now()
 	t2:= time.Unix(int64(pulsetime),0);
 	d := t1.Sub(t2).Seconds()
@@ -317,5 +313,240 @@ func GetMsg(p *PatientInfo) error {
 		(*p).Runstatus = "数据不完整"  
 		(*p).Reporttime = (*p).Runstatus +"："+ t2.Format("2006-01-02 03:04:05 PM")
 	}
+	return nil
+}
+
+
+//func Get one day patient record {
+func GetDayInfo(deviceid string,Hospitalname string, Patientname string,t2time float64) []PatientInfo{
+
+	log := logs.GetBeeLogger()
+	log.Debug("Get One Day Message for a patient", Patientname)
+	
+	var msg []Message
+	check := Message{
+		N:deviceid+":Pulse",
+		T:t2time,
+	}
+
+	sel := qb.Select("messages_by_channel").Where(qb.Eq("n")).AllowFiltering()
+	sel.Where(qb.GtOrEq("t"))
+
+	stmt, names := sel.ToCql()
+	q := gocqlx.Query(SessionMsg.Query(stmt), names).BindStruct(&check)
+	defer q.Release()
+
+	if err := gocqlx.Select(&msg, q.Query); err != nil {
+		log.Debug("select Err:", err.Error())
+		return  nil
+	} 
+	fmt.Println("MSG=",msg);
+
+	Patients := make([]PatientInfo, len(msg))
+	//i := 0
+	for i, p := range msg {
+		Patients[i].Hospitalname = Hospitalname
+/*		Patients[i].Hospitalzone = p.Hospitalzone
+		Patients[i].Hospitalbed = p.Hospitalbed
+*/		Patients[i].Patientname = Patientname
+//		Patients[i].Hospitaldeviceid = p.Hospitaldeviceid
+		Patients[i].Channelid = p.Channel
+		Patients[i].Deviceid = deviceid
+		Patients[i].Recordtime = p.T
+		Patients[i].Reporttime = (time.Unix(int64(p.T),0)).Format("2006-01-02 03:04:05")
+		err := GetDayMsg(&Patients[i])   //assemble the data
+		if err != nil {
+			logs.Error("Get the status failure!")
+		}
+		logs.Debug("Patients = ",Patients[i])
+	}
+	return Patients
+
+}
+
+
+func GetDayMsg(p *PatientInfo) error {
+	log := logs.GetBeeLogger()
+	log.Debug("Get Day Message for %s", p.Deviceid)
+	var msg []Message
+//	var pulse_time, oxgen_time, presshigh_time, presslow_time
+//	var bodycapacitancetime, pulsetime, oxgentime, presshightime,presslowtime,latitudetime,longitudetime float64
+//	var bodycapacitancetime float64
+
+	/* only get the last on message */
+	
+	var nn string
+	var tt float64
+	tt = p.Recordtime
+
+	sel := qb.Select("messages_by_channel").Where(qb.Eq("n")).Limit(1).AllowFiltering()
+	sel.Where(qb.Eq("t"))
+	stmt, names := sel.ToCql()
+	
+	{ /*get the Body Capacitor*/
+		nn = p.Deviceid+":"+ BodyString
+		q := gocqlx.Query(SessionMsg.Query(stmt), names).BindStruct(&Message{N:nn,T:tt})
+		defer q.Release()
+		if err := gocqlx.Select(&msg, q.Query); err != nil {
+			log.Error("GetDayMsg: select Err:" + err.Error())
+		}
+
+		if len(msg) != 0 {
+			(*p).Bodycapacitance = msg[0].V
+//			bodycapacitancetime = msg[0].T
+			log.Debug(PulseString + "value is " + strconv.FormatFloat(msg[0].V, 'f', 6, 64))
+		} else {
+			(*p).Bodycapacitance = 0
+			log.Error("Can't find in DB, set the value to zero")
+		}
+	}
+	
+	{ 
+	//get the PulsString
+		nn=p.Deviceid+":"+ PulseString
+		q := gocqlx.Query(SessionMsg.Query(stmt), names).BindStruct(&Message{N:nn,T:tt})
+//		q := gocqlx.Query(SessionMsg.Query(stmt), names).BindMap(qb.M{"n": n})
+		defer q.Release()
+
+		if err := gocqlx.Select(&msg, q.Query); err != nil {
+			log.Error("GetMsg: select Err:" + err.Error())
+		}
+
+		if len(msg) != 0 {
+			(*p).Puls = msg[0].V
+//			pulsetime = msg[0].T
+			log.Debug(PulseString + "value is " + strconv.FormatFloat(msg[0].V, 'f', 6, 64))
+		} else {
+			(*p).Puls = 0
+			log.Error("Can't find in DB, set the value to zero")
+		}
+	}
+	{ 
+		//get the Pressure High
+		nn = p.Deviceid + ":" + PressureHString
+		q := gocqlx.Query(SessionMsg.Query(stmt), names).BindStruct(&Message{N:nn,T:tt})
+		defer q.Release()
+
+		if err := gocqlx.Select(&msg, q.Query); err != nil {
+			log.Error("GetMsg: select Err:" + err.Error())
+		}
+//need pressure low
+		if len(msg) != 0 {
+			(*p).Pressurehigh = msg[0].V
+//			presshightime = msg[0].T
+			log.Debug(PressureHString + "value is " + strconv.FormatFloat(msg[0].V, 'f', 6, 64))
+		} else {
+			(*p).Pressurehigh = 0
+			log.Error("Can't find in DB, set the value to zero")
+		}
+	}
+	{ 
+		//get the Pressure Low
+		nn = p.Deviceid + ":" + PressureLString
+		q := gocqlx.Query(SessionMsg.Query(stmt), names).BindStruct(&Message{N:nn,T:tt})
+		defer q.Release()
+
+		if err := gocqlx.Select(&msg, q.Query); err != nil {
+			log.Error("GetMsg: select Err:" + err.Error())
+		}
+//need pressure low
+		if len(msg) != 0 {
+			(*p).Pressurelow = msg[0].V
+//			presslowtime = msg[0].T
+			log.Debug(PressureLString + "value is " + strconv.FormatFloat(msg[0].V, 'f', 6, 64))
+		} else {
+			(*p).Pressurelow = 0
+			log.Error("Can't find in DB, set the value to zero")
+		}
+	}
+
+	{ 
+		//get the OxgenString
+		nn = p.Deviceid + ":" + OxgenString
+		q := gocqlx.Query(SessionMsg.Query(stmt), names).BindStruct(&Message{N:nn,T:tt})
+
+		defer q.Release()
+
+		if err := gocqlx.Select(&msg, q.Query); err != nil {
+			log.Error("GetMsg: select Err:" + err.Error())
+		}
+
+		if len(msg) != 0 {
+			(*p).Oxgen = msg[0].V
+//			oxgentime = msg[0].T
+			log.Debug(OxgenString + "value is " + strconv.FormatFloat(msg[0].V, 'f', 6, 64))
+		} else {
+			(*p).Oxgen = 0
+			log.Error("Can't find in DB, set the value to zero")
+		}
+	}
+	{ 
+		//get the LatitudeString
+		nn = p.Deviceid + ":" + LatitudeString
+		q := gocqlx.Query(SessionMsg.Query(stmt), names).BindStruct(&Message{N:nn,T:tt})
+
+		defer q.Release()
+
+		if err := gocqlx.Select(&msg, q.Query); err != nil {
+			log.Error("GetMsg: select Err:" + err.Error())
+		}
+
+		if len(msg) != 0 {
+			(*p).Latitude = msg[0].V
+//			latitudetime = msg[0].T
+			log.Debug(LatitudeString + "value is " + strconv.FormatFloat(msg[0].V, 'f', 6, 64))
+		} else {
+			(*p).Latitude = 0
+			log.Error("Can't find in DB, set the value to zero")
+		}
+	}
+	{ 
+		//get the LongitudeString
+		nn = p.Deviceid + ":" + LongitudeString
+		q := gocqlx.Query(SessionMsg.Query(stmt), names).BindStruct(&Message{N:nn,T:tt})
+
+		defer q.Release()
+
+		if err := gocqlx.Select(&msg, q.Query); err != nil {
+			log.Error("GetMsg: select Err:" + err.Error())
+		}
+
+		if len(msg) != 0 {
+			(*p).Longitude = msg[0].V
+//			longitudetime = msg[0].T
+			log.Debug(LongitudeString + "value is " + strconv.FormatFloat(msg[0].V, 'f', 6, 64))
+		} else {
+			(*p).Longitude = 0
+			log.Error("Can't find in DB, set the value to zero")
+		}
+	}
+	//需要判断最近时间
+/*	log.Debug("时间是：",pulsetime);
+	t1:=time.Now()
+	t2:= time.Unix(int64(pulsetime),0);
+	d := t1.Sub(t2).Seconds()
+	if ((pulsetime == oxgentime)&&(pulsetime == presshightime)&&(pulsetime==presslowtime)&&(pulsetime == longitudetime)&& (pulsetime == latitudetime)&&(pulsetime == bodycapacitancetime)){
+		if (d<=300){
+			if((*p).Bodycapacitance>=5){
+				(*p).Runstatus = "在线使用"  
+				(*p).Reporttime = (*p).Runstatus +"："+ t2.Format("2006-01-02 03:04:05 PM")
+				if((*p).Puls<30){
+					(*p).Runstatus = "在线危急"  
+					(*p).Reporttime = (*p).Runstatus +"："+ t2.Format("2006-01-02 03:04:05 PM")
+				}
+			}else{
+				(*p).Runstatus = "在线未使用"  
+				(*p).Reporttime = (*p).Runstatus +"："+ t2.Format("2006-01-02 03:04:05 PM")
+			}
+
+		} else{
+			(*p).Runstatus = "离线"
+			(*p).Reporttime = (*p).Runstatus +"："+ t2.Format("2006-01-02 03:04:05 PM")
+		}
+	}else{
+		(*p).Runstatus = "数据不完整"  
+		(*p).Reporttime = (*p).Runstatus +"："+ t2.Format("2006-01-02 03:04:05 PM")
+	}
+*/
 	return nil
 }

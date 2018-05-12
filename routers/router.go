@@ -21,7 +21,8 @@ func init() {
 	beego.Router("/api/status", &controllers.StatusController{}, "get:GetStatus;post:PostStatus")
 	beego.Router("/warn/status", &controllers.StatusController{}, "get:GetWarnStatus;post:PostWarnStatus")
 	beego.Router("/info/status", &controllers.StatusController{}, "get:GetInfo;post:PostInfo")
-	
+	beego.Router("/day/status", &controllers.StatusController{}, "get:GetOneData")
+//	beego.Router("/day/status", &controllers.StatusController{}, "get:GetOne;post:GetFive")
 	
 	beego.Router("/pconfig", &controllers.PconfigController{})
 	beego.Router("/api/pconfig", &controllers.PconfigController{}, "get:GetPat;post:PostPat")

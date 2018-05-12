@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"fmt"
 
 	"ht_iot/models"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
+	"time"
 )
 
 type StatusController struct {
@@ -111,12 +113,9 @@ func (this *StatusController) PostWarnStatus() {
 
 func (this *StatusController) GetWarnStatus() { 
 	logs.Debug("Send the warn table for the warning diagram")
-
 	_,Para := Calculatepara()
-//	logs.Debug("Para==",Para)
 	this.Data["json"] = &Para
 	this.ServeJSON()
-
 }
 
 
@@ -275,3 +274,39 @@ func Calculatepara()(Patients []models.PatientInfo, Para Warndata){
 //	logs.Debug("MSG Patients",Patients)
 	return Patients, Para
 }
+
+func (this *StatusController) GetOneData() { 
+	logs.Debug("Get All information on One days about the patient")
+//	var data models.DataTable
+	
+	t1:=time.Now()
+	Deviceid := this.GetString("deviceid")
+	Hospitalname := this.GetString("hospitalname")
+	Patientname := this.GetString("patientname")
+	days := this.GetString("days")
+	
+	var day int
+	if (days == "一"){
+		day=1
+	}else{
+		if(days == "五"){
+			day=5
+		}else{
+			day = 3650
+		}
+	}
+	
+	fmt.Print("t1=",Hospitalname, Patientname, t1.Unix())
+
+	t2 := t1.AddDate(0,0,(0-day))
+	t2time := float64(t2.Unix())
+	logs.Debug("t2time %s", t2time)
+//	var patients []models.PatientInfos
+	var data models.DataTable
+//	data.Data,_ = models.GetDayInfo(Hospitalname,Patientname,t2time)
+	data.Data = models.GetDayInfo(Deviceid,Hospitalname,Patientname,t2time)
+//	data.Data[0].Patientname ="11111"
+	this.Data["json"] = &data
+	this.ServeJSON()
+}
+
